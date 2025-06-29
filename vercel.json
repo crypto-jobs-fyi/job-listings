@@ -1,6 +1,8 @@
 {
   "version": 2,
   "routes": [
+    { "src": "/companies.json", "dest": "/public/companies.json" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
