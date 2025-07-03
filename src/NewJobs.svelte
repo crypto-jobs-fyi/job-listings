@@ -5,39 +5,26 @@
   let companySearch = '';
   let locationSearch = '';
   let titleSearch = '';
+  let jobsLoaded = false;
   let companiesLoaded = false;
 
-  // Load jobs from remote JSON and companies from remote GitHub URL on mount
   onMount(async () => {
     const [jobsRes, companiesRes] = await Promise.all([
-      fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/jobs.json'),
+      fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/jobs_new.json'),
       fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json')
     ]);
     const jobsData = await jobsRes.json();
     jobs = jobsData.data.filter(job => job.company && job.location);
     companies = await companiesRes.json();
     companiesLoaded = true;
+    jobsLoaded = true;
   });
 
-  // Helper: get company_url by company name (case-insensitive)
   function getCompanyUrl(name) {
     const found = companies.find(c => c.company_name.toLowerCase() === name?.toLowerCase());
     return found ? found.company_url : null;
   }
 
-  // Helper: get company logo URL by company name (using favicon)
-  function getCompanyLogoUrl(name) {
-    const url = getCompanyUrl(name);
-    if (!url) return null;
-    try {
-      const { hostname } = new URL(url);
-      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
-    } catch {
-      return null;
-    }
-  }
-
-  // Filter jobs based on separate company and location search inputs
   $: filteredJobs = jobs.filter(job =>
     (!companySearch || (job.company && job.company.toLowerCase().includes(companySearch.toLowerCase()))) &&
     (!locationSearch || (job.location && job.location.toLowerCase().includes(locationSearch.toLowerCase()))) &&
@@ -51,7 +38,7 @@
 </script>
 
 <main>
-  <h1>Crypto Job Listings</h1>
+  <h1>New Crypto Job Listings</h1>
   <div class="search-bar">
     <input
       type="text"
@@ -71,7 +58,6 @@
       bind:value={locationSearch}
       style="padding:0.5rem; width:100%; max-width:180px;"
     />
-    <button class="new-jobs-btn" on:click={() => window.location.href = '/new-jobs.html'}>New Jobs</button>
   </div>
   <table>
     <thead>
@@ -83,7 +69,7 @@
       </tr>
     </thead>
     <tbody>
-      {#if jobs.length === 0 || !companiesLoaded}
+      {#if jobs.length === 0 || !jobsLoaded}
         <tr><td colspan="4">Loading...</td></tr>
       {:else if filteredJobs.length === 0}
         <tr><td colspan="4">No results found.</td></tr>
@@ -92,12 +78,7 @@
           <tr>
             <td>
               {#if getCompanyUrl(job.company)}
-                <a href={getCompanyUrl(job.company)} target="_blank" rel="noopener noreferrer">
-                  {#if getCompanyLogoUrl(job.company)}
-                    <img src={getCompanyLogoUrl(job.company)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
-                  {/if}
-                  {job.company}
-                </a>
+                <a href={getCompanyUrl(job.company)} target="_blank" rel="noopener noreferrer">{job.company}</a>
               {:else}
                 {job.company}
               {/if}
@@ -143,21 +124,6 @@
     padding: 0.5rem;
     width: 100%;
     max-width: 300px;
-  }
-  .new-jobs-btn {
-    font-size: 1.1rem;
-    padding: 0.5rem 1.5rem;
-    border-radius: 8px;
-    border: none;
-    background: #646cff;
-    color: #fff;
-    font-weight: 600;
-    margin-left: 1rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .new-jobs-btn:hover {
-    background: #535bf2;
   }
   table {
     width: 100%;
