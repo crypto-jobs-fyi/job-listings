@@ -140,15 +140,17 @@
     flex-wrap: wrap;
     justify-content: center;
   }
-  input {
+  input,
+  .new-jobs-btn {
     margin-bottom: 1rem;
     padding: 0.5rem;
     width: 100%;
-    max-width: 300px;
+    max-width: 180px;
+    height: 40px;
+    box-sizing: border-box;
+    font-size: 1rem;
   }
   .new-jobs-btn {
-    font-size: 1.1rem;
-    padding: 0.5rem 1.5rem;
     border-radius: 8px;
     border: none;
     background: #646cff;
