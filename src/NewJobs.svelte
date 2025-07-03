@@ -38,7 +38,13 @@
 </script>
 
 <main>
-  <h1>New Crypto Job Listings</h1>
+  <div class="crypto-banner">
+    <img src="/crypto-logo.svg" alt="Crypto Logo" class="crypto-banner-logo" />
+    <div class="crypto-banner-text">
+      <span class="crypto-banner-title">🚀 New Crypto Jobs</span>
+      <span class="crypto-banner-desc">Find your next opportunity in the world of blockchain, DeFi, and digital assets!</span>
+    </div>
+  </div>
   <div class="search-bar">
     <input
       type="text"
@@ -108,10 +114,6 @@
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
-  h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
   .search-bar {
     display: flex;
     gap: 1rem;
@@ -152,5 +154,39 @@
   }
   tr:last-child td {
     border-bottom: none;
+  }
+  .crypto-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, #f8ffae 0%, #43c6ac 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(67,198,172,0.10);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2.5rem;
+    gap: 1.5rem;
+  }
+  .crypto-banner-logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(67,198,172,0.10);
+  }
+  .crypto-banner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .crypto-banner-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #222;
+    letter-spacing: 0.01em;
+  }
+  .crypto-banner-desc {
+    font-size: 1.05rem;
+    color: #333;
+    opacity: 0.85;
   }
 </style>
