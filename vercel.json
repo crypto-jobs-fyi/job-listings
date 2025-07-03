@@ -1,6 +1,7 @@
 {
   "version": 2,
   "routes": [
+    { "src": "/crypto-logo.svg", "dest": "/crypto-logo.svg" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
