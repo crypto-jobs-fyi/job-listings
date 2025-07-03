@@ -7,11 +7,11 @@
   let titleSearch = '';
   let companiesLoaded = false;
 
-  // Load jobs from remote JSON and companies from local file on mount
+  // Load jobs from remote JSON and companies from remote GitHub URL on mount
   onMount(async () => {
     const [jobsRes, companiesRes] = await Promise.all([
       fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/jobs.json'),
-      fetch('/companies.json')
+      fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json')
     ]);
     const jobsData = await jobsRes.json();
     jobs = jobsData.data.filter(job => job.company && job.location);
