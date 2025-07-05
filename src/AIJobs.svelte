@@ -1,63 +1,61 @@
 <script>
 // @ts-nocheck
+import { onMount } from 'svelte';
+let jobs = [];
+let companies = [];
+let companySearch = '';
+let locationSearch = '';
+let titleSearch = '';
+let jobsLoaded = false;
+let companiesLoaded = false;
 
-  import { onMount } from 'svelte';
-  let jobs = [];
-  let companies = [];
-  let companySearch = '';
-  let locationSearch = '';
-  let titleSearch = '';
-  let companiesLoaded = false;
+// Load jobs from remote JSON and companies from remote GitHub URL on mount
+onMount(async () => {
+  const [jobsRes, companiesRes] = await Promise.all([
+    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai-jobs.json'),
+    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai-companies.json')
+  ]);
+  const jobsData = await jobsRes.json();
+  jobs = jobsData.data.filter(job => job.company && job.location);
+  companies = await companiesRes.json();
+  companiesLoaded = true;
+  jobsLoaded = true;
+});
 
-  // Load jobs from remote JSON and companies from remote GitHub URL on mount
-  onMount(async () => {
-    const [jobsRes, companiesRes] = await Promise.all([
-      fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/jobs.json'),
-      fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json')
-    ]);
-    const jobsData = await jobsRes.json();
-    jobs = jobsData.data.filter(job => job.company && job.location);
-    companies = await companiesRes.json();
-    companiesLoaded = true;
-  });
+function getCompanyUrl(name) {
+  const found = companies.find(c => c.company_name.toLowerCase() === name?.toLowerCase());
+  return found ? found.company_url : null;
+}
 
-  // Helper: get company_url by company name (case-insensitive)
-  function getCompanyUrl(name) {
-    const found = companies.find(c => c.company_name.toLowerCase() === name?.toLowerCase());
-    return found ? found.company_url : null;
+function getCompanyLogoUrl(name) {
+  const url = getCompanyUrl(name);
+  if (!url) return null;
+  try {
+    const { hostname } = new URL(url);
+    return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+  } catch {
+    return null;
   }
+}
 
-  // Helper: get company logo URL by company name (using favicon)
-  function getCompanyLogoUrl(name) {
-    const url = getCompanyUrl(name);
-    if (!url) return null;
-    try {
-      const { hostname } = new URL(url);
-      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
-    } catch {
-      return null;
-    }
-  }
-
-  // Filter jobs based on separate company and location search inputs
-  $: filteredJobs = jobs.filter(job =>
-    (!companySearch || (job.company && job.company.toLowerCase().includes(companySearch.toLowerCase()))) &&
-    (!locationSearch || (job.location && job.location.toLowerCase().includes(locationSearch.toLowerCase()))) &&
-    (!titleSearch || (job.title && job.title.toLowerCase().includes(titleSearch.toLowerCase())))
-  ).map(job => ({
-    ...job,
-    location: job.location
-      ? job.location.replace(/United States/g, 'US').replace(/United Kingdom/g, 'UK')
-      : job.location
-  }));
+$: filteredJobs = jobs.filter(job =>
+  (!companySearch || (job.company && job.company.toLowerCase().includes(companySearch.toLowerCase()))) &&
+  (!locationSearch || (job.location && job.location.toLowerCase().includes(locationSearch.toLowerCase()))) &&
+  (!titleSearch || (job.title && job.title.toLowerCase().includes(titleSearch.toLowerCase())))
+).map(job => ({
+  ...job,
+  location: job.location
+    ? job.location.replace(/United States/g, 'US').replace(/United Kingdom/g, 'UK')
+    : job.location
+}));
 </script>
 
 <main>
   <div class="crypto-banner">
-    <img src="/crypto-logo.svg" alt="Crypto Logo" class="crypto-banner-logo" />
+    <img src="/ai-logo.svg" alt="AI Logo" class="crypto-banner-logo" />
     <div class="crypto-banner-text">
-      <span class="crypto-banner-title">🚀 Crypto Jobs</span>
-      <span class="crypto-banner-desc">Find your next opportunity in the world of blockchain, DeFi, and digital assets!</span>
+      <span class="crypto-banner-title">🤖 AI Jobs</span>
+      <span class="crypto-banner-desc">Find your next opportunity in the world of AI, ML, and data science!</span>
     </div>
   </div>
   <div class="search-bar">
@@ -80,7 +78,6 @@
       style="padding:0.5rem; width:100%; max-width:180px;"
     />
     <button class="new-jobs-btn" on:click={() => window.location.href = '/new-jobs.html'}>New Jobs</button>
-    <button class="ai-jobs-btn" on:click={() => window.location.href = '/ai-jobs.html'}>AI Jobs</button>
   </div>
   <table>
     <thead>
@@ -144,8 +141,7 @@
     justify-content: center;
   }
   input,
-  .new-jobs-btn,
-  .ai-jobs-btn {
+  .new-jobs-btn {
     margin-bottom: 1rem;
     padding: 0.5rem;
     width: 100%;
@@ -166,18 +162,6 @@
   }
   .new-jobs-btn:hover {
     background: #535bf2;
-  }
-  .ai-jobs-btn {
-    border-radius: 8px;
-    border: none;
-    background: #ff4081;
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .ai-jobs-btn:hover {
-    background: #f50057;
   }
   table {
     width: 100%;

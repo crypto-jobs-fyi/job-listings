@@ -12,6 +12,7 @@ export default defineConfig({
       input: [
         './index.html',
         './new-jobs.html',
+        './ai-jobs.html',
       ],
     },
   },

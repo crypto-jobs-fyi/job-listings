@@ -1,0 +1,16 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="aiGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#43c6ac"/>
+      <stop offset="100%" stop-color="#f8ffae"/>
+    </radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="32" fill="url(#aiGradient)"/>
+  <g>
+    <rect x="18" y="18" width="28" height="28" rx="8" fill="#fff"/>
+    <text x="32" y="39" text-anchor="middle" font-size="18" font-family="Arial, Helvetica, sans-serif" fill="#43c6ac" font-weight="bold">AI</text>
+  </g>
+  <g opacity="0.15">
+    <ellipse cx="32" cy="54" rx="18" ry="4" fill="#222"/>
+  </g>
+</svg>
