@@ -7,6 +7,10 @@
   let titleSearch = '';
   let jobsLoaded = false;
   let companiesLoaded = false;
+  let showPopup = false;
+  let popupJob = null;
+  let popupLoading = false;
+  let popupError = '';
 
   onMount(async () => {
     const [jobsRes, companiesRes] = await Promise.all([
@@ -25,6 +29,17 @@
     return found ? found.company_url : null;
   }
 
+  function getCompanyLogoUrl(name) {
+    const url = getCompanyUrl(name);
+    if (!url) return null;
+    try {
+      const { hostname } = new URL(url);
+      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+    } catch {
+      return null;
+    }
+  }
+
   $: filteredJobs = jobs.filter(job =>
     (!companySearch || (job.company && job.company.toLowerCase().includes(companySearch.toLowerCase()))) &&
     (!locationSearch || (job.location && job.location.toLowerCase().includes(locationSearch.toLowerCase()))) &&
@@ -35,6 +50,32 @@
       ? job.location.replace(/United States/g, 'US').replace(/United Kingdom/g, 'UK')
       : job.location
   }));
+
+  async function openPopup(job) {
+    showPopup = true;
+    popupJob = job;
+    popupLoading = true;
+    popupError = '';
+    try {
+      // Try to fetch the job description from the apply URL (expecting HTML)
+      const url = job.link;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Failed to load description');
+      const html = await res.text();
+      // Try to extract a main content or fallback to body
+      const match = html.match(/<main[\s\S]*?<\/main>/i) || html.match(/<body[\s\S]*?<\/body>/i);
+    } catch (e) {
+      popupError = 'Could not load job description.';
+    } finally {
+      popupLoading = false;
+    }
+  }
+
+  function closePopup() {
+    showPopup = false;
+    popupJob = null;
+    popupError = '';
+  }
 </script>
 
 <main>
@@ -84,12 +125,27 @@
           <tr>
             <td>
               {#if getCompanyUrl(job.company)}
-                <a href={getCompanyUrl(job.company)} target="_blank" rel="noopener noreferrer">{job.company}</a>
+                <a href={getCompanyUrl(job.company)} target="_blank" rel="noopener noreferrer">
+                  {#if getCompanyLogoUrl(job.company)}
+                    <img src={getCompanyLogoUrl(job.company)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
+                  {/if}
+                  {job.company}
+                </a>
               {:else}
                 {job.company}
               {/if}
             </td>
-            <td>{job.title}</td>
+            <td>
+              <span style="display:flex;align-items:center;gap:6px;">
+                {job.title}
+                <button class="desc-icon-btn" type="button" title="Show description" on:click|preventDefault={() => openPopup(job)} on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { openPopup(job); e.preventDefault(); } }} tabindex="0" aria-label="Show job description">
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="10" cy="10" r="9" fill="#646cff" stroke="#222" stroke-width="1.5"/>
+                    <text x="10" y="15" text-anchor="middle" font-size="12" font-family="Arial, Helvetica, sans-serif" fill="#fff">i</text>
+                  </svg>
+                </button>
+              </span>
+            </td>
             <td>
               {#if job.location && job.location.length > 24}
                 <span title={job.location}>{job.location.slice(0, 24)}&hellip;</span>
@@ -103,6 +159,31 @@
       {/if}
     </tbody>
   </table>
+
+  {#if showPopup && popupJob}
+    <div
+      class="popup-overlay"
+      role="dialog"
+      aria-modal="true"
+      on:click={closePopup}
+      on:keydown={(e) => { if (e.key === 'Escape') { closePopup(); } }}
+    >
+      <div
+        class="popup-window"
+        role="document"
+        on:click|stopPropagation
+        on:keydown={(e) => { if (e.key === 'Escape') { closePopup(); } }}
+      >
+        <button class="popup-close" on:click={closePopup}>&times;</button>
+        <h2>{popupJob.title}</h2>
+        {#if popupJob.link}
+          <div class="popup-iframe-container">
+            <iframe src={popupJob.link.replace(/<a [^>]*href=["']([^"']+)['"][^>]*>.*<\/a>/, '$1')} width="100%" height="400" style="border:1px solid #eee; border-radius:6px; margin-top:1.5rem;" title="Job Posting"></iframe>
+          </div>
+        {/if}
+      </div>
+    </div>
+  {/if}
 </main>
 
 <style>
@@ -188,5 +269,75 @@
     font-size: 1.05rem;
     color: #333;
     opacity: 0.85;
+  }
+  .desc-icon-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    position: relative;
+  }
+  .desc-icon-btn[title]:hover:after,
+  .desc-icon-btn[title]:focus:after {
+    content: attr(title);
+    position: absolute;
+    left: 50%;
+    top: 120%;
+    transform: translateX(-50%);
+    background: #ffe066;
+    color: #222;
+    padding: 0.35em 0.8em;
+    border-radius: 6px;
+    font-size: 0.95em;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    z-index: 10;
+    pointer-events: none;
+  }
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .popup-window {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+  }
+  .popup-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  .popup-iframe-container {
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+  .popup-iframe-container iframe {
+    width: 100%;
+    height: 400px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    background: #fff;
   }
 </style>
