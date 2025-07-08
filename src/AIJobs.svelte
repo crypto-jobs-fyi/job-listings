@@ -12,8 +12,8 @@ let companiesLoaded = false;
 // Load jobs from remote JSON and companies from remote GitHub URL on mount
 onMount(async () => {
   const [jobsRes, companiesRes] = await Promise.all([
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai-jobs.json'),
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai-companies.json')
+    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs.json'),
+    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json')
   ]);
   const jobsData = await jobsRes.json();
   jobs = jobsData.data.filter(job => job.company && job.location);
