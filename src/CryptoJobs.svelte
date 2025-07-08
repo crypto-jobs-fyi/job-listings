@@ -6,22 +6,19 @@ let companies = [];
 let companySearch = '';
 let locationSearch = '';
 let titleSearch = '';
-let jobsLoaded = false;
 let companiesLoaded = false;
 let totalJobs = null;
 
-// Load jobs from remote JSON and companies from remote GitHub URL on mount
 onMount(async () => {
   const [jobsRes, companiesRes, currentRes] = await Promise.all([
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs.json'),
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json'),
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_current.json')
+    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/jobs.json'),
+    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json'),
+    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/current.json')
   ]);
   const jobsData = await jobsRes.json();
   jobs = jobsData.data.filter(job => job.company && job.location);
   companies = await companiesRes.json();
   companiesLoaded = true;
-  jobsLoaded = true;
   const currentData = await currentRes.json();
   totalJobs = currentData["Total Jobs"];
 });
@@ -59,11 +56,12 @@ $: filteredJobs = jobs.filter(job =>
     <div class="total-jobs-banner">Total Jobs: <span>{totalJobs}</span></div>
   {/if}
   <div class="crypto-banner">
-    <img src="/ai-logo.svg" alt="AI Logo" class="crypto-banner-logo" />
+    <img src="/crypto-logo.svg" alt="Crypto Logo" class="crypto-banner-logo" />
     <div class="crypto-banner-text">
-      <span class="crypto-banner-title">🤖 AI Jobs</span>
-      <span class="crypto-banner-desc">Find your next opportunity in the world of AI, ML, and data science!</span>
+      <span class="crypto-banner-title">🚀 Crypto Jobs</span>
+      <span class="crypto-banner-desc">Find your next opportunity in the world of blockchain, DeFi, and digital assets!</span>
     </div>
+    <a href="/new-jobs.html" class="new-jobs-btn">New Jobs Page</a>
   </div>
   <div class="search-bar">
     <input
@@ -84,7 +82,6 @@ $: filteredJobs = jobs.filter(job =>
       bind:value={locationSearch}
       style="padding:0.5rem; width:100%; max-width:180px;"
     />
-    <button class="new-jobs-btn" on:click={() => window.location.href = '/new-jobs.html'}>New Jobs</button>
   </div>
   <table>
     <thead>
@@ -147,8 +144,7 @@ $: filteredJobs = jobs.filter(job =>
     flex-wrap: wrap;
     justify-content: center;
   }
-  input,
-  .new-jobs-btn {
+  input {
     margin-bottom: 1rem;
     padding: 0.5rem;
     width: 100%;
@@ -156,19 +152,6 @@ $: filteredJobs = jobs.filter(job =>
     height: 40px;
     box-sizing: border-box;
     font-size: 1rem;
-  }
-  .new-jobs-btn {
-    border-radius: 8px;
-    border: none;
-    background: #646cff;
-    color: #fff;
-    font-weight: 600;
-    margin-left: 1rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .new-jobs-btn:hover {
-    background: #535bf2;
   }
   table {
     width: 100%;
@@ -231,6 +214,25 @@ $: filteredJobs = jobs.filter(job =>
     font-size: 1.05rem;
     color: #333;
     opacity: 0.85;
+  }
+  .new-jobs-btn {
+    margin-left: auto;
+    margin-right: 0;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    background: #ffb300;
+    color: #222;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(67,198,172,0.10);
+    transition: background 0.2s, transform 0.2s;
+    align-self: center;
+    white-space: nowrap;
+  }
+  .new-jobs-btn:hover {
+    background: #ffd54f;
+    transform: translateY(-2px) scale(1.03);
   }
   .total-jobs-banner {
     width: 100%;
