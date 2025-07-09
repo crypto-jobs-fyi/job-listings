@@ -11,7 +11,9 @@
   </div>
   <div class="main-links">
     <a class="main-link-btn crypto" href="/crypto-jobs.html">Crypto Jobs</a>
+    <a class="main-link-btn crypto" href="/crypto-companies.html">Crypto Companies</a>
     <a class="main-link-btn ai" href="/ai-jobs.html">AI Jobs</a>
+    <a class="main-link-btn ai" href="/ai-companies.html">AI Companies</a>
   </div>
 </main>
 
@@ -51,10 +53,12 @@
   }
   .main-links {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 1.5rem;
     align-items: center;
     margin-top: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   .main-link-btn {
     display: inline-block;
@@ -67,7 +71,7 @@
     background: #646cff;
     box-shadow: 0 2px 8px rgba(67,198,172,0.10);
     transition: background 0.2s, transform 0.2s;
-    min-width: 220px; /* Ensures all buttons have the same width */
+    min-width: 220px;
     text-align: center;
   }
   .main-link-btn.crypto {

@@ -6,5 +6,12 @@
     { "src": "/index.html", "dest": "/index.html" },
     { "src": "/new-jobs.html", "dest": "/new-jobs" },
     { "src": "/ai-jobs.html", "dest": "/ai-jobs" }
+  ],
+  "rewrites": [
+    { "source": "/crypto-jobs", "destination": "/crypto-jobs.html" },
+    { "source": "/ai-jobs", "destination": "/ai-jobs.html" },
+    { "source": "/new-jobs", "destination": "/new-jobs.html" },
+    { "source": "/ai-companies", "destination": "/ai-companies.html" },
+    { "source": "/crypto-companies", "destination": "/crypto-companies.html" }
   ]
 }
