@@ -3,6 +3,7 @@
 import { onMount } from 'svelte';
 let companies = [];
 let companiesLoaded = false;
+let jobsCountByCompany = {};
 
 function getCompanyLogoUrl(url) {
   if (!url) return null;
@@ -15,8 +16,12 @@ function getCompanyLogoUrl(url) {
 }
 
 onMount(async () => {
-  const res = await fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json');
-  companies = await res.json();
+  const [companiesRes, currentRes] = await Promise.all([
+    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json'),
+    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/current.json')
+  ]);
+  companies = await companiesRes.json();
+  jobsCountByCompany = await currentRes.json();
   companiesLoaded = true;
 });
 </script>
@@ -31,13 +36,14 @@ onMount(async () => {
       <tr>
         <th>Company Name</th>
         <th>Careers Page</th>
+        <th>Jobs</th>
       </tr>
     </thead>
     <tbody>
       {#if !companiesLoaded}
-        <tr><td colspan="2">Loading...</td></tr>
+        <tr><td colspan="3">Loading...</td></tr>
       {:else if companies.length === 0}
-        <tr><td colspan="2">No companies found.</td></tr>
+        <tr><td colspan="3">No companies found.</td></tr>
       {:else}
         {#each companies as company}
           <tr>
@@ -58,6 +64,7 @@ onMount(async () => {
                 —
               {/if}
             </td>
+            <td>{jobsCountByCompany[company.company_name] || 0}</td>
           </tr>
         {/each}
       {/if}
