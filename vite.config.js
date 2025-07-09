@@ -11,6 +11,7 @@ export default defineConfig({
     rollupOptions: {
       input: [
         './index.html',
+        './crypto-jobs.html',
         './new-jobs.html',
         './ai-jobs.html',
         './ai-companies.html', // Add ai-companies.html to the input array
