@@ -84,7 +84,6 @@ $: filteredJobs = jobs.filter(job =>
       bind:value={locationSearch}
       style="padding:0.5rem; width:100%; max-width:180px;"
     />
-    <button class="new-jobs-btn" on:click={() => window.location.href = '/new-jobs.html'}>New Jobs</button>
   </div>
   <table>
     <thead>
@@ -147,8 +146,7 @@ $: filteredJobs = jobs.filter(job =>
     flex-wrap: wrap;
     justify-content: center;
   }
-  input,
-  .new-jobs-btn {
+  input {
     margin-bottom: 1rem;
     padding: 0.5rem;
     width: 100%;
@@ -156,19 +154,6 @@ $: filteredJobs = jobs.filter(job =>
     height: 40px;
     box-sizing: border-box;
     font-size: 1rem;
-  }
-  .new-jobs-btn {
-    border-radius: 8px;
-    border: none;
-    background: #646cff;
-    color: #fff;
-    font-weight: 600;
-    margin-left: 1rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .new-jobs-btn:hover {
-    background: #535bf2;
   }
   table {
     width: 100%;

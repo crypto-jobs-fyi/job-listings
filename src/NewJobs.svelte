@@ -165,6 +165,7 @@
       class="popup-overlay"
       role="dialog"
       aria-modal="true"
+      tabindex="-1"
       on:click={closePopup}
       on:keydown={(e) => { if (e.key === 'Escape') { closePopup(); } }}
     >
@@ -178,7 +179,7 @@
         <h2>{popupJob.title}</h2>
         {#if popupJob.link}
           <div class="popup-iframe-container">
-            <iframe src={popupJob.link.replace(/<a [^>]*href=["']([^"']+)['"][^>]*>.*<\/a>/, '$1')} width="100%" height="400" style="border:1px solid #eee; border-radius:6px; margin-top:1.5rem;" title="Job Posting"></iframe>
+            <iframe src={popupJob.link.replace(/<a [^>]*href=["']([^"']+)["'][^>]*>.*<\/a>/, '$1')} width="100%" height="400" style="border:1px solid #eee; border-radius:6px; margin-top:1.5rem;" title="Job Posting"></iframe>
           </div>
         {/if}
       </div>
