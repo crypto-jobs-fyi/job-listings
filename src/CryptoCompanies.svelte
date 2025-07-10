@@ -51,9 +51,12 @@ onMount(async () => {
 </script>
 
 <main>
-  <div class="crypto-companies-banner">
-    <span class="crypto-companies-title">🚀 Crypto Companies</span>
-    <span class="crypto-companies-desc">Explore top crypto companies and their careers pages.</span>
+  <div class="crypto-banner">
+    <img src="/crypto-logo.svg" alt="Crypto Logo" class="crypto-banner-logo" />
+    <div class="crypto-banner-text">
+      <span class="crypto-banner-title">🚀 Crypto Companies</span>
+      <span class="crypto-banner-desc">Explore top crypto companies and their careers pages.</span>
+    </div>
   </div>
   <table>
     <thead>
@@ -109,20 +112,36 @@ onMount(async () => {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
-  .crypto-companies-banner {
+  .crypto-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, #f8ffae 0%, #43c6ac 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(67,198,172,0.10);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2.5rem;
+    gap: 1.5rem;
+  }
+  .crypto-banner-logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(67,198,172,0.10);
+  }
+  .crypto-banner-text {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 0.3rem;
-    margin-bottom: 2rem;
   }
-  .crypto-companies-title {
+  .crypto-banner-title {
     font-size: 1.6rem;
     font-weight: 700;
     color: #222;
     letter-spacing: 0.01em;
   }
-  .crypto-companies-desc {
+  .crypto-banner-desc {
     font-size: 1.05rem;
     color: #333;
     opacity: 0.85;
