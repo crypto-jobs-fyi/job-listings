@@ -4,6 +4,8 @@ import { onMount } from 'svelte';
 let companies = [];
 let companiesLoaded = false;
 let jobsCountByCompany = {};
+let sortColumn = 'jobs';
+let sortDirection = 'desc';
 
 function getCompanyLogoUrl(url) {
   if (!url) return null;
@@ -15,6 +17,27 @@ function getCompanyLogoUrl(url) {
   }
 }
 
+function sortCompanies(column) {
+  if (sortColumn === column) {
+    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortColumn = column;
+    sortDirection = 'asc';
+  }
+
+  companies.sort((a, b) => {
+    let aValue = column === 'jobs' ? (jobsCountByCompany[a.company_name] || 0) : a.company_name.toLowerCase();
+    let bValue = column === 'jobs' ? (jobsCountByCompany[b.company_name] || 0) : b.company_name.toLowerCase();
+
+    if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  // Trigger reactivity by reassigning the companies array
+  companies = [...companies];
+}
+
 onMount(async () => {
   const [companiesRes, currentRes] = await Promise.all([
     fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json'),
@@ -23,6 +46,8 @@ onMount(async () => {
   companies = await companiesRes.json();
   jobsCountByCompany = await currentRes.json();
   companiesLoaded = true;
+
+  companies.sort((a, b) => (jobsCountByCompany[b.company_name] || 0) - (jobsCountByCompany[a.company_name] || 0));
 });
 </script>
 
@@ -34,9 +59,13 @@ onMount(async () => {
   <table>
     <thead>
       <tr>
-        <th>Company Name</th>
+        <th on:click={() => sortCompanies('company_name')} style="cursor: pointer;">
+          Company Name {sortColumn === 'company_name' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}
+        </th>
         <th>Careers Page</th>
-        <th>Jobs</th>
+        <th on:click={() => sortCompanies('jobs')} style="cursor: pointer;">
+          Jobs {sortColumn === 'jobs' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -114,6 +143,8 @@ onMount(async () => {
   th {
     background: #f8f8f8;
     font-weight: 600;
+    cursor: pointer;
+    user-select: none;
   }
   tr:last-child td {
     border-bottom: none;
