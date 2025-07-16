@@ -6,6 +6,7 @@ let companiesLoaded = false;
 let jobsCountByCompany = {};
 let sortColumn = 'jobs';
 let sortDirection = 'desc';
+let companySearch = '';
 
 function getCompanyLogoUrl(url) {
   if (!url) return null;
@@ -48,6 +49,10 @@ onMount(async () => {
   companiesLoaded = true;
   companies.sort((a, b) => (jobsCountByCompany[b.company_name] || 0) - (jobsCountByCompany[a.company_name] || 0));
 });
+
+$: filteredCompanies = companies.filter(company =>
+  !companySearch || company.company_name.toLowerCase().includes(companySearch.toLowerCase())
+);
 </script>
 
 <main>
@@ -57,6 +62,14 @@ onMount(async () => {
       <span class="crypto-banner-title">🚀 Crypto Companies</span>
       <span class="crypto-banner-desc">Explore top crypto companies and their careers pages.</span>
     </div>
+  </div>
+  <div class="search-bar">
+    <input
+      type="text"
+      placeholder="Search company..."
+      bind:value={companySearch}
+      style="padding:0.5rem; width:100%; max-width:300px; margin-bottom:1rem;"
+    />
   </div>
   <table>
     <thead>
@@ -73,10 +86,10 @@ onMount(async () => {
     <tbody>
       {#if !companiesLoaded}
         <tr><td colspan="3">Loading...</td></tr>
-      {:else if companies.length === 0}
+      {:else if filteredCompanies.length === 0}
         <tr><td colspan="3">No companies found.</td></tr>
       {:else}
-        {#each companies as company}
+        {#each filteredCompanies as company}
           <tr>
             <td>
               {#if company.company_url && getCompanyLogoUrl(company.company_url)}
@@ -145,6 +158,11 @@ onMount(async () => {
     font-size: 1.05rem;
     color: #333;
     opacity: 0.85;
+  }
+  .search-bar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
   }
   table {
     width: 100%;
