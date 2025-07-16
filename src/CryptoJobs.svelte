@@ -61,7 +61,7 @@ $: filteredJobs = jobs.filter(job =>
       <span class="crypto-banner-title">🚀 Crypto Jobs</span>
       <span class="crypto-banner-desc">Find your next opportunity in the world of blockchain, DeFi, and digital assets!</span>
     </div>
-    <a href="/new-jobs.html" class="new-jobs-btn">New Jobs Page</a>
+    <a href="/crypto-new-jobs.html" class="new-jobs-btn">New Jobs Page</a>
   </div>
   <div class="search-bar">
     <input

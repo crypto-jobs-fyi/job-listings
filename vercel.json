@@ -4,7 +4,7 @@
     { "src": "/crypto-logo.svg", "dest": "/crypto-logo.svg" },
     { "src": "/ai-logo.svg", "dest": "/ai-logo.svg" },
     { "src": "/index.html", "dest": "/index.html" },
-    { "src": "/new-jobs.html", "dest": "/new-jobs" },
+    { "src": "/crypto-new-jobs.html", "dest": "/crypto-new-jobs" },
     { "src": "/ai-jobs.html", "dest": "/ai-jobs" },
     { "src": "/crypto-jobs.html", "dest": "/crypto-jobs" },
     { "src": "/ai-companies.html", "dest": "/ai-companies" },
