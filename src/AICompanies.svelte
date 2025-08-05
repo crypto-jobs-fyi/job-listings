@@ -48,7 +48,9 @@ onMount(async () => {
   jobsCountByCompany = await currentRes.json();
   companiesLoaded = true;
 
+  // Sort companies by jobs count in descending order (highest first)
   companies.sort((a, b) => (jobsCountByCompany[b.company_name] || 0) - (jobsCountByCompany[a.company_name] || 0));
+  companies = [...companies]; // Trigger reactivity
 });
 
 $: filteredCompanies = companies.filter(company =>
