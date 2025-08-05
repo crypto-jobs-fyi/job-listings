@@ -122,7 +122,13 @@ $: filteredJobs = jobs.filter(job =>
                 {job.location}
               {/if}
             </td>
-            <td>{@html job.link}</td>
+            <td>
+              <div class="apply-button-wrapper">
+                <a href={job.link} target="_blank" rel="noopener noreferrer" class="apply-button">
+                  Apply
+                </a>
+              </div>
+            </td>
           </tr>
         {/each}
       {/if}
@@ -229,5 +235,34 @@ $: filteredJobs = jobs.filter(job =>
     margin-bottom: 1.2rem;
     letter-spacing: 0.01em;
     box-shadow: 0 2px 8px rgba(67,198,172,0.10);
+  }
+  .apply-button-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+  .apply-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #646cff 0%, #7c3aed 100%);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(100, 108, 255, 0.2);
+    min-width: 80px;
+    text-align: center;
+  }
+  .apply-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(100, 108, 255, 0.3);
+    background: linear-gradient(135deg, #5b64ff 0%, #6d28d9 100%);
+  }
+  .apply-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(100, 108, 255, 0.2);
   }
 </style>
