@@ -91,7 +91,7 @@ $: filteredJobs = jobs.filter(job =>
         <th class="company-col">Company</th>
         <th class="title-col">Title</th>
         <th class="location-col">Location</th>
-        <th>Link</th>
+        <th class="link-col">Link</th>
       </tr>
     </thead>
     <tbody>
@@ -186,6 +186,9 @@ $: filteredJobs = jobs.filter(job =>
   th.location-col {
     width: 20%;
   }
+  th.link-col {
+    width: 20%;
+  }
   tr:last-child td {
     border-bottom: none;
   }
@@ -239,6 +242,7 @@ $: filteredJobs = jobs.filter(job =>
   .apply-button-wrapper {
     display: flex;
     justify-content: center;
+    width: 100%;
   }
   .apply-button {
     display: inline-block;
@@ -253,7 +257,7 @@ $: filteredJobs = jobs.filter(job =>
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(100, 108, 255, 0.2);
-    min-width: 80px;
+    width: 100%;
     text-align: center;
   }
   .apply-button:hover {
