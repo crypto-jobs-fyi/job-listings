@@ -110,13 +110,10 @@
     }
   }
   .main-links {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
-    align-items: center;
     margin-top: 2rem;
-    flex-wrap: wrap;
-    justify-content: center;
     padding: 0 1rem;
   }
   
@@ -130,7 +127,7 @@
   
   @media (max-width: 480px) {
     .main-links {
-      flex-direction: column;
+      grid-template-columns: 1fr;
       gap: 0.8rem;
       margin-top: 1rem;
       padding: 0;
@@ -147,18 +144,15 @@
     background: #037dd6;
     border: 1px solid transparent;
     transition: all 0.2s ease;
-    min-width: 180px;
-    max-width: calc(50% - 0.75rem);
     text-align: center;
     box-sizing: border-box;
+    width: 100%;
   }
   
   @media (max-width: 768px) {
     .main-link-btn {
       padding: 0.8rem 1.5rem;
       font-size: 1.1rem;
-      min-width: 160px;
-      max-width: calc(50% - 0.5rem);
     }
   }
   
@@ -166,9 +160,6 @@
     .main-link-btn {
       padding: 0.7rem 1.5rem;
       font-size: 1rem;
-      min-width: auto;
-      width: 100%;
-      max-width: 100%;
     }
   }
   .main-link-btn.crypto {
