@@ -100,6 +100,10 @@ function toggleCompany(companyName) {
     />
   </div>
   <table>
+    <colgroup>
+      <col style="width: 70%;">
+      <col style="width: 30%;">
+    </colgroup>
     <tbody>
       {#if jobs.length === 0 || !companiesLoaded}
         <tr><td colspan="2">Loading...</td></tr>
@@ -229,23 +233,11 @@ function toggleCompany(companyName) {
     text-align: left;
     word-break: break-word;
   }
-  td:nth-child(1) {
-    width: 70%;
-  }
-  td:nth-child(2) {
-    width: 30%;
-  }
   
   @media (max-width: 768px) {
     td {
       padding: 0.5rem 0.3rem;
       font-size: 0.75rem;
-    }
-    td:nth-child(1) {
-      width: 70%;
-    }
-    td:nth-child(2) {
-      width: 30%;
     }
   }
   tr:last-child td {
