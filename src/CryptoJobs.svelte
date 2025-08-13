@@ -66,13 +66,13 @@ function toggleCompany(companyName) {
 </script>
 
 <main>
-  {#if totalJobs !== null}
-    <div class="total-jobs-banner">Total Jobs: <span>{totalJobs}</span></div>
-  {/if}
   <div class="crypto-banner">
     <div class="crypto-banner-text">
       <span class="crypto-banner-title">🚀 Crypto Jobs</span>
       <span class="crypto-banner-desc">Find your next opportunity in the world of blockchain, DeFi, and digital assets!</span>
+      {#if totalJobs !== null}
+        <span class="total-jobs-text">Total Jobs: <span>{totalJobs}</span></span>
+      {/if}
     </div>
     <a href="/crypto-new-jobs.html" class="new-jobs-btn">New Jobs</a>
   </div>
@@ -312,24 +312,16 @@ function toggleCompany(companyName) {
     background: #ffd54f;
     transform: translateY(-2px) scale(1.03);
   }
-  .total-jobs-banner {
-    width: 100%;
-    background: #f7f7f7;
-    border: 1px solid #e0e0e0;
-    color: #333;
-    font-size: 1.15rem;
-    font-weight: 600;
-    text-align: center;
-    padding: 0.7rem 0;
-    border-radius: 6px;
-    margin-bottom: 1.2rem;
-    letter-spacing: 0.01em;
+  .total-jobs-text {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+    margin-top: 0.2rem;
   }
   
   @media (max-width: 768px) {
-    .total-jobs-banner {
-      font-size: 0.9rem;
-      padding: 0.5rem 0;
+    .total-jobs-text {
+      font-size: 0.75rem;
     }
   }
   .job-title-link {
