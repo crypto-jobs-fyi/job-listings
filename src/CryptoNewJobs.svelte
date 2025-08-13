@@ -197,9 +197,10 @@
   
   @media (max-width: 768px) {
     main {
-      margin: 1rem;
+      margin: 0 5vw;
       padding: 1rem;
       border-radius: 6px;
+      max-width: 90vw;
     }
   }
   .search-bar {
