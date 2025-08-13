@@ -74,17 +74,6 @@ $: filteredCompanies = companies.filter(company =>
     />
   </div>
   <table>
-    <thead>
-      <tr>
-        <th on:click={() => sortCompanies('company_name')} style="cursor: pointer;">
-          Company Name {sortColumn === 'company_name' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}
-        </th>
-        <th>Careers Page</th>
-        <th on:click={() => sortCompanies('jobs')} style="cursor: pointer;">
-          Jobs {sortColumn === 'jobs' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}
-        </th>
-      </tr>
-    </thead>
     <tbody>
       {#if !companiesLoaded}
         <tr><td colspan="3">Loading...</td></tr>
@@ -168,21 +157,11 @@ $: filteredCompanies = companies.filter(company =>
     border-radius: 6px;
     overflow: hidden;
   }
-  th, td {
+  td {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid #e0e0e0;
     text-align: left;
     word-break: break-word;
-  }
-  th {
-    background: #f7f7f7;
-    font-weight: 500;
-    cursor: pointer;
-    color: #666;
-    font-size: 0.9rem;
-  }
-  th:hover {
-    background: #f0f0f0;
   }
   tr:last-child td {
     border-bottom: none;
@@ -219,7 +198,7 @@ $: filteredCompanies = companies.filter(company =>
       overflow-x: auto;
       white-space: nowrap;
     }
-    th, td {
+    td {
       padding: 0.5rem;
       font-size: 0.75rem;
     }
