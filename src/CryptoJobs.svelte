@@ -56,7 +56,6 @@ $: filteredJobs = jobs.filter(job =>
     <div class="total-jobs-banner">Total Jobs: <span>{totalJobs}</span></div>
   {/if}
   <div class="crypto-banner">
-    <img src="/crypto-logo.svg" alt="Crypto Logo" class="crypto-banner-logo" />
     <div class="crypto-banner-text">
       <span class="crypto-banner-title">🚀 Crypto Jobs</span>
       <span class="crypto-banner-desc">Find your next opportunity in the world of blockchain, DeFi, and digital assets!</span>
@@ -241,13 +240,6 @@ $: filteredJobs = jobs.filter(job =>
       gap: 1rem;
       text-align: center;
     }
-  }
-  .crypto-banner-logo {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(67,198,172,0.10);
   }
   .crypto-banner-text {
     display: flex;
