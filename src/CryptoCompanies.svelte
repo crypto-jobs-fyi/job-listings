@@ -60,9 +60,8 @@ $: filteredCompanies = companies.filter(company =>
 
 <main>
   <div class="crypto-banner">
-    <img src="/crypto-logo.svg" alt="Crypto Logo" class="crypto-banner-logo" />
     <div class="crypto-banner-text">
-      <span class="crypto-banner-title">🚀 Crypto Companies</span>
+  <span class="crypto-banner-title">Crypto Companies</span>
       <span class="crypto-banner-desc">Explore top crypto companies and their careers pages.</span>
     </div>
   </div>
@@ -139,13 +138,6 @@ $: filteredCompanies = companies.filter(company =>
     margin-bottom: 2.5rem;
     gap: 1.5rem;
   }
-  .crypto-banner-logo {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(67,198,172,0.10);
-  }
   .crypto-banner-text {
     display: flex;
     flex-direction: column;
@@ -197,5 +189,31 @@ $: filteredCompanies = companies.filter(company =>
   }
   a:hover {
     color: #222;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    main {
+      margin: 1rem auto;
+      padding: 1rem;
+    }
+    .search-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    input {
+      max-width: 100%;
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+    table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    th, td {
+      padding: 0.5rem;
+      font-size: 0.75rem;
+    }
   }
 </style>

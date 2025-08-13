@@ -144,8 +144,8 @@ function toggleCompany(companyName) {
                   </a>
                 </td>
                 <td>
-                  {#if job.location && job.location.length > 24}
-                    <span title={job.location}>{job.location.slice(0, 24)}&hellip;</span>
+                  {#if job.location && job.location.length > 36}
+                    <span title={job.location}>{job.location.slice(0, 36)}&hellip;</span>
                   {:else}
                     {job.location}
                   {/if}
