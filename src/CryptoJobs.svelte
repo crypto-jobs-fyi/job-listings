@@ -89,14 +89,13 @@ $: filteredJobs = jobs.filter(job =>
         <th class="company-col">Company</th>
         <th class="title-col">Title</th>
         <th class="location-col">Location</th>
-        <th class="link-col">Link</th>
       </tr>
     </thead>
     <tbody>
       {#if jobs.length === 0 || !companiesLoaded}
-        <tr><td colspan="4">Loading...</td></tr>
+        <tr><td colspan="3">Loading...</td></tr>
       {:else if filteredJobs.length === 0}
-        <tr><td colspan="4">No results found.</td></tr>
+        <tr><td colspan="3">No results found.</td></tr>
       {:else}
         {#each filteredJobs as job}
           <tr>
@@ -112,20 +111,17 @@ $: filteredJobs = jobs.filter(job =>
                 {job.company}
               {/if}
             </td>
-            <td>{job.title}</td>
+            <td>
+              <a href={job.link} target="_blank" rel="noopener noreferrer" class="job-title-link">
+                {job.title}
+              </a>
+            </td>
             <td>
               {#if job.location && job.location.length > 24}
                 <span title={job.location}>{job.location.slice(0, 24)}&hellip;</span>
               {:else}
                 {job.location}
               {/if}
-            </td>
-            <td>
-              <div class="apply-button-wrapper">
-                <a href={job.link} target="_blank" rel="noopener noreferrer" class="apply-button">
-                  Apply
-                </a>
-              </div>
             </td>
           </tr>
         {/each}
@@ -214,16 +210,13 @@ $: filteredJobs = jobs.filter(job =>
     font-weight: 600;
   }
   th.company-col {
-    width: 20%;
+    width: 25%;
   }
   th.title-col {
-    width: 40%;
+    width: 50%;
   }
   th.location-col {
-    width: 20%;
-  }
-  th.link-col {
-    width: 20%;
+    width: 25%;
   }
   tr:last-child td {
     border-bottom: none;
@@ -330,41 +323,14 @@ $: filteredJobs = jobs.filter(job =>
       padding: 0.5rem 0;
     }
   }
-  .apply-button-wrapper {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
-  .apply-button {
-    display: inline-block;
-    background: linear-gradient(135deg, #646cff 0%, #7c3aed 100%);
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
+  .job-title-link {
+    color: #646cff;
     text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(100, 108, 255, 0.2);
-    width: 100%;
-    text-align: center;
+    font-weight: 600;
+    transition: color 0.2s ease;
   }
-  
-  @media (max-width: 768px) {
-    .apply-button {
-      padding: 0.4rem 0.6rem;
-      font-size: 0.7rem;
-    }
-  }
-  .apply-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(100, 108, 255, 0.3);
-    background: linear-gradient(135deg, #5b64ff 0%, #6d28d9 100%);
-  }
-  .apply-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(100, 108, 255, 0.2);
+  .job-title-link:hover {
+    color: #222;
+    text-decoration: underline;
   }
 </style>
