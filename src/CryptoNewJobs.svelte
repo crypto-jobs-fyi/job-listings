@@ -187,7 +187,7 @@
 
 <style>
   main {
-    max-width: 900px;
+    max-width: 90vw;
     margin: 2rem auto;
     padding: 2rem;
     background: #fff;
