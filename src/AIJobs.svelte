@@ -133,7 +133,7 @@ $: filteredJobs = jobs.filter(job =>
 
 <style>
   main {
-    max-width: 90vw;
+    max-width: 80vw;
     margin: 2rem auto;
     padding: 2rem;
     background: #fff;
@@ -141,7 +141,7 @@ $: filteredJobs = jobs.filter(job =>
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
   
-  @media (max-width: 768px) {
+  @media (max-width: 90vw) {
     main {
       margin: 0 5vw;
       padding: 1rem;
