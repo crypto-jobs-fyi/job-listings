@@ -11,6 +11,7 @@
   let popupJob = null;
   let popupLoading = false;
   let popupError = '';
+  let collapsedCompanies = new Set();
 
   onMount(async () => {
     const [jobsRes, companiesRes] = await Promise.all([
@@ -44,12 +45,25 @@
     (!companySearch || (job.company && job.company.toLowerCase().includes(companySearch.toLowerCase()))) &&
     (!locationSearch || (job.location && job.location.toLowerCase().includes(locationSearch.toLowerCase()))) &&
     (!titleSearch || (job.title && job.title.toLowerCase().includes(titleSearch.toLowerCase())))
-  ).map(job => ({
-    ...job,
-    location: job.location
-      ? job.location.replace(/United States/g, 'US').replace(/United Kingdom/g, 'UK')
-      : job.location
-  }));
+  );
+
+  $: groupedJobs = filteredJobs.reduce((groups, job) => {
+    const company = job.company;
+    if (!groups[company]) {
+      groups[company] = [];
+    }
+    groups[company].push(job);
+    return groups;
+  }, {});
+
+  function toggleCompany(companyName) {
+    if (collapsedCompanies.has(companyName)) {
+      collapsedCompanies.delete(companyName);
+    } else {
+      collapsedCompanies.add(companyName);
+    }
+    collapsedCompanies = collapsedCompanies; // Trigger reactivity
+  }
 
   async function openPopup(job) {
     showPopup = true;
@@ -107,52 +121,68 @@
   <table>
     <thead>
       <tr>
-        <th class="company-col">Company</th>
         <th class="title-col">Title</th>
         <th class="location-col">Location</th>
       </tr>
     </thead>
     <tbody>
       {#if jobs.length === 0 || !jobsLoaded}
-        <tr><td colspan="3">Loading...</td></tr>
+        <tr><td colspan="2">Loading...</td></tr>
       {:else if filteredJobs.length === 0}
-        <tr><td colspan="3">No results found.</td></tr>
+        <tr><td colspan="2">No results found.</td></tr>
       {:else}
-        {#each filteredJobs as job}
-          <tr>
-            <td>
-              {#if getCompanyUrl(job.company)}
-                <a href={getCompanyUrl(job.company)} target="_blank" rel="noopener noreferrer">
-                  {#if getCompanyLogoUrl(job.company)}
-                    <img src={getCompanyLogoUrl(job.company)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
-                  {/if}
-                  {job.company}
-                </a>
-              {:else}
-                {job.company}
-              {/if}
-            </td>
-            <td>
-              <span style="display:flex;align-items:center;gap:6px;">
-                <a href={job.link} target="_blank" rel="noopener noreferrer" class="job-title-link">
-                  {job.title}
-                </a>
-                <button class="desc-icon-btn" type="button" title="Show description" on:click|preventDefault={() => openPopup(job)} on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { openPopup(job); e.preventDefault(); } }} tabindex="0" aria-label="Show job description">
-                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="10" cy="10" r="9" fill="#646cff" stroke="#222" stroke-width="1.5"/>
-                    <text x="10" y="15" text-anchor="middle" font-size="12" font-family="Arial, Helvetica, sans-serif" fill="#fff">i</text>
-                  </svg>
-                </button>
-              </span>
-            </td>
-            <td>
-              {#if job.location && job.location.length > 24}
-                <span title={job.location}>{job.location.slice(0, 24)}&hellip;</span>
-              {:else}
-                {job.location}
-              {/if}
+        {#each Object.entries(groupedJobs) as [companyName, companyJobs]}
+          <tr class="company-header" on:click={() => toggleCompany(companyName)}>
+            <td colspan="2" class="company-cell">
+              <div class="company-row">
+                <span class="toggle-icon" class:collapsed={collapsedCompanies.has(companyName)}>
+                  ▼
+                </span>
+                {#if getCompanyUrl(companyName)}
+                  <a href={getCompanyUrl(companyName)} target="_blank" rel="noopener noreferrer" class="company-link" on:click|stopPropagation>
+                    {#if getCompanyLogoUrl(companyName)}
+                      <img src={getCompanyLogoUrl(companyName)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
+                    {/if}
+                    {companyName}
+                  </a>
+                {:else}
+                  <span class="company-name">
+                    {#if getCompanyLogoUrl(companyName)}
+                      <img src={getCompanyLogoUrl(companyName)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
+                    {/if}
+                    {companyName}
+                  </span>
+                {/if}
+                <span class="job-count">({companyJobs.length} job{companyJobs.length !== 1 ? 's' : ''})</span>
+              </div>
             </td>
           </tr>
+          {#if !collapsedCompanies.has(companyName)}
+            {#each companyJobs as job}
+              <tr class="job-row">
+                <td>
+                  <span style="display:flex;align-items:center;gap:6px;">
+                    <a href={job.link} target="_blank" rel="noopener noreferrer" class="job-title-link">
+                      {job.title}
+                    </a>
+                    <button class="desc-icon-btn" type="button" title="Show description" on:click|preventDefault={() => openPopup(job)} on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { openPopup(job); e.preventDefault(); } }} tabindex="0" aria-label="Show job description">
+                      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="10" cy="10" r="9" fill="#646cff" stroke="#222" stroke-width="1.5"/>
+                        <text x="10" y="15" text-anchor="middle" font-size="12" font-family="Arial, Helvetica, sans-serif" fill="#fff">i</text>
+                      </svg>
+                    </button>
+                  </span>
+                </td>
+                <td>
+                  {#if job.location && job.location.length > 24}
+                    <span title={job.location}>{job.location.slice(0, 24)}&hellip;</span>
+                  {:else}
+                    {job.location}
+                  {/if}
+                </td>
+              </tr>
+            {/each}
+          {/if}
         {/each}
       {/if}
     </tbody>
@@ -265,14 +295,11 @@
     background: #f8f8f8;
     font-weight: 600;
   }
-  th.company-col {
-    width: 25%;
-  }
   th.title-col {
-    width: 50%;
+    width: 70%;
   }
   th.location-col {
-    width: 25%;
+    width: 30%;
   }
   tr:last-child td {
     border-bottom: none;
@@ -394,5 +421,61 @@
   .job-title-link:hover {
     color: #222;
     text-decoration: underline;
+  }
+  .company-header {
+    background: #f9f9f9;
+    cursor: pointer;
+    border-bottom: 2px solid #e0e0e0 !important;
+  }
+  .company-header:hover {
+    background: #f0f0f0;
+  }
+  .company-cell {
+    padding: 1rem !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  .company-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .toggle-icon {
+    font-size: 0.8rem;
+    transition: transform 0.2s ease;
+    color: #666;
+  }
+  .toggle-icon.collapsed {
+    transform: rotate(-90deg);
+  }
+  .company-link, .company-name {
+    display: flex;
+    align-items: center;
+    color: #333;
+    text-decoration: none;
+  }
+  .company-link:hover {
+    text-decoration: underline;
+  }
+  .job-count {
+    color: #666;
+    font-size: 0.9rem;
+    margin-left: auto;
+  }
+  .job-row {
+    background: #fafafa;
+  }
+  .job-row:hover {
+    background: #f5f5f5;
+  }
+  
+  @media (max-width: 768px) {
+    .company-cell {
+      padding: 0.75rem 0.3rem !important;
+      font-size: 0.9rem;
+    }
+    .job-count {
+      font-size: 0.75rem;
+    }
   }
 </style>
