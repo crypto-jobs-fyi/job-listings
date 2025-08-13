@@ -89,6 +89,10 @@
     />
   </div>
   <table>
+    <colgroup>
+      <col style="width: 70%;">
+      <col style="width: 30%;">
+    </colgroup>
     <tbody>
       {#if jobs.length === 0 || !jobsLoaded}
         <tr><td colspan="2">Loading...</td></tr>
