@@ -261,6 +261,8 @@ function toggleCompany(companyName) {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+    text-align: center;
+    flex: 1;
   }
   .crypto-banner-title {
     font-size: 1.4rem;
