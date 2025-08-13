@@ -227,10 +227,10 @@ function toggleCompany(companyName) {
     word-break: break-word;
   }
   td:nth-child(1) {
-    width: 60%;
+    width: 70%;
   }
   td:nth-child(2) {
-    width: 40%;
+    width: 30%;
   }
   
   @media (max-width: 768px) {
@@ -239,10 +239,10 @@ function toggleCompany(companyName) {
       font-size: 0.75rem;
     }
     td:nth-child(1) {
-      width: 60%;
+      width: 70%;
     }
     td:nth-child(2) {
-      width: 40%;
+      width: 30%;
     }
   }
   tr:last-child td {
