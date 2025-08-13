@@ -143,12 +143,28 @@ $: filteredJobs = jobs.filter(job =>
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
+  
+  @media (max-width: 768px) {
+    main {
+      margin: 1rem;
+      padding: 1rem;
+      border-radius: 6px;
+    }
+  }
   .search-bar {
     display: flex;
     gap: 1rem;
     margin-bottom: 1rem;
     flex-wrap: wrap;
     justify-content: center;
+  }
+  
+  @media (max-width: 768px) {
+    .search-bar {
+      gap: 0.5rem;
+      flex-direction: column;
+      align-items: center;
+    }
   }
   input {
     margin-bottom: 1rem;
@@ -159,17 +175,39 @@ $: filteredJobs = jobs.filter(job =>
     box-sizing: border-box;
     font-size: 1rem;
   }
+  
+  @media (max-width: 768px) {
+    input {
+      max-width: 100%;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      padding: 0.4rem;
+    }
+  }
   table {
     width: 100%;
     border-collapse: collapse;
     margin: 0 auto;
     table-layout: fixed;
   }
+  
+  @media (max-width: 768px) {
+    table {
+      font-size: 0.75rem;
+    }
+  }
   th, td {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid #eee;
     text-align: left;
     word-break: break-word;
+  }
+  
+  @media (max-width: 768px) {
+    th, td {
+      padding: 0.5rem 0.3rem;
+      font-size: 0.75rem;
+    }
   }
   th {
     background: #f8f8f8;
@@ -201,6 +239,16 @@ $: filteredJobs = jobs.filter(job =>
     margin-bottom: 2.5rem;
     gap: 1.5rem;
   }
+  
+  @media (max-width: 768px) {
+    .crypto-banner {
+      flex-direction: column;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      text-align: center;
+    }
+  }
   .crypto-banner-logo {
     width: 56px;
     height: 56px;
@@ -219,10 +267,22 @@ $: filteredJobs = jobs.filter(job =>
     color: #222;
     letter-spacing: 0.01em;
   }
+  
+  @media (max-width: 768px) {
+    .crypto-banner-title {
+      font-size: 1.1rem;
+    }
+  }
   .crypto-banner-desc {
     font-size: 1.05rem;
     color: #333;
     opacity: 0.85;
+  }
+  
+  @media (max-width: 768px) {
+    .crypto-banner-desc {
+      font-size: 0.8rem;
+    }
   }
   .new-jobs-btn {
     margin-left: auto;
@@ -238,6 +298,13 @@ $: filteredJobs = jobs.filter(job =>
     transition: background 0.2s, transform 0.2s;
     align-self: center;
     white-space: nowrap;
+  }
+  
+  @media (max-width: 768px) {
+    .new-jobs-btn {
+      font-size: 0.8rem;
+      padding: 0.5rem 1rem;
+    }
   }
   .new-jobs-btn:hover {
     background: #ffd54f;
@@ -255,6 +322,13 @@ $: filteredJobs = jobs.filter(job =>
     margin-bottom: 1.2rem;
     letter-spacing: 0.01em;
     box-shadow: 0 2px 8px rgba(67,198,172,0.10);
+  }
+  
+  @media (max-width: 768px) {
+    .total-jobs-banner {
+      font-size: 0.9rem;
+      padding: 0.5rem 0;
+    }
   }
   .apply-button-wrapper {
     display: flex;
@@ -276,6 +350,13 @@ $: filteredJobs = jobs.filter(job =>
     box-shadow: 0 2px 8px rgba(100, 108, 255, 0.2);
     width: 100%;
     text-align: center;
+  }
+  
+  @media (max-width: 768px) {
+    .apply-button {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.7rem;
+    }
   }
   .apply-button:hover {
     transform: translateY(-1px);
