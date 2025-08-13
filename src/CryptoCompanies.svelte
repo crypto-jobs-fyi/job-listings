@@ -163,6 +163,15 @@ $: filteredCompanies = companies.filter(company =>
     text-align: left;
     word-break: break-word;
   }
+  td:nth-child(1) {
+    width: 60%;
+  }
+  td:nth-child(2) {
+    width: 25%;
+  }
+  td:nth-child(3) {
+    width: 15%;
+  }
   tr:last-child td {
     border-bottom: none;
   }
@@ -184,6 +193,19 @@ $: filteredCompanies = companies.filter(company =>
       margin: 1rem auto;
       padding: 1rem;
     }
+    .crypto-banner {
+      flex-direction: column;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      text-align: center;
+    }
+    .crypto-banner-title {
+      font-size: 1.1rem;
+    }
+    .crypto-banner-desc {
+      font-size: 0.8rem;
+    }
     .search-bar {
       flex-direction: column;
       align-items: stretch;
@@ -192,14 +214,14 @@ $: filteredCompanies = companies.filter(company =>
       max-width: 100%;
       width: 100%;
       margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      padding: 0.4rem;
     }
     table {
-      display: block;
-      overflow-x: auto;
-      white-space: nowrap;
+      font-size: 0.75rem;
     }
     td {
-      padding: 0.5rem;
+      padding: 0.5rem 0.3rem;
       font-size: 0.75rem;
     }
   }
