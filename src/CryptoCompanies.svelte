@@ -124,18 +124,19 @@ $: filteredCompanies = companies.filter(company =>
     margin: 2rem auto;
     padding: 2rem;
     background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
   .crypto-banner {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(90deg, #f8ffae 0%, #43c6ac 100%);
-    border-radius: 12px;
-    box-shadow: 0 2px 16px rgba(67,198,172,0.10);
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     padding: 1.5rem 2rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
     gap: 1.5rem;
   }
   .crypto-banner-text {
@@ -144,15 +145,14 @@ $: filteredCompanies = companies.filter(company =>
     gap: 0.3rem;
   }
   .crypto-banner-title {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #222;
-    letter-spacing: 0.01em;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: -0.01em;
   }
   .crypto-banner-desc {
-    font-size: 1.05rem;
-    color: #333;
-    opacity: 0.85;
+    font-size: 0.95rem;
+    color: #666;
   }
   .search-bar {
     display: flex;
@@ -164,31 +164,39 @@ $: filteredCompanies = companies.filter(company =>
     border-collapse: collapse;
     margin: 0 auto;
     table-layout: fixed;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
   }
   th, td {
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #e0e0e0;
     text-align: left;
     word-break: break-word;
   }
   th {
-    background: #f8f8f8;
-    font-weight: 600;
+    background: #f7f7f7;
+    font-weight: 500;
     cursor: pointer;
+    color: #666;
+    font-size: 0.9rem;
   }
   th:hover {
-    background: #eaeaea;
+    background: #f0f0f0;
   }
   tr:last-child td {
     border-bottom: none;
   }
+  tr:hover {
+    background: #f9f9f9;
+  }
   a {
-    color: #646cff;
-    text-decoration: underline;
+    color: #037dd6;
+    text-decoration: none;
     font-weight: 500;
   }
   a:hover {
-    color: #222;
+    text-decoration: underline;
   }
 
   /* Mobile responsiveness */
