@@ -229,11 +229,23 @@ function toggleCompany(companyName) {
     text-align: left;
     word-break: break-word;
   }
+  td:nth-child(1) {
+    width: 60%;
+  }
+  td:nth-child(2) {
+    width: 40%;
+  }
   
   @media (max-width: 768px) {
     td {
       padding: 0.5rem 0.3rem;
       font-size: 0.75rem;
+    }
+    td:nth-child(1) {
+      width: 60%;
+    }
+    td:nth-child(2) {
+      width: 40%;
     }
   }
   tr:last-child td {
