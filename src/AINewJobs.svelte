@@ -1,83 +1,72 @@
 <script>
-// @ts-nocheck
-import { onMount } from 'svelte';
-let jobs = [];
-let companies = [];
-let companySearch = '';
-let locationSearch = '';
-let titleSearch = '';
-let jobsLoaded = false;
-let companiesLoaded = false;
-let totalJobs = null;
-let collapsedCompanies = new Set();
+  import { onMount } from 'svelte';
+  let jobs = [];
+  let companies = [];
+  let companySearch = '';
+  let locationSearch = '';
+  let titleSearch = '';
+  let jobsLoaded = false;
+  let companiesLoaded = false;
+  let collapsedCompanies = new Set();
 
-// Load jobs from remote JSON and companies from remote GitHub URL on mount
-onMount(async () => {
-  const [jobsRes, companiesRes, currentRes] = await Promise.all([
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs.json'),
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json'),
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_current.json')
-  ]);
-  const jobsData = await jobsRes.json();
-  jobs = jobsData.data.filter(job => job.company && job.location);
-  companies = await companiesRes.json();
-  companiesLoaded = true;
-  jobsLoaded = true;
-  const currentData = await currentRes.json();
-  totalJobs = currentData["Total Jobs"];
-});
+  onMount(async () => {
+    const [jobsRes, companiesRes] = await Promise.all([
+      fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs_new.json'),
+      fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json')
+    ]);
+    const jobsData = await jobsRes.json();
+    jobs = jobsData.data.filter(job => job.company && job.location);
+    companies = await companiesRes.json();
+    companiesLoaded = true;
+    jobsLoaded = true;
+  });
 
-function getCompanyUrl(name) {
-  const found = companies.find(c => c.company_name.toLowerCase() === name?.toLowerCase());
-  return found ? found.company_url : null;
-}
-
-function getCompanyLogoUrl(name) {
-  const url = getCompanyUrl(name);
-  if (!url) return null;
-  try {
-    const { hostname } = new URL(url);
-    return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
-  } catch {
-    return null;
+  function getCompanyUrl(name) {
+    const found = companies.find(c => c.company_name.toLowerCase() === name?.toLowerCase());
+    return found ? found.company_url : null;
   }
-}
 
-$: filteredJobs = jobs.filter(job =>
-  (!companySearch || (job.company && job.company.toLowerCase().includes(companySearch.toLowerCase()))) &&
-  (!locationSearch || (job.location && job.location.toLowerCase().includes(locationSearch.toLowerCase()))) &&
-  (!titleSearch || (job.title && job.title.toLowerCase().includes(titleSearch.toLowerCase())))
-);
-
-$: groupedJobs = filteredJobs.reduce((groups, job) => {
-  const company = job.company;
-  if (!groups[company]) {
-    groups[company] = [];
+  function getCompanyLogoUrl(name) {
+    const url = getCompanyUrl(name);
+    if (!url) return null;
+    try {
+      const { hostname } = new URL(url);
+      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+    } catch {
+      return null;
+    }
   }
-  groups[company].push(job);
-  return groups;
-}, {});
 
-function toggleCompany(companyName) {
-  if (collapsedCompanies.has(companyName)) {
-    collapsedCompanies.delete(companyName);
-  } else {
-    collapsedCompanies.add(companyName);
+  $: filteredJobs = jobs.filter(job =>
+    (!companySearch || (job.company && job.company.toLowerCase().includes(companySearch.toLowerCase()))) &&
+    (!locationSearch || (job.location && job.location.toLowerCase().includes(locationSearch.toLowerCase()))) &&
+    (!titleSearch || (job.title && job.title.toLowerCase().includes(titleSearch.toLowerCase())))
+  );
+
+  $: groupedJobs = filteredJobs.reduce((groups, job) => {
+    const company = job.company;
+    if (!groups[company]) {
+      groups[company] = [];
+    }
+    groups[company].push(job);
+    return groups;
+  }, {});
+
+  function toggleCompany(companyName) {
+    if (collapsedCompanies.has(companyName)) {
+      collapsedCompanies.delete(companyName);
+    } else {
+      collapsedCompanies.add(companyName);
+    }
+    collapsedCompanies = collapsedCompanies; // Trigger reactivity
   }
-  collapsedCompanies = collapsedCompanies; // Trigger reactivity
-}
 </script>
 
 <main>
-  {#if totalJobs !== null}
-    <div class="total-jobs-banner">Total Jobs: <span>{totalJobs}</span></div>
-  {/if}
   <div class="crypto-banner">
     <div class="crypto-banner-text">
-      <span class="crypto-banner-title">🤖 AI Jobs</span>
-      <span class="crypto-banner-desc">Find your next opportunity in the world of AI, ML, and data science!</span>
+      <span class="crypto-banner-title">🤖 New AI Jobs</span>
     </div>
-    <a href="/ai-new-jobs.html" class="new-jobs-btn">New Jobs</a>
   </div>
   <div class="search-bar">
     <input
@@ -101,7 +90,7 @@ function toggleCompany(companyName) {
   </div>
   <table>
     <tbody>
-      {#if jobs.length === 0 || !companiesLoaded}
+      {#if jobs.length === 0 || !jobsLoaded}
         <tr><td colspan="2">Loading...</td></tr>
       {:else if filteredJobs.length === 0}
         <tr><td colspan="2">No results found.</td></tr>
@@ -275,62 +264,6 @@ function toggleCompany(companyName) {
   @media (max-width: 768px) {
     .crypto-banner-title {
       font-size: 1.1rem;
-    }
-  }
-  .crypto-banner-desc {
-    font-size: 0.95rem;
-    color: #666;
-  }
-  
-  @media (max-width: 768px) {
-    .crypto-banner-desc {
-      font-size: 0.8rem;
-    }
-  }
-  .new-jobs-btn {
-    margin-left: auto;
-    margin-right: 0;
-    padding: 0.56rem 1.2rem;
-    border-radius: 8px;
-    background: #ffb300;
-    color: #222;
-    font-weight: 600;
-    font-size: 0.8rem;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(67,198,172,0.10);
-    transition: background 0.2s, transform 0.2s;
-    align-self: center;
-    white-space: nowrap;
-  }
-  
-  @media (max-width: 768px) {
-    .new-jobs-btn {
-      font-size: 0.64rem;
-      padding: 0.4rem 0.8rem;
-    }
-  }
-  .new-jobs-btn:hover {
-    background: #ffd54f;
-    transform: translateY(-2px) scale(1.03);
-  }
-  .total-jobs-banner {
-    width: 100%;
-    background: #f7f7f7;
-    border: 1px solid #e0e0e0;
-    color: #333;
-    font-size: 1.15rem;
-    font-weight: 600;
-    text-align: center;
-    padding: 0.7rem 0;
-    border-radius: 6px;
-    margin-bottom: 1.2rem;
-    letter-spacing: 0.01em;
-  }
-  
-  @media (max-width: 768px) {
-    .total-jobs-banner {
-      font-size: 0.9rem;
-      padding: 0.5rem 0;
     }
   }
   .job-title-link {

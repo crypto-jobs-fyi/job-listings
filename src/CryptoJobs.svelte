@@ -74,7 +74,7 @@ function toggleCompany(companyName) {
       <span class="crypto-banner-title">🚀 Crypto Jobs</span>
       <span class="crypto-banner-desc">Find your next opportunity in the world of blockchain, DeFi, and digital assets!</span>
     </div>
-    <a href="/crypto-new-jobs.html" class="new-jobs-btn">New Jobs Page</a>
+    <a href="/crypto-new-jobs.html" class="new-jobs-btn">New Jobs</a>
   </div>
   <div class="search-bar">
     <input
@@ -287,12 +287,12 @@ function toggleCompany(companyName) {
   .new-jobs-btn {
     margin-left: auto;
     margin-right: 0;
-    padding: 0.7rem 1.5rem;
+    padding: 0.56rem 1.2rem;
     border-radius: 8px;
     background: #ffb300;
     color: #222;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.8rem;
     text-decoration: none;
     box-shadow: 0 2px 8px rgba(67,198,172,0.10);
     transition: background 0.2s, transform 0.2s;
@@ -302,8 +302,8 @@ function toggleCompany(companyName) {
   
   @media (max-width: 768px) {
     .new-jobs-btn {
-      font-size: 0.8rem;
-      padding: 0.5rem 1rem;
+      font-size: 0.64rem;
+      padding: 0.4rem 0.8rem;
     }
   }
   .new-jobs-btn:hover {
