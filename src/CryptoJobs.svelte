@@ -310,6 +310,8 @@ function toggleCompany(companyName) {
     .new-jobs-btn {
       font-size: 0.64rem;
       padding: 0.4rem 0.8rem;
+      align-self: center;
+      margin: 0;
     }
   }
   .new-jobs-btn:hover {
