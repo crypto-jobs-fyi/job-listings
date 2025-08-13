@@ -80,10 +80,8 @@
 
 <main>
   <div class="crypto-banner">
-    <img src="/crypto-logo.svg" alt="Crypto Logo" class="crypto-banner-logo" />
     <div class="crypto-banner-text">
       <span class="crypto-banner-title">🚀 New Crypto Jobs</span>
-      <span class="crypto-banner-desc">Find your next opportunity in the world of blockchain, DeFi, and digital assets!</span>
     </div>
   </div>
   <div class="search-bar">
@@ -112,14 +110,13 @@
         <th class="company-col">Company</th>
         <th class="title-col">Title</th>
         <th class="location-col">Location</th>
-        <th class="link-col">Link</th>
       </tr>
     </thead>
     <tbody>
       {#if jobs.length === 0 || !jobsLoaded}
-        <tr><td colspan="4">Loading...</td></tr>
+        <tr><td colspan="3">Loading...</td></tr>
       {:else if filteredJobs.length === 0}
-        <tr><td colspan="4">No results found.</td></tr>
+        <tr><td colspan="3">No results found.</td></tr>
       {:else}
         {#each filteredJobs as job}
           <tr>
@@ -137,7 +134,9 @@
             </td>
             <td>
               <span style="display:flex;align-items:center;gap:6px;">
-                {job.title}
+                <a href={job.link} target="_blank" rel="noopener noreferrer" class="job-title-link">
+                  {job.title}
+                </a>
                 <button class="desc-icon-btn" type="button" title="Show description" on:click|preventDefault={() => openPopup(job)} on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { openPopup(job); e.preventDefault(); } }} tabindex="0" aria-label="Show job description">
                   <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="10" cy="10" r="9" fill="#646cff" stroke="#222" stroke-width="1.5"/>
@@ -152,13 +151,6 @@
               {:else}
                 {job.location}
               {/if}
-            </td>
-            <td>
-              <div class="apply-button-wrapper">
-                <a href={job.link} target="_blank" rel="noopener noreferrer" class="apply-button">
-                  Apply
-                </a>
-              </div>
             </td>
           </tr>
         {/each}
@@ -202,6 +194,14 @@
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
+  
+  @media (max-width: 768px) {
+    main {
+      margin: 1rem;
+      padding: 1rem;
+      border-radius: 6px;
+    }
+  }
   .search-bar {
     display: flex;
     gap: 1rem;
@@ -209,11 +209,31 @@
     flex-wrap: wrap;
     justify-content: center;
   }
+  
+  @media (max-width: 768px) {
+    .search-bar {
+      gap: 0.5rem;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
   input {
     margin-bottom: 1rem;
     padding: 0.5rem;
     width: 100%;
-    max-width: 300px;
+    max-width: 180px;
+    height: 40px;
+    box-sizing: border-box;
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 768px) {
+    input {
+      max-width: 100%;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      padding: 0.4rem;
+    }
   }
   table {
     width: 100%;
@@ -221,27 +241,37 @@
     margin: 0 auto;
     table-layout: fixed;
   }
+  
+  @media (max-width: 768px) {
+    table {
+      font-size: 0.75rem;
+    }
+  }
   th, td {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid #eee;
     text-align: left;
     word-break: break-word;
   }
+  
+  @media (max-width: 768px) {
+    th, td {
+      padding: 0.5rem 0.3rem;
+      font-size: 0.75rem;
+    }
+  }
   th {
     background: #f8f8f8;
     font-weight: 600;
   }
   th.company-col {
-    width: 20%;
+    width: 25%;
   }
   th.title-col {
-    width: 40%;
+    width: 50%;
   }
   th.location-col {
-    width: 20%;
-  }
-  th.link-col {
-    width: 20%;
+    width: 25%;
   }
   tr:last-child td {
     border-bottom: none;
@@ -257,12 +287,15 @@
     margin-bottom: 2.5rem;
     gap: 1.5rem;
   }
-  .crypto-banner-logo {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(67,198,172,0.10);
+  
+  @media (max-width: 768px) {
+    .crypto-banner {
+      flex-direction: column;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      text-align: center;
+    }
   }
   .crypto-banner-text {
     display: flex;
@@ -275,10 +308,11 @@
     color: #222;
     letter-spacing: 0.01em;
   }
-  .crypto-banner-desc {
-    font-size: 1.05rem;
-    color: #333;
-    opacity: 0.85;
+  
+  @media (max-width: 768px) {
+    .crypto-banner-title {
+      font-size: 1.1rem;
+    }
   }
   .desc-icon-btn {
     background: none;
@@ -350,34 +384,14 @@
     border-radius: 6px;
     background: #fff;
   }
-  .apply-button-wrapper {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
-  .apply-button {
-    display: inline-block;
-    background: linear-gradient(135deg, #646cff 0%, #7c3aed 100%);
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
+  .job-title-link {
+    color: #646cff;
     text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(100, 108, 255, 0.2);
-    width: 100%;
-    text-align: center;
+    font-weight: 600;
+    transition: color 0.2s ease;
   }
-  .apply-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(100, 108, 255, 0.3);
-    background: linear-gradient(135deg, #5b64ff 0%, #6d28d9 100%);
-  }
-  .apply-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(100, 108, 255, 0.2);
+  .job-title-link:hover {
+    color: #222;
+    text-decoration: underline;
   }
 </style>
