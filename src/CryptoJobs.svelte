@@ -68,6 +68,8 @@ function shareOnLinkedIn() {
   const searchTerms = [companySearch, titleSearch, locationSearch].filter(term => term.trim()).join(', ');
   const searchText = searchTerms ? ` for "${searchTerms}"` : '';
   const resultCount = filteredJobs.length;
+  const url = 'https://job-finder.org/';
+
   
   // Create a table of top 5 jobs for the post
   const topJobs = filteredJobs.slice(0, 5);
@@ -80,14 +82,13 @@ function shareOnLinkedIn() {
       jobTable += `${index + 1}. ${job.title} - ${location}\n   Apply: ${job.link}\n`;
     });
     if (filteredJobs.length > 5) {
-      jobTable += `\n...and ${filteredJobs.length - 5} more opportunities!`;
+      jobTable += `\n...and ${filteredJobs.length - 5} more opportunities at ${url}!`;
     }
   }
   
   const text = `Found ${resultCount} crypto job opportunities${searchText}! 🚀 Check out these amazing opportunities! ${jobTable}\n\n#CryptoJobs`;
-  const url = 'https://job-finder.org/';
   
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?text=${encodeURIComponent(text)}`;
   window.open(linkedInUrl, '_blank', 'width=600,height=400');
 }
 </script>
