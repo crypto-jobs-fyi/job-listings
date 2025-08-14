@@ -63,6 +63,33 @@ function toggleCompany(companyName) {
   }
   collapsedCompanies = collapsedCompanies; // Trigger reactivity
 }
+
+function shareOnLinkedIn() {
+  const searchTerms = [companySearch, titleSearch, locationSearch].filter(term => term.trim()).join(', ');
+  const searchText = searchTerms ? ` for "${searchTerms}"` : '';
+  const resultCount = filteredJobs.length;
+  
+  // Create a table of top 5 jobs for the post
+  const topJobs = filteredJobs.slice(0, 5);
+  let jobTable = '';
+  if (topJobs.length > 0) {
+    jobTable = '\n\nTop opportunities:\n';
+    topJobs.forEach((job, index) => {
+      const location = job.location && job.location.length > 20 ? 
+        job.location.slice(0, 20) + '...' : job.location;
+      jobTable += `${index + 1}. ${job.title} - ${location}\n   Apply: ${job.link}\n`;
+    });
+    if (filteredJobs.length > 5) {
+      jobTable += `\n...and ${filteredJobs.length - 5} more opportunities!`;
+    }
+  }
+  
+  const text = `Found ${resultCount} crypto job opportunities${searchText}! 🚀 Check out these amazing opportunities! ${jobTable}\n\n#CryptoJobs`;
+  const url = 'https://job-finder.org/';
+  
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+  window.open(linkedInUrl, '_blank', 'width=600,height=400');
+}
 </script>
 
 <main>
@@ -74,7 +101,15 @@ function toggleCompany(companyName) {
         <span class="total-jobs-text">Total Jobs: <span>{totalJobs}</span></span>
       {/if}
     </div>
-    <a href="/crypto-new-jobs.html" class="new-jobs-btn">New Jobs</a>
+    <div class="banner-actions">
+      <a href="/crypto-new-jobs.html" class="new-jobs-btn">New Jobs</a>
+      <button class="share-btn" on:click={shareOnLinkedIn} title="Share on LinkedIn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        Share
+      </button>
+    </div>
   </div>
   <div class="search-bar">
     <input
@@ -291,8 +326,6 @@ function toggleCompany(companyName) {
     }
   }
   .new-jobs-btn {
-    margin-left: auto;
-    margin-right: 0;
     padding: 0.56rem 1.2rem;
     border-radius: 8px;
     background: #ffb300;
@@ -302,7 +335,29 @@ function toggleCompany(companyName) {
     text-decoration: none;
     box-shadow: 0 2px 8px rgba(67,198,172,0.10);
     transition: background 0.2s, transform 0.2s;
-    align-self: center;
+    white-space: nowrap;
+  }
+  .banner-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: center;
+  }
+  .share-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.48rem 1rem;
+    border-radius: 8px;
+    background: #0077b5;
+    color: white;
+    border: none;
+    font-weight: 600;
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,119,181,0.20);
+    transition: background 0.2s, transform 0.2s;
     white-space: nowrap;
   }
   
@@ -310,12 +365,21 @@ function toggleCompany(companyName) {
     .new-jobs-btn {
       font-size: 0.64rem;
       padding: 0.4rem 0.8rem;
-      align-self: center;
-      margin: 0;
+    }
+    .share-btn {
+      font-size: 0.64rem;
+      padding: 0.4rem 0.8rem;
+    }
+    .banner-actions {
+      gap: 0.6rem;
     }
   }
   .new-jobs-btn:hover {
     background: #ffd54f;
+    transform: translateY(-2px) scale(1.03);
+  }
+  .share-btn:hover {
+    background: #005885;
     transform: translateY(-2px) scale(1.03);
   }
   .total-jobs-text {
