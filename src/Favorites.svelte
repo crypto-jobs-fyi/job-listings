@@ -19,17 +19,10 @@ onMount(() => {
   // load favorites and company list
   (async () => {
     loadFavorites();
-    try {
-      const companiesRes = await fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json');
-      const companiesJson = await companiesRes.json().catch(() => null);
-      companies = companiesJson || [];
-    } catch (e) {
-      console.error('Error loading companies.json:', e);
-      companies = [];
-    } finally {
-      companiesLoaded = true;
-      loaded = true;
-    }
+    const companiesRes = await fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json');
+    companies = await companiesRes.json();
+    companiesLoaded = true;
+    loaded = true;
   })();
 });
 
@@ -84,12 +77,14 @@ $: groupedJobs = filteredJobs.reduce((groups, job) => {
 function toggleCategory(category) {
   categoryFilter = category;
 }
-function getCompanyUrl(name) {
-  return getCompanyUrlFromList(companies, name);
-}
 
 function getCompanyLogoUrl(name) {
+  if (!name) return null;
   return getCompanyLogoUrlFromList(companies, name);
+}
+
+function getCompanyUrl(name) {
+  return getCompanyUrlFromList(companies, name);
 }
 </script>
 
@@ -182,10 +177,19 @@ function getCompanyLogoUrl(name) {
             <td colspan="2" class="company-cell">
               <div class="company-row">
                 <div>
-                  {#if getCompanyLogoUrl(companyName)}
-                    <img src={getCompanyLogoUrl(companyName)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
+                  {#if getCompanyUrl(companyName)}
+                    <a href={getCompanyUrl(companyName)} target="_blank" rel="noopener noreferrer">
+                      {#if getCompanyLogoUrl(companyName)}
+                        <img src={getCompanyLogoUrl(companyName)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
+                      {/if}
+                      {companyName}
+                    </a>
+                  {:else}
+                    {#if getCompanyLogoUrl(companyName)}
+                      <img src={getCompanyLogoUrl(companyName)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
+                    {/if}
+                    {companyName}
                   {/if}
-                  {companyName}
                 </div>
                 <span class="job-count">({companyJobs.length} job{companyJobs.length !== 1 ? 's' : ''})</span>
               </div>

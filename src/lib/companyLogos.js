@@ -7,19 +7,8 @@ export function getCompanyUrlFromList(companies = [], name) {
 
 export function getCompanyLogoUrlFromList(companies = [], name) {
   const url = getCompanyUrlFromList(companies, name);
-  if (!url) return null;
   try {
     const { hostname } = new URL(url);
-    return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
-  } catch {
-    return null;
-  }
-}
-
-export function getFaviconForLink(link) {
-  if (!link) return null;
-  try {
-    const { hostname } = new URL(link);
     return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
   } catch {
     return null;

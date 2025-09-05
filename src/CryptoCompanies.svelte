@@ -3,7 +3,7 @@
 import { onMount } from 'svelte';
 import TopMenu from './TopMenu.svelte';
 import './lib/top-menu.css';
-import { getFaviconForLink, getCompanyLogoUrlFromList } from './lib/companyLogos.js';
+import { getCompanyLogoUrlFromList } from './lib/companyLogos.js';
 let companies = [];
 let companiesLoaded = false;
 let jobsCountByCompany = {};
@@ -11,11 +11,8 @@ let sortColumn = 'jobs';
 let sortDirection = 'desc';
 let companySearch = '';
 
-function getCompanyLogoUrl(url) {
-  if (!url) return null;
-  const fromList = getCompanyLogoUrlFromList(companies, url);
-  if (fromList) return fromList;
-  return getFaviconForLink(url);
+function getCompanyLogoUrl(name) {
+  return getCompanyLogoUrlFromList(companies, name);
 }
 
 function sortCompanies(column) {
@@ -85,8 +82,8 @@ $: filteredCompanies = companies.filter(company =>
         {#each filteredCompanies as company}
           <tr>
             <td>
-              {#if company.company_url && getCompanyLogoUrl(company.company_url)}
-                <img src={getCompanyLogoUrl(company.company_url)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
+              {#if getCompanyLogoUrl(company.company_name)}
+                <img src={getCompanyLogoUrl(company.company_name)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
               {/if}
               {#if company.company_url}
                 <a href={company.company_url} target="_blank" rel="noopener noreferrer">{company.company_name}</a>
