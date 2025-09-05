@@ -19,8 +19,13 @@ onMount(() => {
   // load favorites and company list
   (async () => {
     loadFavorites();
-    const companiesRes = await fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json');
-    companies = await companiesRes.json();
+    const [companiesRes, companiesAIRes] = await Promise.all([
+        fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json'),
+    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json')
+    ]);
+    const companiesJson = await companiesRes.json();
+    const companiesAIJson = await companiesAIRes.json();
+    companies = [...companiesJson, ...companiesAIJson];
     companiesLoaded = true;
     loaded = true;
   })();
@@ -79,12 +84,14 @@ function toggleCategory(category) {
 }
 
 function getCompanyLogoUrl(name) {
+    console.log('Getting logo for company:', name);
   if (!name) return null;
   return getCompanyLogoUrlFromList(companies, name);
 }
 
 function getCompanyUrl(name) {
-  return getCompanyUrlFromList(companies, name);
+    const result = getCompanyUrlFromList(companies, name);
+  return result;
 }
 </script>
 
