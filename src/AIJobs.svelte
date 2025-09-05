@@ -1,6 +1,8 @@
 <script>
 // @ts-nocheck
 import { onMount } from 'svelte';
+import TopMenu from './TopMenu.svelte';
+import './lib/top-menu.css';
 import { makeJobId, loadFavoritesMap, saveFavoritesMap, toggleFavoriteInMap } from './lib/favorites.js';
 let jobs = [];
 let companies = [];
@@ -171,15 +173,7 @@ function shareOnLinkedIn() {
 }
 </script>
 
-<!-- Top menu: fixed at the top of the page, contains Favorites link -->
-<div class="top-menu">
-  <div class="top-menu-inner">
-    <a href="/" class="logo">Job Finder</a>
-    <div class="top-actions">
-      <a href="/favorites.html" class="new-jobs-btn">Favorites</a>
-    </div>
-  </div>
-</div>
+<TopMenu active="ai" />
 
 <main>
   <div class="crypto-banner">
@@ -428,43 +422,7 @@ function shareOnLinkedIn() {
       font-size: 0.8rem;
     }
   }
-  /* top-menu (fixed) */
-  .top-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
-    border-bottom: 1px solid #eaeaea;
-    z-index: 1000;
-  }
-  .top-menu-inner {
-    max-width: 80vw;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.6rem 2rem;
-  }
-  /* push main content below the fixed top menu */
-  .top-menu + main {
-    margin-top: 64px;
-  }
-  .new-jobs-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.56rem 1.2rem;
-    border-radius: 8px;
-    background: #ffb300;
-    color: #222;
-    font-weight: 600;
-    font-size: 0.8rem;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(67,198,172,0.10);
-    transition: background 0.2s, transform 0.2s;
-    white-space: nowrap;
-  }
+  /* top menu and .new-jobs-btn styles are provided by src/lib/top-menu.css */
   .banner-actions {
     display: flex;
     flex-direction: column;
@@ -490,10 +448,6 @@ function shareOnLinkedIn() {
   }
   
   @media (max-width: 768px) {
-    .new-jobs-btn {
-      font-size: 0.64rem;
-      padding: 0.4rem 0.8rem;
-    }
     .share-btn {
       font-size: 0.64rem;
       padding: 0.4rem 0.8rem;
@@ -501,10 +455,6 @@ function shareOnLinkedIn() {
     .banner-actions {
       gap: 0.6rem;
     }
-  }
-  .new-jobs-btn:hover {
-    background: #ffd54f;
-    transform: translateY(-2px) scale(1.03);
   }
   .share-btn:hover {
     background: #005885;

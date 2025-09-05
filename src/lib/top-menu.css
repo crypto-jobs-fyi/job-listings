@@ -1,0 +1,57 @@
+.top-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-bottom: 1px solid #eaeaea;
+  z-index: 1000;
+}
+.top-menu-inner {
+  max-width: 80vw;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 2rem;
+}
+.top-menu + main {
+  margin-top: 64px;
+}
+.new-jobs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.56rem 1.2rem;
+  border-radius: 8px;
+  background: #ffb300;
+  color: #222;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(67,198,172,0.10);
+  transition: background 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+.new-jobs-btn:hover {
+  background: #ffd54f;
+  transform: translateY(-2px) scale(1.03);
+}
+.logo {
+  font-weight: 700;
+  color: #111;
+  text-decoration: none;
+}
+.top-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+/* active variant for the current page */
+.new-jobs-btn.active {
+  background: #222;
+  color: #fff;
+  transform: translateY(-1px) scale(1.01);
+}
+@media (max-width: 768px) {
+  .new-jobs-btn { font-size: 0.64rem; padding: 0.4rem 0.8rem; }
+}

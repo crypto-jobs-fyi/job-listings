@@ -1,5 +1,7 @@
 <script>
   import { onMount } from 'svelte';
+  import TopMenu from './TopMenu.svelte';
+  import './lib/top-menu.css';
   let jobs = [];
   let companies = [];
   let companySearch = '';
@@ -82,13 +84,15 @@
   );
 
   $: groupedJobs = filteredJobs.reduce((groups, job) => {
-    const company = job.company;
-    if (!groups[company]) {
+    const company = String(job.company ?? '');
+    // Ensure we use a null-prototype object to avoid collisions with Object.prototype
+    if (!groups || groups === Object.prototype) groups = Object.create(null);
+    if (!Array.isArray(groups[company])) {
       groups[company] = [];
     }
     groups[company].push(job);
     return groups;
-  }, {});
+  }, Object.create(null));
 
   function toggleCompany(companyName) {
     if (collapsedCompanies.has(companyName)) {
@@ -100,15 +104,7 @@
   }
 </script>
 
-<!-- Top menu: fixed at the top of the page, contains Favorites link -->
-<div class="top-menu">
-  <div class="top-menu-inner">
-    <a href="/" class="logo">Job Finder</a>
-    <div class="top-actions">
-      <a href="/favorites.html" class="new-jobs-btn">Favorites</a>
-    </div>
-  </div>
-</div>
+<TopMenu active="ai" />
 
 <main>
   <div class="crypto-banner">
@@ -332,46 +328,7 @@
       font-size: 1.1rem;
     }
   }
-  /* top-menu (fixed) */
-  .top-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
-    border-bottom: 1px solid #eaeaea;
-    z-index: 1000;
-  }
-  .top-menu-inner {
-    max-width: 80vw;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.6rem 2rem;
-  }
-  .top-menu + main {
-    margin-top: 64px;
-  }
-  .new-jobs-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.56rem 1.2rem;
-    border-radius: 8px;
-    background: #ffb300;
-    color: #222;
-    font-weight: 600;
-    font-size: 0.8rem;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(67,198,172,0.10);
-    transition: background 0.2s, transform 0.2s;
-    white-space: nowrap;
-  }
-  
-  @media (max-width: 768px) {
-    /* responsive tweaks */
-  }
+  /* top-menu and .new-jobs-btn styles are provided by src/lib/top-menu.css */
   .job-title-link {
     color: #037dd6;
     text-decoration: none;

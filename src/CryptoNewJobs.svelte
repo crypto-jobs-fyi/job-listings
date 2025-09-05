@@ -114,7 +114,9 @@
   <div class="top-menu-inner">
     <a href="/" class="logo">Job Finder</a>
     <div class="top-actions">
-      <a href="/favorites.html" class="new-jobs-btn">Favorites</a>
+  <a href="/ai-jobs.html" class="new-jobs-btn">AI Jobs</a>
+  <a href="/crypto-jobs.html" class="new-jobs-btn">Crypto Jobs</a>
+  <a href="/favorites.html" class="new-jobs-btn">Favorites</a>
     </div>
   </div>
 </div>
