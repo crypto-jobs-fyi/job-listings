@@ -43,10 +43,18 @@ function getCompanyLogoUrl(name) {
   }
 }
 
+// Function to check if any search term matches the target string
+function matchesAnyTerm(target, searchTerms) {
+  if (!target || !searchTerms) return false;
+  const terms = searchTerms.split(',').map(term => term.trim().toLowerCase()).filter(Boolean);
+  if (terms.length === 0) return false;
+  return terms.some(term => target.toLowerCase().includes(term));
+}
+
 $: filteredJobs = jobs.filter(job =>
-  (!companySearch || (job.company && job.company.toLowerCase().includes(companySearch.toLowerCase()))) &&
-  (!locationSearch || (job.location && job.location.toLowerCase().includes(locationSearch.toLowerCase()))) &&
-  (!titleSearch || (job.title && job.title.toLowerCase().includes(titleSearch.toLowerCase())))
+  (!companySearch || (job.company && matchesAnyTerm(job.company, companySearch))) &&
+  (!locationSearch || (job.location && matchesAnyTerm(job.location, locationSearch))) &&
+  (!titleSearch || (job.title && matchesAnyTerm(job.title, titleSearch)))
 );
 
 $: groupedJobs = filteredJobs.reduce((groups, job) => {
@@ -68,8 +76,26 @@ function toggleCompany(companyName) {
 }
 
 function shareOnLinkedIn() {
-  const searchTerms = [companySearch, titleSearch, locationSearch].filter(term => term.trim()).join(', ');
-  const searchText = searchTerms ? ` for "${searchTerms}"` : '';
+  // Format the search terms for display - remove empty terms and format comma-separated terms
+  const formatSearchTerms = (terms) => {
+    if (!terms) return '';
+    return terms.split(',')
+      .map(term => term.trim())
+      .filter(Boolean)
+      .join(', ');
+  };
+  
+  const companyTerms = formatSearchTerms(companySearch);
+  const titleTerms = formatSearchTerms(titleSearch);
+  const locationTerms = formatSearchTerms(locationSearch);
+  
+  // Combine search terms with labels if they exist
+  const searchParts = [];
+  if (companyTerms) searchParts.push(`Companies: ${companyTerms}`);
+  if (titleTerms) searchParts.push(`Titles: ${titleTerms}`);
+  if (locationTerms) searchParts.push(`Locations: ${locationTerms}`);
+  
+  const searchText = searchParts.length ? ` for ${searchParts.join(' | ')}` : '';
   const resultCount = filteredJobs.length;
   const url = 'https://job-finder.org/';
   
@@ -117,21 +143,21 @@ function shareOnLinkedIn() {
   <div class="search-bar">
     <input
       type="text"
-      placeholder="Search company..."
+      placeholder="Search company (comma separated)..."
       bind:value={companySearch}
-      style="padding:0.5rem; width:100%; max-width:180px;"
+      style="padding:0.5rem; width:100%; max-width:220px;"
     />
     <input
       type="text"
-      placeholder="Search title..."
+      placeholder="Search title (comma separated)..."
       bind:value={titleSearch}
-      style="padding:0.5rem; width:100%; max-width:180px;"
+      style="padding:0.5rem; width:100%; max-width:220px;"
     />
     <input
       type="text"
-      placeholder="Search location..."
+      placeholder="Search location (comma separated)..."
       bind:value={locationSearch}
-      style="padding:0.5rem; width:100%; max-width:180px;"
+      style="padding:0.5rem; width:100%; max-width:220px;"
     />
   </div>
   <table>
