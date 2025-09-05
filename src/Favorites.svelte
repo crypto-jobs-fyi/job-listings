@@ -538,10 +538,15 @@ function toggleCategory(category) {
     }
   }
   .total-jobs-text {
+    display: inline-block;
     font-size: 0.9rem;
-    color: #6b7280; /* dark gray so it is visible on the white banner */
-    font-weight: 500;
+    color: #374151; /* slightly darker gray for readability */
+    background: #f3f4f6; /* subtle neutral badge background */
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 600;
     margin-top: 0.2rem;
+    box-shadow: 0 1px 0 rgba(15,15,15,0.03);
   }
   
   @media (max-width: 768px) {
