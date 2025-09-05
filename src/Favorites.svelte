@@ -4,6 +4,7 @@ import { onMount } from 'svelte';
 import TopMenu from './TopMenu.svelte';
 import './lib/top-menu.css';
 import { loadFavoritesArray, saveFavoritesArray, removeFavoriteByIdArray } from './lib/favorites.js';
+import { getCompanyUrlFromList, getCompanyLogoUrlFromList, getFaviconForLink } from './lib/companyLogos.js';
 
 let favorites = loadFavoritesArray();
 let categoryFilter = 'all'; // all, ai, crypto
@@ -11,10 +12,25 @@ let companySearch = '';
 let locationSearch = '';
 let titleSearch = '';
 let loaded = false;
+let companies = [];
+let companiesLoaded = false;
 
 onMount(() => {
-  loadFavorites();
-  loaded = true;
+  // load favorites and company list
+  (async () => {
+    loadFavorites();
+    try {
+      const companiesRes = await fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json');
+      const companiesJson = await companiesRes.json().catch(() => null);
+      companies = companiesJson || [];
+    } catch (e) {
+      console.error('Error loading companies.json:', e);
+      companies = [];
+    } finally {
+      companiesLoaded = true;
+      loaded = true;
+    }
+  })();
 });
 
 function loadFavorites() {
@@ -67,6 +83,23 @@ $: groupedJobs = filteredJobs.reduce((groups, job) => {
 
 function toggleCategory(category) {
   categoryFilter = category;
+}
+function getCompanyUrl(name) {
+  return getCompanyUrlFromList(companies, name);
+}
+
+function getCompanyLogoUrl(name) {
+  return getCompanyLogoUrlFromList(companies, name);
+}
+
+
+// Resolve a favicon for a company: prefer the central companies list, then
+// fall back to deriving a favicon from the first job's link.
+function getFaviconUrl(companyName, companyJobs) {
+  const fromList = getCompanyLogoUrl(companyName);
+  if (fromList) return fromList;
+  const candidateLink = companyJobs && companyJobs[0] && companyJobs[0].link;
+  return getFaviconForLink(candidateLink);
 }
 </script>
 
@@ -158,7 +191,12 @@ function toggleCategory(category) {
           <tr class="company-header">
             <td colspan="2" class="company-cell">
               <div class="company-row">
-                {companyName}
+                <div>
+                  {#if getFaviconUrl(companyName, companyJobs)}
+                    <img src={getFaviconUrl(companyName, companyJobs)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
+                  {/if}
+                  {companyName}
+                </div>
                 <span class="job-count">({companyJobs.length} job{companyJobs.length !== 1 ? 's' : ''})</span>
               </div>
             </td>

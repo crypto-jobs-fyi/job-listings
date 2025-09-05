@@ -1,6 +1,7 @@
 <script>
 // @ts-nocheck
 import { onMount } from 'svelte';
+import { getFaviconForLink, getCompanyLogoUrlFromList } from './lib/companyLogos.js';
 let companies = [];
 let companiesLoaded = false;
 let jobsCountByCompany = {};
@@ -10,12 +11,9 @@ let companySearch = '';
 
 function getCompanyLogoUrl(url) {
   if (!url) return null;
-  try {
-    const { hostname } = new URL(url);
-    return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
-  } catch {
-    return null;
-  }
+  const fromList = getCompanyLogoUrlFromList(companies, url);
+  if (fromList) return fromList;
+  return getFaviconForLink(url);
 }
 
 function sortCompanies(column) {

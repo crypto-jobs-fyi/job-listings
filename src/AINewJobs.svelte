@@ -11,6 +11,7 @@
   let companiesLoaded = false;
   let collapsedCompanies = new Set();
   import { loadFavoritesMap, saveFavoritesMap, toggleFavoriteInMap } from './lib/favorites.js';
+  import { getCompanyUrlFromList, getCompanyLogoUrlFromList } from './lib/companyLogos.js';
   let favorites = loadFavoritesMap();
 
   // Derive a plain Set of favorite IDs so Svelte's reactivity reliably updates the UI
@@ -54,19 +55,11 @@
   }
 
   function getCompanyUrl(name) {
-    const found = companies.find(c => c.company_name.toLowerCase() === name?.toLowerCase());
-    return found ? found.company_url : null;
+    return getCompanyUrlFromList(companies, name);
   }
 
   function getCompanyLogoUrl(name) {
-    const url = getCompanyUrl(name);
-    if (!url) return null;
-    try {
-      const { hostname } = new URL(url);
-      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
-    } catch {
-      return null;
-    }
+    return getCompanyLogoUrlFromList(companies, name);
   }
 
   // Function to check if any search term matches the target string
