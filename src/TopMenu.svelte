@@ -9,7 +9,9 @@
     <a href="/" class="logo">Job Finder</a>
     <div class="top-actions">
       <a href="/ai-jobs.html" class="new-jobs-btn" class:active={active === 'ai'}>AI Jobs</a>
-      <a href="/crypto-jobs.html" class="new-jobs-btn" class:active={active === 'crypto'}>Crypto Jobs</a>
+    <a href="/ai-companies.html" class="new-jobs-btn" class:active={active === 'ai-companies'}>AI Companies</a>
+    <a href="/crypto-companies.html" class="new-jobs-btn" class:active={active === 'crypto-companies'}>Crypto Companies</a>
+    <a href="/crypto-jobs.html" class="new-jobs-btn" class:active={active === 'crypto'}>Crypto Jobs</a>
       <a href="/favorites.html" class="new-jobs-btn" class:active={active === 'favorites'}>Favorites</a>
     </div>
   </div>

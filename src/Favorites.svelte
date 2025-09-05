@@ -4,7 +4,7 @@ import { onMount } from 'svelte';
 import TopMenu from './TopMenu.svelte';
 import './lib/top-menu.css';
 import { loadFavoritesArray, saveFavoritesArray, removeFavoriteByIdArray } from './lib/favorites.js';
-import { getCompanyUrlFromList, getCompanyLogoUrlFromList, getFaviconForLink } from './lib/companyLogos.js';
+import { getCompanyUrlFromList, getCompanyLogoUrlFromList } from './lib/companyLogos.js';
 
 let favorites = loadFavoritesArray();
 let categoryFilter = 'all'; // all, ai, crypto
@@ -90,16 +90,6 @@ function getCompanyUrl(name) {
 
 function getCompanyLogoUrl(name) {
   return getCompanyLogoUrlFromList(companies, name);
-}
-
-
-// Resolve a favicon for a company: prefer the central companies list, then
-// fall back to deriving a favicon from the first job's link.
-function getFaviconUrl(companyName, companyJobs) {
-  const fromList = getCompanyLogoUrl(companyName);
-  if (fromList) return fromList;
-  const candidateLink = companyJobs && companyJobs[0] && companyJobs[0].link;
-  return getFaviconForLink(candidateLink);
 }
 </script>
 
@@ -192,8 +182,8 @@ function getFaviconUrl(companyName, companyJobs) {
             <td colspan="2" class="company-cell">
               <div class="company-row">
                 <div>
-                  {#if getFaviconUrl(companyName, companyJobs)}
-                    <img src={getFaviconUrl(companyName, companyJobs)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
+                  {#if getCompanyLogoUrl(companyName)}
+                    <img src={getCompanyLogoUrl(companyName)} alt="logo" style="vertical-align:middle;width:20px;height:20px;margin-right:6px;border-radius:3px;" />
                   {/if}
                   {companyName}
                 </div>

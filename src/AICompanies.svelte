@@ -1,6 +1,8 @@
 <script>
 // @ts-nocheck
 import { onMount } from 'svelte';
+import TopMenu from './TopMenu.svelte';
+import './lib/top-menu.css';
 import { getFaviconForLink, getCompanyLogoUrlFromList } from './lib/companyLogos.js';
 let companies = [];
 let companiesLoaded = false;
@@ -56,6 +58,8 @@ $: filteredCompanies = companies.filter(company =>
   !companySearch || company.company_name.toLowerCase().includes(companySearch.toLowerCase())
 );
 </script>
+
+<TopMenu active="ai-companies" />
 
 <main>
   <div class="crypto-banner">
