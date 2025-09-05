@@ -1,6 +1,8 @@
 <script>
 // @ts-nocheck
 import { onMount } from 'svelte';
+import TopMenu from './TopMenu.svelte';
+import './lib/top-menu.css';
 import { loadFavoritesArray, saveFavoritesArray, removeFavoriteByIdArray } from './lib/favorites.js';
 
 let favorites = loadFavoritesArray();
@@ -55,38 +57,27 @@ $: filteredJobs = favorites.filter(job =>
 );
 
 $: groupedJobs = filteredJobs.reduce((groups, job) => {
-  const company = job.company;
-  if (!groups[company]) {
+  const company = job.company || 'Unknown';
+  if (!Array.isArray(groups[company])) {
     groups[company] = [];
   }
   groups[company].push(job);
   return groups;
-}, {});
+}, Object.create(null));
 
 function toggleCategory(category) {
   categoryFilter = category;
 }
 </script>
 
-<!-- Top menu: fixed at the top of the page, contains Favorites link -->
-<div class="top-menu">
-  <div class="top-menu-inner">
-    <a href="/" class="logo">Job Finder</a>
-    <div class="top-actions">
-      <a href="/favorites.html" class="new-jobs-btn">Favorites</a>
-    </div>
-  </div>
-</div>
+<TopMenu active="favorites" />
 
 <main>
   <div class="favorites-banner">
-    <div class="favorites-banner-left">
-      <div class="favorites-banner-icon">⭐</div>
-      <div class="favorites-banner-text">
-        <span class="favorites-banner-title">My Favorite Jobs</span>
-        <span class="favorites-banner-desc">A curated list of roles you've saved</span>
-        <span class="total-jobs-text">{favorites.length} favorites</span>
-      </div>
+    <div class="favorites-banner-text">
+      <span class="favorites-banner-title">My Favorite Jobs</span>
+      <span class="favorites-banner-desc">A curated list of roles you've saved</span>
+      <span class="total-jobs-text">{favorites.length} favorites</span>
     </div>
     <div class="banner-actions">
       {#if favorites.length > 0}
@@ -226,9 +217,12 @@ function toggleCategory(category) {
     }
   }
   .favorites-banner {
-    display: flex;
+    /* Use a 3-column grid so the center column can be visually centered
+       while the actions live on the right. Left and right columns grow
+       equally which balances the center column in the middle. */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
     background: #fff;
     border: 1px solid #e6e6e6;
     border-radius: 8px;
@@ -238,9 +232,11 @@ function toggleCategory(category) {
     box-shadow: 0 1px 0 rgba(15,15,15,0.03);
     color: #111827;
   }
-  
+
+  /* Mobile: stack the banner content as before */
   @media (max-width: 768px) {
     .favorites-banner {
+      display: flex;
       flex-direction: column;
       padding: 1rem;
       margin-bottom: 1.5rem;
@@ -248,31 +244,17 @@ function toggleCategory(category) {
       text-align: center;
     }
   }
-  .favorites-banner-left {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* center horizontally */
-    gap: 0.75rem;
-    flex: 1; /* take available space so content can be centered */
+  .favorites-banner-text {
+    grid-column: 2;
   }
-  .favorites-banner-icon {
-    width: 44px;
-    height: 44px;
-    background: #f3f4f6;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: #111827;
-    flex-shrink: 0;
-  }
+  /* favorites banner icon removed - styles cleaned up */
   .favorites-banner-text {
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
     text-align: center;
     align-items: center;
+    min-width: 0; /* allow text to truncate/wrap within available space */
   }
   .favorites-banner-title {
     font-size: 1.125rem;
@@ -290,39 +272,18 @@ function toggleCategory(category) {
     }
   }
   .banner-actions {
+    /* place actions into the right grid column and align them to the
+       far right of the banner. On mobile the layout becomes static */
+    grid-column: 3;
+    justify-self: end;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.8rem;
     align-items: center;
+    flex: 0 0 auto;
   }
 
-  /* top-menu (fixed) */
-  .top-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
-    border-bottom: 1px solid #eaeaea;
-    z-index: 1000;
-  }
-  .top-menu-inner {
-    max-width: 80vw;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.6rem 2rem;
-  }
-  .top-menu + main {
-    margin-top: 64px;
-  }
-  
-  @media (max-width: 768px) {
-    .banner-actions {
-      gap: 0.6rem;
-    }
-  }
+  /* top-menu and .new-jobs-btn styles are provided by src/lib/top-menu.css */
   .nav-btn {
     padding: 0.56rem 1.2rem;
     border-radius: 8px;
@@ -578,7 +539,7 @@ function toggleCategory(category) {
   }
   .total-jobs-text {
     font-size: 0.9rem;
-    color: rgba(255,255,255,0.8);
+    color: #6b7280; /* dark gray so it is visible on the white banner */
     font-weight: 500;
     margin-top: 0.2rem;
   }
