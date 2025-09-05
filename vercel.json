@@ -8,6 +8,7 @@
     { "src": "/ai-jobs.html", "dest": "/ai-jobs" },
     { "src": "/crypto-jobs.html", "dest": "/crypto-jobs" },
     { "src": "/ai-companies.html", "dest": "/ai-companies" },
-    { "src": "/crypto-companies.html", "dest": "/crypto-companies" }
+    { "src": "/crypto-companies.html", "dest": "/crypto-companies" },
+    { "src": "/favorites.html", "dest": "/favorites" }
   ]
 }

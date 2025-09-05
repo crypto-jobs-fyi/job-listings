@@ -15,6 +15,7 @@ export default defineConfig({
         './crypto-new-jobs.html',
         './ai-jobs.html',
         './ai-new-jobs.html',
+        './ai-favorites.html',
         './ai-companies.html', // Add ai-companies.html to the input array
         './crypto-companies.html', // Add crypto-companies.html to the input array
       ],
