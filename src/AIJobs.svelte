@@ -1,6 +1,7 @@
 <script>
 // @ts-nocheck
 import { onMount } from 'svelte';
+import { makeJobId, loadFavoritesMap, saveFavoritesMap, toggleFavoriteInMap } from './lib/favorites.js';
 let jobs = [];
 let companies = [];
 let companySearch = '';
@@ -10,22 +11,69 @@ let jobsLoaded = false;
 let companiesLoaded = false;
 let totalJobs = null;
 let collapsedCompanies = new Set();
+let favorites = loadFavoritesMap();
+
+// Derive a plain Set of favorite IDs so Svelte's reactivity reliably updates the UI
+$: favoriteIds = new Set(Array.from(favorites.keys()));
 
 // Load jobs from remote JSON and companies from remote GitHub URL on mount
 onMount(async () => {
-  const [jobsRes, companiesRes, currentRes] = await Promise.all([
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs.json'),
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json'),
-    fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_current.json')
-  ]);
-  const jobsData = await jobsRes.json();
-  jobs = jobsData.data.filter(job => job.company && job.location);
-  companies = await companiesRes.json();
-  companiesLoaded = true;
-  jobsLoaded = true;
-  const currentData = await currentRes.json();
-  totalJobs = currentData["Total Jobs"];
+  // Load favorites from localStorage
+  loadFavorites();
+  try {
+    const [jobsRes, companiesRes, currentRes] = await Promise.all([
+      fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs.json'),
+      fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json'),
+      fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_current.json')
+    ]);
+
+    // Be defensive: check response.ok and JSON shape
+    const jobsData = await jobsRes.json().catch(() => null);
+    if (jobsData && Array.isArray(jobsData.data)) {
+      jobs = jobsData.data.filter(job => job.company && job.location);
+    } else if (Array.isArray(jobsData)) {
+      jobs = jobsData.filter(job => job.company && job.location);
+    } else {
+      // fallback to empty array
+      jobs = [];
+    }
+
+    const companiesJson = await companiesRes.json().catch(() => null);
+    companies = companiesJson || [];
+
+    const currentData = await currentRes.json().catch(() => null);
+    if (currentData && currentData["Total Jobs"] !== undefined) {
+      totalJobs = currentData["Total Jobs"];
+    }
+  } catch (err) {
+    console.error('Error loading AI jobs or companies:', err);
+    // keep jobs empty so UI shows 'No results' instead of stuck 'Loading...'
+    jobs = [];
+    companies = [];
+  } finally {
+    companiesLoaded = true;
+    jobsLoaded = true;
+  }
 });
+
+function loadFavorites() {
+  favorites = loadFavoritesMap();
+}
+
+function saveFavorites() {
+  saveFavoritesMap(favorites);
+}
+
+function toggleFavorite(job) {
+  favorites = toggleFavoriteInMap(favorites, job, 'ai');
+  saveFavorites();
+}
+
+function isFavorite(job) {
+  const jobId = `${job.company}-${job.title}-${job.link}`.replace(/\s+/g, '-');
+  // Use the derived Set for quick lookup and reliable reactivity
+  return favoriteIds.has(jobId);
+}
 
 function getCompanyUrl(name) {
   const found = companies.find(c => c.company_name.toLowerCase() === name?.toLowerCase());
@@ -58,13 +106,15 @@ $: filteredJobs = jobs.filter(job =>
 );
 
 $: groupedJobs = filteredJobs.reduce((groups, job) => {
-  const company = job.company;
-  if (!groups[company]) {
+  const company = String(job.company ?? '');
+  // Use a null-prototype object to avoid collisions with Object.prototype keys
+  if (!groups || groups === Object.prototype) groups = Object.create(null);
+  if (!Array.isArray(groups[company])) {
     groups[company] = [];
   }
   groups[company].push(job);
   return groups;
-}, {});
+}, Object.create(null));
 
 function toggleCompany(companyName) {
   if (collapsedCompanies.has(companyName)) {
@@ -76,7 +126,7 @@ function toggleCompany(companyName) {
 }
 
 function shareOnLinkedIn() {
-  // Format the search terms for display - remove empty terms and format comma-separated terms
+  // Format the search terms for display - remove empty terms and format ,-separated terms
   const formatSearchTerms = (terms) => {
     if (!terms) return '';
     return terms.split(',')
@@ -121,6 +171,16 @@ function shareOnLinkedIn() {
 }
 </script>
 
+<!-- Top menu: fixed at the top of the page, contains Favorites link -->
+<div class="top-menu">
+  <div class="top-menu-inner">
+    <a href="/" class="logo">Job Finder</a>
+    <div class="top-actions">
+      <a href="/favorites.html" class="new-jobs-btn">Favorites</a>
+    </div>
+  </div>
+</div>
+
 <main>
   <div class="crypto-banner">
     <div class="crypto-banner-text">
@@ -143,19 +203,19 @@ function shareOnLinkedIn() {
   <div class="search-bar">
     <input
       type="text"
-      placeholder="Search company (comma separated)..."
+      placeholder="Search company(s)"
       bind:value={companySearch}
       style="padding:0.5rem; width:100%; max-width:220px;"
     />
     <input
       type="text"
-      placeholder="Search title (comma separated)..."
+      placeholder="Search title(s)"
       bind:value={titleSearch}
       style="padding:0.5rem; width:100%; max-width:220px;"
     />
     <input
       type="text"
-      placeholder="Search location (comma separated)..."
+      placeholder="Search location(s)"
       bind:value={locationSearch}
       style="padding:0.5rem; width:100%; max-width:220px;"
     />
@@ -201,9 +261,23 @@ function shareOnLinkedIn() {
             {#each companyJobs as job}
               <tr class="job-row">
                 <td>
-                  <a href={job.link} target="_blank" rel="noopener noreferrer" class="job-title-link">
-                    {job.title}
-                  </a>
+                  <div class="job-title-container">
+                    <a href={job.link} target="_blank" rel="noopener noreferrer" class="job-title-link">
+                      {job.title}
+                    </a>
+                    <button 
+                      class="favorite-btn" 
+                      class:favorited={isFavorite(job)} 
+                      on:click|stopPropagation={() => toggleFavorite(job)}
+                      title={isFavorite(job) ? "Remove from favorites" : "Add to favorites"}
+                    >
+                      {#if isFavorite(job)}
+                        ★
+                      {:else}
+                        ☆
+                      {/if}
+                    </button>
+                  </div>
                 </td>
                 <td>
                   {#if job.location && job.location.length > 36}
@@ -354,7 +428,32 @@ function shareOnLinkedIn() {
       font-size: 0.8rem;
     }
   }
+  /* top-menu (fixed) */
+  .top-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-bottom: 1px solid #eaeaea;
+    z-index: 1000;
+  }
+  .top-menu-inner {
+    max-width: 80vw;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 2rem;
+  }
+  /* push main content below the fixed top menu */
+  .top-menu + main {
+    margin-top: 64px;
+  }
   .new-jobs-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     padding: 0.56rem 1.2rem;
     border-radius: 8px;
     background: #ffb300;
@@ -431,6 +530,26 @@ function shareOnLinkedIn() {
   }
   .job-title-link:hover {
     text-decoration: underline;
+  }
+  .job-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .favorite-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+    padding: 0 0.5rem;
+  }
+  .favorite-btn.favorited {
+    color: #ffb300;
+  }
+  .favorite-btn:hover {
+    transform: scale(1.2);
   }
   .company-header {
     background: #f9f9f9;

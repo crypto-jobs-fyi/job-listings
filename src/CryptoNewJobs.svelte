@@ -8,8 +8,16 @@
   let jobsLoaded = false;
   let companiesLoaded = false;
   let collapsedCompanies = new Set();
+  import { loadFavoritesMap, saveFavoritesMap, toggleFavoriteInMap } from './lib/favorites.js';
+  let favorites = loadFavoritesMap();
+
+  // Derive a plain Set of favorite IDs so Svelte's reactivity reliably updates the UI
+  $: favoriteIds = new Set(Array.from(favorites.keys()));
 
   onMount(async () => {
+    // Load favorites from localStorage
+    loadFavorites();
+    
     const [jobsRes, companiesRes] = await Promise.all([
       fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/jobs_new.json'),
       fetch('https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json')
@@ -20,6 +28,37 @@
     companiesLoaded = true;
     jobsLoaded = true;
   });
+
+  function loadFavorites() {
+    try {
+      const storedFavorites = localStorage.getItem('favoriteJobs');
+      if (storedFavorites) {
+        const parsedFavorites = JSON.parse(storedFavorites);
+        // Convert the array back to a Map
+  favorites = new Map(parsedFavorites.map(job => [job.id, job]));
+      }
+    } catch (e) {
+      console.error('Error loading favorites from localStorage:', e);
+    }
+  }
+
+  function saveFavorites() {
+    try {
+  saveFavoritesMap(favorites);
+    } catch (e) {
+      console.error('Error saving favorites to localStorage:', e);
+    }
+  }
+
+  function toggleFavorite(job) {
+  favorites = toggleFavoriteInMap(favorites, job, 'crypto');
+  saveFavorites();
+  }
+
+  function isFavorite(job) {
+  const jobId = `${job.company}-${job.title}-${job.link}`.replace(/\s+/g, '-');
+  return favoriteIds.has(jobId);
+  }
 
   function getCompanyUrl(name) {
     const found = companies.find(c => c.company_name.toLowerCase() === name?.toLowerCase());
@@ -70,6 +109,16 @@
   }
 </script>
 
+<!-- Top menu: fixed at the top of the page, contains Favorites link -->
+<div class="top-menu">
+  <div class="top-menu-inner">
+    <a href="/" class="logo">Job Finder</a>
+    <div class="top-actions">
+      <a href="/favorites.html" class="new-jobs-btn">Favorites</a>
+    </div>
+  </div>
+</div>
+
 <main>
   <div class="crypto-banner">
     <div class="crypto-banner-text">
@@ -79,19 +128,19 @@
   <div class="search-bar">
     <input
       type="text"
-      placeholder="Search company (comma separated)..."
+      placeholder="Search company(s)"
       bind:value={companySearch}
       style="padding:0.5rem; width:100%; max-width:220px;"
     />
     <input
       type="text"
-      placeholder="Search title (comma separated)..."
+      placeholder="Search title(s)"
       bind:value={titleSearch}
       style="padding:0.5rem; width:100%; max-width:220px;"
     />
     <input
       type="text"
-      placeholder="Search location (comma separated)..."
+      placeholder="Search location(s)"
       bind:value={locationSearch}
       style="padding:0.5rem; width:100%; max-width:220px;"
     />
@@ -137,9 +186,23 @@
             {#each companyJobs as job}
               <tr class="job-row">
                 <td>
-                  <a href={job.link} target="_blank" rel="noopener noreferrer" class="job-title-link">
-                    {job.title}
-                  </a>
+                  <div class="job-title-container">
+                    <a href={job.link} target="_blank" rel="noopener noreferrer" class="job-title-link">
+                      {job.title}
+                    </a>
+                    <button 
+                      class="favorite-btn" 
+                      class:favorited={isFavorite(job)} 
+                      on:click|stopPropagation={() => toggleFavorite(job)}
+                      title={isFavorite(job) ? "Remove from favorites" : "Add to favorites"}
+                    >
+                      {#if isFavorite(job)}
+                        ★
+                      {:else}
+                        ☆
+                      {/if}
+                    </button>
+                  </div>
                 </td>
                 <td>
                   {#if job.location && job.location.length > 36}
@@ -278,6 +341,47 @@
       font-size: 1.1rem;
     }
   }
+  /* top-menu (fixed) */
+  .top-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-bottom: 1px solid #eaeaea;
+    z-index: 1000;
+  }
+  .top-menu-inner {
+    max-width: 80vw;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 2rem;
+  }
+  .top-menu + main {
+    margin-top: 64px;
+  }
+  .new-jobs-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.56rem 1.2rem;
+    border-radius: 8px;
+    background: #ffb300;
+    color: #222;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(67,198,172,0.10);
+    transition: background 0.2s, transform 0.2s;
+    white-space: nowrap;
+  }
+  /* banner-actions removed; top-menu handles actions now */
+  
+  @media (max-width: 768px) {
+    /* responsive tweaks */
+  }
   .job-title-link {
     color: #037dd6;
     text-decoration: none;
@@ -286,6 +390,26 @@
   }
   .job-title-link:hover {
     text-decoration: underline;
+  }
+  .job-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .favorite-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+    padding: 0 0.5rem;
+  }
+  .favorite-btn.favorited {
+    color: #ffb300;
+  }
+  .favorite-btn:hover {
+    transform: scale(1.2);
   }
   .company-header {
     background: #f9f9f9;
