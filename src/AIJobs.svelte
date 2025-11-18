@@ -207,6 +207,11 @@ function shareOnLinkedIn() {
       style="padding:0.5rem; width:100%; max-width:220px;"
     />
   </div>
+  <div class="quick-filters">
+    <span class="filter-label">Quick Filters:</span>
+    <button class="filter-btn" on:click={() => titleSearch = 'QA, test, sdet'}>QA</button>
+    <button class="filter-btn" on:click={() => titleSearch = 'DevOps, SRE, Reliability, Platform Engineering'}>DevOps</button>
+  </div>
   <table>
     <colgroup>
       <col style="width: 70%;">
@@ -332,6 +337,56 @@ function shareOnLinkedIn() {
       margin-bottom: 0.5rem;
       font-size: 0.85rem;
       padding: 0.4rem;
+    }
+  }
+  .quick-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  @media (max-width: 768px) {
+    .quick-filters {
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+  }
+  .filter-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666;
+  }
+  
+  @media (max-width: 768px) {
+    .filter-label {
+      font-size: 0.8rem;
+    }
+  }
+  .filter-btn {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #037dd6;
+    border-radius: 4px;
+    background: white;
+    color: #037dd6;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .filter-btn:hover {
+    background: #037dd6;
+    color: white;
+    transform: translateY(-1px);
+  }
+  
+  @media (max-width: 768px) {
+    .filter-btn {
+      padding: 0.35rem 0.6rem;
+      font-size: 0.75rem;
     }
   }
   table {
