@@ -1,5 +1,13 @@
 <script>
   // @ts-nocheck
+  import { onMount } from 'svelte';
+  
+  onMount(() => {
+    import('@vercel/analytics').then(({ inject }) => {
+      inject();
+    });
+  });
+  
   let showQR = false;
 
   function toggleQR() {
