@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /ai-jobs.html
+Allow: /crypto-jobs.html
+Allow: /ai-companies.html
+Allow: /crypto-companies.html
+Allow: /ai-new-jobs.html
+Allow: /crypto-new-jobs.html
+Disallow: /favorites.html
+
+Sitemap: https://www.job-finder.org/sitemap.xml
+
+# Crawl delay in seconds
+Crawl-delay: 1

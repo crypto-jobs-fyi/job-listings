@@ -209,7 +209,7 @@ function shareOnLinkedIn() {
   </div>
   <div class="quick-filters">
     <span class="filter-label">Quick Filters:</span>
-    <button class="filter-btn" on:click={() => titleSearch = 'QA, test, sdet'}>QA</button>
+    <button class="filter-btn" on:click={() => titleSearch = 'QA, test, sdet, quality'}>QA</button>
     <button class="filter-btn" on:click={() => titleSearch = 'DevOps, SRE, Reliability, Platform Engineering'}>DevOps</button>
   </div>
   <table>
