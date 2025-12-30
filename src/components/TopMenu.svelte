@@ -235,11 +235,11 @@
       left: 1rem;
       flex-direction: column;
       gap: 0.5rem;
-      background: white;
-      border: 1px solid #e5e7eb;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
       padding: 0.75rem;
       border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
       transform-origin: top right;
       opacity: 0;
       pointer-events: none;
@@ -258,7 +258,7 @@
       width: 100%;
       display: block;
       padding: 0.6rem 0.75rem;
-      color: #111827;
+      color: var(--text-color);
       background: transparent;
       border-radius: 6px;
     }

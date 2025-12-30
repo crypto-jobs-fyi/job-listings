@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { fade } from 'svelte/transition';
   import { theme } from './stores/theme';
   import TopMenu from './components/TopMenu.svelte';
   import HomePage from './pages/HomePage.svelte';
@@ -67,15 +68,17 @@
 
 <TopMenu showHome={!isHomePage} />
 
-{#if isHomePage}
-  <HomePage {toggleQR} {closeQR} {handleKeyDown} {showQR} />
-{:else if isJobsPage || isNewJobsPage}
-  <JobsPage {pageConfig} {isNewJobs} />
-{:else if isCompaniesPage}
-  <CompaniesPage {pageConfig} />
-{:else if isFavoritesPage}
-  <FavoritesPage />
-{/if}
+<div in:fade={{ duration: 300, delay: 100 }}>
+  {#if isHomePage}
+    <HomePage {toggleQR} {closeQR} {handleKeyDown} {showQR} />
+  {:else if isJobsPage || isNewJobsPage}
+    <JobsPage {pageConfig} {isNewJobs} />
+  {:else if isCompaniesPage}
+    <CompaniesPage {pageConfig} />
+  {:else if isFavoritesPage}
+    <FavoritesPage />
+  {/if}
+</div>
 
 <style>
   /* Styles moved to HomePage.svelte */

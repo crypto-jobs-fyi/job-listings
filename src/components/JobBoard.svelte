@@ -4,6 +4,7 @@
   import type { Company } from '../types/company';
   import { favorites } from '../stores/favorites';
   import { filterJobs, groupJobsByCompany, makeJobId } from '../utils/search';
+  import { fade } from 'svelte/transition';
   import SearchBar from './SearchBar.svelte';
   import QuickFilters from './QuickFilters.svelte';
 
@@ -208,13 +209,15 @@
       {#if isCompaniesPage}
         <!-- Companies view -->
         {#if companies.length === 0}
-          <tr><td colspan="3" class="empty-state">Loading companies...</td></tr>
+          <tr transition:fade><td colspan="3" class="empty-state">Loading companies...</td></tr>
         {:else if filteredCompanies.length === 0}
-          <tr><td colspan="3" class="empty-state">No companies found matching your search.</td></tr>
+          <tr transition:fade>
+            <td colspan="3" class="empty-state">No companies found matching your search.</td>
+          </tr>
         {:else}
           {#each filteredCompanies as company (company.company_name)}
             {@const jobCount = allGroupedJobs[company.company_name]?.length || 0}
-            <tr class="company-row-item">
+            <tr class="company-row-item" transition:fade={{ duration: 150 }}>
               <td>
                 <div class="company-row">
                   {#if getCompanyLogoUrl(company.company_name)}
@@ -260,12 +263,16 @@
           {/each}
         {/if}
       {:else if jobs.length === 0}
-        <tr><td colspan="2" class="empty-state">Loading...</td></tr>
+        <tr transition:fade><td colspan="2" class="empty-state">Loading...</td></tr>
       {:else if filteredJobs.length === 0}
-        <tr><td colspan="2" class="empty-state">No results found.</td></tr>
+        <tr transition:fade><td colspan="2" class="empty-state">No results found.</td></tr>
       {:else}
         {#each Object.entries(groupedJobs) as [companyName, companyJobs] (companyName)}
-          <tr class="company-header" on:click={() => toggleCompany(companyName)}>
+          <tr
+            class="company-header"
+            on:click={() => toggleCompany(companyName)}
+            transition:fade={{ duration: 150 }}
+          >
             <td colspan="2" class="company-cell">
               <div class="company-row">
                 <span class="toggle-icon" class:collapsed={collapsedCompanies.has(companyName)}>
@@ -297,7 +304,7 @@
           {#if !collapsedCompanies.has(companyName)}
             {#each companyJobs as job (makeJobId(job))}
               {@const favorited = $favorites.has(makeJobId(job))}
-              <tr class="job-row">
+              <tr class="job-row" transition:fade={{ duration: 150 }}>
                 <td>
                   <div class="job-title-container">
                     <a
@@ -314,7 +321,7 @@
                       on:click|stopPropagation={() => toggleFavorite(job)}
                       title={favorited ? 'Remove from favorites' : 'Add to favorites'}
                     >
-                      <span style="color: {favorited ? '#FFD700' : 'var(--border-color)'};">
+                      <span style="color: {favorited ? '#FFD700' : 'var(--secondary-text)'};">
                         {favorited ? '★' : '☆'}
                       </span>
                     </button>
@@ -389,7 +396,7 @@
   .share-btn,
   .clear-btn {
     padding: 0.5rem 0.75rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--secondary-text);
     border-radius: 4px;
     font-size: 0.9rem;
     cursor: pointer;

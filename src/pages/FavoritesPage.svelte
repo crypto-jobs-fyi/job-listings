@@ -100,33 +100,33 @@
   .loading-message {
     text-align: center;
     padding: 2rem;
-    color: #666;
+    color: var(--secondary-text);
   }
 
   .no-favorites {
     text-align: center;
     padding: 3rem 2rem;
-    background: #f5f5f5;
+    background: var(--card-bg);
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-color);
   }
 
   .no-favorites p {
     margin: 0.5rem 0;
-    color: #666;
+    color: var(--secondary-text);
   }
 
   .no-favorites p:first-child {
     font-size: 1.2rem;
     font-weight: 600;
-    color: #333;
+    color: var(--text-color);
   }
 
   .cta-link {
     display: inline-block;
     margin-top: 1rem;
     padding: 0.75rem 1.5rem;
-    background: #667eea;
+    background: var(--link-color);
     color: white;
     text-decoration: none;
     border-radius: 4px;
@@ -135,6 +135,6 @@
   }
 
   .cta-link:hover {
-    background: #5568d3;
+    opacity: 0.9;
   }
 </style>
