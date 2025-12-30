@@ -1,9 +1,24 @@
-import { mount } from 'svelte'
+import { mount } from 'svelte';
+import App from './App.svelte';
 import './app.css';
-import CryptoCompanies from './CryptoCompanies.svelte';
 
-const cryptoCompanies = mount(CryptoCompanies, {
-  target: document.getElementById('app')
+// Import the page configuration
+const pageConfig = {
+  type: 'companies',
+  category: 'crypto',
+  title: 'Crypto Companies - Find Top Web3 Organizations',
+  description:
+    'Explore leading cryptocurrency and blockchain companies hiring. Browse by company size, location, and specialization.',
+};
+
+// Store in window for App.svelte to access
+window.__PAGE_CONFIG__ = pageConfig;
+
+const app = mount(App, {
+  target: document.getElementById('app'),
+  props: {
+    pageConfig,
+  },
 });
 
-export default cryptoCompanies;
+export default app;

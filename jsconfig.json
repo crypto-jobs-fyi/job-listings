@@ -1,32 +1,35 @@
 {
   "compilerOptions": {
     "moduleResolution": "bundler",
-    "target": "ESNext",
+    "target": "ES2020",
     "module": "ESNext",
-    /**
-     * svelte-preprocess cannot figure out whether you have
-     * a value or a type, so tell TypeScript to enforce using
-     * `import type` instead of `import` for Types.
-     */
+    "lib": ["ES2020", "DOM"],
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
-    /**
-     * To have warnings / errors of the Svelte compiler at the
-     * correct position, enable source maps by default.
-     */
     "sourceMap": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    /**
-     * Typecheck JS in `.svelte` and `.js` files by default.
-     * Disable this if you'd like to use dynamic types.
-     */
-    "checkJs": true
+    "checkJs": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "declaration": true,
+    "declarationMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "$lib/*": ["src/lib/*"],
+      "$types/*": ["src/types/*"],
+      "$utils/*": ["src/utils/*"]
+    }
   },
-  /**
-   * Use global.d.ts instead of compilerOptions.types
-   * to avoid limiting type declarations.
-   */
-  "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte"]
+  "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"],
+  "exclude": ["dist", "node_modules", ".svelte-kit", "build"]
 }

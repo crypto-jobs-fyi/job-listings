@@ -1,9 +1,24 @@
-import { mount } from 'svelte'
+import { mount } from 'svelte';
+import App from './App.svelte';
 import './app.css';
-import AINewJobs from './AINewJobs.svelte';
 
-const aiNewJobs = mount(AINewJobs, {
+// Import the page configuration
+const pageConfig = {
+  type: 'new-jobs',
+  category: 'ai',
+  title: 'New AI Jobs - Latest ML & AI Opportunities',
+  description:
+    'Discover the newest AI, machine learning, and data science job listings. Updated daily with fresh opportunities.',
+};
+
+// Store in window for App.svelte to access
+window.__PAGE_CONFIG__ = pageConfig;
+
+const app = mount(App, {
   target: document.getElementById('app'),
-})
+  props: {
+    pageConfig,
+  },
+});
 
-export default aiNewJobs;
+export default app;

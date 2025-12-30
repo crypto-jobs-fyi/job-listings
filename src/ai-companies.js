@@ -1,9 +1,24 @@
-import { mount } from 'svelte'
+import { mount } from 'svelte';
+import App from './App.svelte';
 import './app.css';
-import AICompanies from './AICompanies.svelte';
 
-const aiCompanies = mount(AICompanies, {
-  target: document.getElementById('app')
+// Import the page configuration
+const pageConfig = {
+  type: 'companies',
+  category: 'ai',
+  title: 'AI Companies - Find Top AI Organizations',
+  description:
+    'Explore leading AI and machine learning companies hiring. Browse by company size, location, and specialization.',
+};
+
+// Store in window for App.svelte to access
+window.__PAGE_CONFIG__ = pageConfig;
+
+const app = mount(App, {
+  target: document.getElementById('app'),
+  props: {
+    pageConfig,
+  },
 });
 
-export default aiCompanies;
+export default app;
