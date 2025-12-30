@@ -197,9 +197,8 @@
   <table>
     <colgroup>
       {#if isCompaniesPage}
-        <col style="width: 50%;" />
-        <col style="width: 25%;" />
-        <col style="width: 25%;" />
+        <col style="width: 70%;" />
+        <col style="width: 30%;" />
       {:else}
         <col style="width: 70%;" />
         <col style="width: 30%;" />
@@ -240,23 +239,22 @@
                 </div>
               </td>
               <td>
-                {#if jobCount > 0}
-                  <span class="job-count-text">{jobCount} job{jobCount !== 1 ? 's' : ''}</span>
-                {:else}
-                  <span class="text-muted">—</span>
-                {/if}
-              </td>
-              <td>
-                {#if company.jobs_url}
-                  <a
-                    href={company.jobs_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="careers-link">Careers ↗</a
-                  >
-                {:else}
-                  <span class="text-muted">—</span>
-                {/if}
+                <div class="company-stats">
+                  {#if jobCount > 0}
+                    <span class="job-count-text">{jobCount} job{jobCount !== 1 ? 's' : ''}</span>
+                  {:else}
+                    <span class="text-muted">—</span>
+                  {/if}
+
+                  {#if company.jobs_url}
+                    <a
+                      href={company.jobs_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="careers-link">Careers ↗</a
+                    >
+                  {/if}
+                </div>
               </td>
             </tr>
           {/each}
@@ -510,6 +508,13 @@
     font-size: 0.9rem;
   }
 
+  .company-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    justify-content: flex-end;
+  }
+
   .careers-link {
     color: var(--secondary-text);
     text-decoration: none;
@@ -669,22 +674,39 @@
       border-radius: 6px;
       padding: 1rem;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
       gap: 0.5rem;
     }
 
     .company-row-item td {
       padding: 0;
       border: none;
+      width: auto;
     }
 
-    .company-row-item td:nth-child(2)::before {
-      content: 'Open Jobs: ';
-      color: var(--secondary-text);
+    .company-row-item td:nth-child(1) {
+      flex: 1;
+      min-width: 0;
     }
 
-    .company-row-item td:nth-child(3) {
-      margin-top: 0.5rem;
+    .company-row-item td:nth-child(2) {
+      flex: 0 0 auto;
+    }
+
+    .company-stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+
+    .careers-link {
+      width: 100%;
+      text-align: right;
+      margin-top: 0.25rem;
     }
   }
 </style>
