@@ -3,3 +3,6 @@ node_modules
 dist
 .vite
 .DS_Store
+MODERNIZATION_PLAN.md
+test-results
+playwright-report
