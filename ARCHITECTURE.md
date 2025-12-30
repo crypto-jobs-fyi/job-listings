@@ -41,8 +41,13 @@ src/
 │   └── ...             # Other utilities
 ├── scripts/            # Build and maintenance scripts
 │   └── generate-entry-points.js # Auto-generates HTML/JS entry points
+├── e2e/                # End-to-End tests (Playwright)
+├── .github/
+│   └── workflows/      # CI/CD pipelines
 ├── App.svelte          # Root component (acts as a router)
-└── app.css             # Global styles
+├── app.css             # Global styles
+├── playwright.config.ts # Playwright configuration
+└── vitest.config.js    # Vitest configuration
 ```
 
 ### Theme System
@@ -184,7 +189,21 @@ Utility functions in `src/utils/` and stores in `src/stores/` are unit tested:
 - `jobs` store - Data fetching and caching
 
 ### Component Tests
-Key components and pages are tested using `@testing-library/svelte`:
+Ke# End-to-End (E2E) Tests
+The project uses **Playwright** for E2E testing to ensure critical user flows work across devices.
+- **Configuration**: `playwright.config.ts`
+- **Browsers**: Desktop Chrome and Mobile Chrome (Pixel 5 emulation).
+- **Tests**: Located in `e2e/` directory.
+- **CI Integration**: Runs automatically on push and PR via GitHub Actions.
+
+## CI/CD Pipeline
+
+Automated workflows are defined in `.github/workflows/ci.yml` using GitHub Actions.
+- **Trigger**: On `push` to main and `pull_request`.
+- **Environment**: Node.js v22 (LTS).
+- **Checks**: Linting, Unit Tests (Vitest), and E2E Tests (Playwright).
+
+##y components and pages are tested using `@testing-library/svelte`:
 - `HomePage.svelte`
 - `FavoritesPage.svelte`
 - `JobBoard.svelte`
@@ -224,9 +243,8 @@ Key components and pages are tested using `@testing-library/svelte`:
 ## Code Quality
 
 - **TypeScript**: Strict mode enabled across all `.ts` and `.svelte` files.
-- **ESLint**: Enforced with `--max-warnings 0`.
-- **Prettier**: Auto-formatting via husky pre-commit hooks.
-- **Svelte 5**: Modern Svelte features used, including `mount` for application initialization.
+- **EPWA Support** - Add service workers for offline functionality.
+3 **Svelte 5**: Modern Svelte features used, including `mount` for application initialization.
 
 ## Migration Status
 

@@ -2,6 +2,7 @@
 
 ## Project Overview
 Job Finder is a Svelte 5 + Vite job search platform for AI and Crypto industries. The codebase emphasizes modern architecture with TypeScript, reusable components, Svelte stores for state management, and automated entry point generation.
+**Node.js Version**: v22 (LTS)
 
 ## Architecture Overview
 
