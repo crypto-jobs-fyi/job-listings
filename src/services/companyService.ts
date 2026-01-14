@@ -1,5 +1,6 @@
-import { fetchJSON, API_CONFIG } from './api';
+import { fetchJSON } from './api';
 import type { Company } from '../types/company';
+import { ENDPOINTS } from '../utils/constants';
 
 /**
  * Company Service - handles all company-related API calls
@@ -10,7 +11,7 @@ export const companyService = {
    */
   fetchCryptoCompanies: async (): Promise<Company[]> => {
     try {
-      return await fetchJSON<Company[]>(`${API_CONFIG.GITHUB_RAW_URL}/crypto_companies.json`);
+      return await fetchJSON<Company[]>(ENDPOINTS.CRYPTO_COMPANIES);
     } catch (error) {
       console.error('Error fetching crypto companies:', error);
       throw error;
@@ -22,7 +23,7 @@ export const companyService = {
    */
   fetchAICompanies: async (): Promise<Company[]> => {
     try {
-      return await fetchJSON<Company[]>(`${API_CONFIG.GITHUB_RAW_URL}/ai_companies.json`);
+      return await fetchJSON<Company[]>(ENDPOINTS.AI_COMPANIES);
     } catch (error) {
       console.error('Error fetching AI companies:', error);
       throw error;

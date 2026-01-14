@@ -1,5 +1,6 @@
-import { fetchJSON, API_CONFIG } from './api';
+import { fetchJSON } from './api';
 import type { Job, JobsResponse, CurrentResponse } from '../types/job';
+import { ENDPOINTS } from '../utils/constants';
 
 /**
  * Job Service - handles all job-related API calls
@@ -14,8 +15,8 @@ export async function fetchCryptoJobs(): Promise<{
 }> {
   try {
     const [jobsData, currentData] = await Promise.all([
-      fetchJSON<JobsResponse>(`${API_CONFIG.GITHUB_RAW_URL}/crypto_jobs.json`),
-      fetchJSON<CurrentResponse>(`${API_CONFIG.GITHUB_RAW_URL}/crypto_current.json`),
+      fetchJSON<JobsResponse>(ENDPOINTS.CRYPTO_JOBS),
+      fetchJSON<CurrentResponse>(ENDPOINTS.CRYPTO_CURRENT),
     ]);
 
     const jobs = jobsData.data.filter((job) => job.company && job.location);
@@ -38,8 +39,8 @@ export async function fetchAIJobs(): Promise<{
 }> {
   try {
     const [jobsData, currentData] = await Promise.all([
-      fetchJSON<JobsResponse>(`${API_CONFIG.GITHUB_RAW_URL}/ai_jobs.json`),
-      fetchJSON<CurrentResponse>(`${API_CONFIG.GITHUB_RAW_URL}/ai_current.json`),
+      fetchJSON<JobsResponse>(ENDPOINTS.AI_JOBS),
+      fetchJSON<CurrentResponse>(ENDPOINTS.AI_CURRENT),
     ]);
 
     const jobs = jobsData.data.filter((job) => job.company && job.location);
@@ -58,9 +59,7 @@ export async function fetchAIJobs(): Promise<{
  */
 export async function fetchCryptoNewJobs(): Promise<Job[]> {
   try {
-    const jobsData = await fetchJSON<JobsResponse>(
-      `${API_CONFIG.GITHUB_RAW_URL}/crypto_jobs_new.json`
-    );
+    const jobsData = await fetchJSON<JobsResponse>(ENDPOINTS.CRYPTO_NEW_JOBS);
     return jobsData.data.filter((job) => job.company && job.location);
   } catch (error) {
     console.error('Error fetching crypto new jobs:', error);
@@ -73,7 +72,7 @@ export async function fetchCryptoNewJobs(): Promise<Job[]> {
  */
 export async function fetchAINewJobs(): Promise<Job[]> {
   try {
-    const jobsData = await fetchJSON<JobsResponse>(`${API_CONFIG.GITHUB_RAW_URL}/ai_jobs_new.json`);
+    const jobsData = await fetchJSON<JobsResponse>(ENDPOINTS.AI_NEW_JOBS);
     return jobsData.data.filter((job) => job.company && job.location);
   } catch (error) {
     console.error('Error fetching AI new jobs:', error);

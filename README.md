@@ -78,6 +78,20 @@ npm run lint:fix     # Auto-fix linting issues
 npm run format       # Format with Prettier
 npm run test         # Run tests once
 npm run test:watch   # Watch test mode
+npm run test:e2e     # Run Playwright E2E tests
+```
+
+### E2E Testing Details
+
+Before running Playwright tests for the first time, you may need to install the required browsers:
+```bash
+npx playwright install
+```
+
+The tests run against the production build by default to ensure maximum accuracy:
+```bash
+npm run build
+npm run test:e2e
 ```
 
 **After adding pages/entry points:**

@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import type { Job, JobsResponse, CurrentResponse } from '../types/job';
 import type { Company } from '../types/company';
+import { ENDPOINTS } from '../utils/constants';
 
 export interface JobsStoreState {
   cryptoJobs: Job[];
@@ -43,15 +44,9 @@ function createJobsStore() {
       update((state) => ({ ...state, loading: true, error: null }));
       try {
         const [jobsRes, companiesRes, currentRes] = await Promise.all([
-          fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_jobs.json'
-          ),
-          fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_companies.json'
-          ),
-          fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_current.json'
-          ),
+          fetch(ENDPOINTS.CRYPTO_JOBS),
+          fetch(ENDPOINTS.CRYPTO_COMPANIES),
+          fetch(ENDPOINTS.CRYPTO_CURRENT),
         ]);
 
         const jobsData = (await jobsRes.json()) as JobsResponse;
@@ -84,15 +79,9 @@ function createJobsStore() {
       update((state) => ({ ...state, loading: true, error: null }));
       try {
         const [jobsRes, companiesRes, currentRes] = await Promise.all([
-          fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs.json'
-          ),
-          fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json'
-          ),
-          fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_current.json'
-          ),
+          fetch(ENDPOINTS.AI_JOBS),
+          fetch(ENDPOINTS.AI_COMPANIES),
+          fetch(ENDPOINTS.AI_CURRENT),
         ]);
 
         const jobsData = (await jobsRes.json()) as JobsResponse;
@@ -125,12 +114,8 @@ function createJobsStore() {
       update((state) => ({ ...state, loading: true, error: null }));
       try {
         const [jobsRes, companiesRes] = await Promise.all([
-          fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_jobs_new.json'
-          ),
-          fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_companies.json'
-          ),
+          fetch(ENDPOINTS.CRYPTO_NEW_JOBS),
+          fetch(ENDPOINTS.CRYPTO_COMPANIES),
         ]);
 
         const jobsData = (await jobsRes.json()) as JobsResponse;
@@ -161,12 +146,8 @@ function createJobsStore() {
       update((state) => ({ ...state, loading: true, error: null }));
       try {
         const [jobsRes, companiesRes] = await Promise.all([
-          fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs_new.json'
-          ),
-          fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json'
-          ),
+          fetch(ENDPOINTS.AI_NEW_JOBS),
+          fetch(ENDPOINTS.AI_COMPANIES),
         ]);
 
         const jobsData = (await jobsRes.json()) as JobsResponse;
@@ -196,9 +177,8 @@ function createJobsStore() {
     fetchCompanies: async (type: 'crypto' | 'ai') => {
       update((state) => ({ ...state, loading: true, error: null }));
       try {
-        const companiesRes = await fetch(
-          `https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/${type}_companies.json`
-        );
+        const url = type === 'crypto' ? ENDPOINTS.CRYPTO_COMPANIES : ENDPOINTS.AI_COMPANIES;
+        const companiesRes = await fetch(url);
 
         const companiesData = await companiesRes.json();
 
