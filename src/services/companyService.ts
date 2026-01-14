@@ -10,7 +10,7 @@ export const companyService = {
    */
   fetchCryptoCompanies: async (): Promise<Company[]> => {
     try {
-      return await fetchJSON<Company[]>(`${API_CONFIG.GITHUB_RAW_URL}/companies.json`);
+      return await fetchJSON<Company[]>(`${API_CONFIG.GITHUB_RAW_URL}/crypto_companies.json`);
     } catch (error) {
       console.error('Error fetching crypto companies:', error);
       throw error;

@@ -152,10 +152,10 @@ All endpoints use the GitHub raw content CDN:
 - Base: `https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main`
 
 ### Crypto Jobs
-- `/jobs.json` - All crypto jobs
-- `/jobs_new.json` - New crypto jobs (last 24-48h)
-- `/companies.json` - Crypto companies
-- `/current.json` - Total job count
+- `/crypto_jobs.json` - All crypto jobs
+- `/crypto_jobs_new.json` - New crypto jobs (last 24-48h)
+- `/crypto_companies.json` - Crypto companies
+- `/crypto_current.json` - Total job count
 
 ### AI Jobs
 - `/ai_jobs.json` - All AI jobs

@@ -44,13 +44,13 @@ function createJobsStore() {
       try {
         const [jobsRes, companiesRes, currentRes] = await Promise.all([
           fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/jobs.json'
+            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_jobs.json'
           ),
           fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json'
+            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_companies.json'
           ),
           fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/current.json'
+            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_current.json'
           ),
         ]);
 
@@ -126,10 +126,10 @@ function createJobsStore() {
       try {
         const [jobsRes, companiesRes] = await Promise.all([
           fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/jobs_new.json'
+            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_jobs_new.json'
           ),
           fetch(
-            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/companies.json'
+            'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_companies.json'
           ),
         ]);
 

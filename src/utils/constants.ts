@@ -8,10 +8,10 @@ export const API_BASE_URL =
 
 // Job Data Endpoints
 export const ENDPOINTS = {
-  CRYPTO_JOBS: `${API_BASE_URL}/jobs.json`,
-  CRYPTO_COMPANIES: `${API_BASE_URL}/companies.json`,
-  CRYPTO_CURRENT: `${API_BASE_URL}/current.json`,
-  CRYPTO_NEW_JOBS: `${API_BASE_URL}/jobs_new.json`,
+  CRYPTO_JOBS: `${API_BASE_URL}/crypto_jobs.json`,
+  CRYPTO_COMPANIES: `${API_BASE_URL}/crypto_companies.json`,
+  CRYPTO_CURRENT: `${API_BASE_URL}/crypto_current.json`,
+  CRYPTO_NEW_JOBS: `${API_BASE_URL}/crypto_jobs_new.json`,
 
   AI_JOBS: `${API_BASE_URL}/ai_jobs.json`,
   AI_COMPANIES: `${API_BASE_URL}/ai_companies.json`,

@@ -142,7 +142,7 @@ All endpoints are centralized in `src/utils/constants.ts`:
 ```
 Base: https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main
 
-Crypto:  /jobs.json, /jobs_new.json, /companies.json, /current.json
+Crypto:  /crypto_jobs.json, /crypto_jobs_new.json, /crypto_companies.json, /crypto_current.json
 AI:      /ai_jobs.json, /ai_jobs_new.json, /ai_companies.json, /ai_current.json
 ```
 
