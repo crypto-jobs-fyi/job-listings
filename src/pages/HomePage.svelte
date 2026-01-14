@@ -1,8 +1,31 @@
 <script>
+  import { onMount } from 'svelte';
+  import { jobs } from '../stores/jobs';
+
   export let toggleQR = () => {};
   export let closeQR = () => {};
   export let handleKeyDown = () => {};
   export let showQR = false;
+
+  let cryptoTotal = 0;
+  let aiTotal = 0;
+
+  onMount(() => {
+    const unsubscribe = jobs.subscribe((state) => {
+      cryptoTotal = state.cryptoTotal || 0;
+      aiTotal = state.aiTotal || 0;
+
+      // Only fetch if data is missing and we aren't already loading
+      if (state.cryptoTotal === null && !state.loading) {
+        jobs.fetchCryptoJobs();
+      }
+      if (state.aiTotal === null && !state.loading) {
+        jobs.fetchAIJobs();
+      }
+    });
+
+    return unsubscribe;
+  });
 </script>
 
 <main>
@@ -68,9 +91,19 @@
     </div>
   {/if}
   <div class="main-links">
-    <a class="main-link-btn crypto" href="/crypto-jobs.html">Crypto Jobs</a>
+    <a class="main-link-btn crypto" href="/crypto-jobs.html">
+      Crypto Jobs
+      {#if cryptoTotal > 0}
+        <span class="job-count-badge">{cryptoTotal}</span>
+      {/if}
+    </a>
     <a class="main-link-btn crypto" href="/crypto-companies.html">Crypto Companies</a>
-    <a class="main-link-btn ai" href="/ai-jobs.html">AI Jobs</a>
+    <a class="main-link-btn ai" href="/ai-jobs.html">
+      AI Jobs
+      {#if aiTotal > 0}
+        <span class="job-count-badge">{aiTotal}</span>
+      {/if}
+    </a>
     <a class="main-link-btn ai" href="/ai-companies.html">AI Companies</a>
   </div>
 </main>
@@ -201,7 +234,10 @@
   }
 
   .main-link-btn {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
     padding: 1rem 2rem;
     border-radius: 6px;
     font-size: 1.25rem;
@@ -214,6 +250,25 @@
     text-align: center;
     box-sizing: border-box;
     width: 100%;
+  }
+
+  .job-count-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--card-bg);
   }
 
   @media (max-width: 768px) {
