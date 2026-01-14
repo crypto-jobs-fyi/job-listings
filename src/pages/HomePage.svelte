@@ -9,11 +9,15 @@
 
   let cryptoTotal = 0;
   let aiTotal = 0;
+  let cryptoCompaniesCount = 0;
+  let aiCompaniesCount = 0;
 
   onMount(() => {
     const unsubscribe = jobs.subscribe((state) => {
       cryptoTotal = state.cryptoTotal || 0;
       aiTotal = state.aiTotal || 0;
+      cryptoCompaniesCount = state.cryptoCompanies?.length || 0;
+      aiCompaniesCount = state.aiCompanies?.length || 0;
 
       // Only fetch if data is missing and we aren't already loading
       if (state.cryptoTotal === null && !state.loading) {
@@ -97,14 +101,24 @@
         <span class="job-count-badge">{cryptoTotal}</span>
       {/if}
     </a>
-    <a class="main-link-btn crypto" href="/crypto-companies.html">Crypto Companies</a>
+    <a class="main-link-btn crypto" href="/crypto-companies.html">
+      Crypto Companies
+      {#if cryptoCompaniesCount > 0}
+        <span class="job-count-badge">{cryptoCompaniesCount}</span>
+      {/if}
+    </a>
     <a class="main-link-btn ai" href="/ai-jobs.html">
       AI Jobs
       {#if aiTotal > 0}
         <span class="job-count-badge">{aiTotal}</span>
       {/if}
     </a>
-    <a class="main-link-btn ai" href="/ai-companies.html">AI Companies</a>
+    <a class="main-link-btn ai" href="/ai-companies.html">
+      AI Companies
+      {#if aiCompaniesCount > 0}
+        <span class="job-count-badge">{aiCompaniesCount}</span>
+      {/if}
+    </a>
   </div>
 </main>
 
