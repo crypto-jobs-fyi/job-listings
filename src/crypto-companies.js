@@ -6,9 +6,9 @@ import './app.css';
 const pageConfig = {
   type: 'companies',
   category: 'crypto',
-  title: 'Crypto Companies - Find Top Web3 Organizations',
+  title: 'Crypto Companies - Find Top Organizations',
   description:
-    'Explore leading cryptocurrency and blockchain companies hiring. Browse by company size, location, and specialization.',
+    'Explore leading crypto companies hiring. Browse by company size, location, and specialization.',
 };
 
 // Store in window for App.svelte to access

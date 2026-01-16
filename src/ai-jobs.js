@@ -6,9 +6,8 @@ import './app.css';
 const pageConfig = {
   type: 'jobs',
   category: 'ai',
-  title: 'AI Jobs - Artificial Intelligence & ML Careers',
-  description:
-    'Find artificial intelligence, machine learning, and data science job opportunities. Explore careers at AI-focused companies.',
+  title: 'AI Jobs - Find Great Opportunities',
+  description: 'Browse all ai job opportunities. Find your next role at leading companies.',
 };
 
 // Store in window for App.svelte to access

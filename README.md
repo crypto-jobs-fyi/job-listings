@@ -2,9 +2,12 @@
 
 A modern job search platform for **AI** and **Crypto** industries, built with Svelte 5 and Vite.
 
+> **✨ NEW**: Dynamic category system! Add new job categories (DeFi, Gaming, Web3, etc.) by editing one config file. See [DYNAMIC_CATEGORIES.md](DYNAMIC_CATEGORIES.md) for details.
+
 ## Features
 
 - 🔍 **Multi-page Search**: Browse jobs by industry (Crypto, AI) and type (active, new job listings, companies)
+- 🎯 **Dynamic Categories**: Easily add new job categories with automatic page generation
 - ⭐ **Favorites Management**: Save jobs locally with persistent localStorage
 - 🏢 **Company Directory**: Browse companies by industry with logos and links
 - 📱 **Mobile Responsive**: Touch-friendly UI with responsive design
@@ -14,6 +17,23 @@ A modern job search platform for **AI** and **Crypto** industries, built with Sv
 - 🏗️ **Type-Safe**: Full TypeScript support with strict mode
 - 🧪 **Tested**: Vitest test suite with component tests
 - 📝 **SEO-Ready**: Complete meta tags, Open Graph, structured data
+
+## Adding New Job Categories
+
+Want to add "DeFi", "Gaming", or other job categories? It's easy!
+
+1. Edit `categories.config.js` with your category details
+2. Run `node scripts/generate-entry-points.js`
+3. Update the jobs store with fetch methods
+4. Done! Your category is live with all features
+
+See the complete guide: **[DYNAMIC_CATEGORIES.md](DYNAMIC_CATEGORIES.md)**
+
+Quick references:
+- 📖 [Quick Start Guide](QUICK_REFERENCE.md)
+- 📚 [Complete Documentation](ADDING_CATEGORIES.md)
+- 💻 [Code Examples](EXAMPLE_ADD_CATEGORY.js)
+- 🏗️ [System Architecture](CATEGORY_SYSTEM_OVERVIEW.md)
 
 ## Tech Stack
 

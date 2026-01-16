@@ -6,9 +6,8 @@ import './app.css';
 const pageConfig = {
   type: 'new-jobs',
   category: 'ai',
-  title: 'New AI Jobs - Latest ML & AI Opportunities',
-  description:
-    'Discover the newest AI, machine learning, and data science job listings. Updated daily with fresh opportunities.',
+  title: 'New AI Jobs - Latest Opportunities',
+  description: 'Discover the newest ai job listings. Updated daily with fresh opportunities.',
 };
 
 // Store in window for App.svelte to access

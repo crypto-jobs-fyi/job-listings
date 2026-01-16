@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * Generate entry point files from pageConfig.ts
+ * Generate entry point files from categories configuration
  * This script creates:
  * 1. HTML files (index.html, crypto-jobs.html, etc.)
  * 2. JS entry point files (src/index.js, src/crypto-jobs.js, etc.)
  * 3. Updates Vite config with all entry points
+ * 4. Updates constants.ts with category endpoints
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { CATEGORIES } from '../categories.config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,73 +21,73 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const srcDir = path.join(rootDir, 'src');
 
-// Define pages configuration
-const pagesConfig = [
-  {
+/**
+ * Generate pages configuration from categories
+ */
+function generatePagesConfig() {
+  const pages = [];
+
+  // Home page
+  const categoryNames = CATEGORIES.map(c => c.name).join(' & ');
+  pages.push({
     path: '/index.html',
-    title: 'Job Finder - AI & Crypto Jobs | Find Your Next Opportunity',
-    description: 'Discover AI, ML, data science, blockchain, DeFi, and crypto job opportunities. Search thousands of positions from top companies.',
+    title: `Job Finder - ${categoryNames} Jobs | Find Your Next Opportunity`,
+    description: `Discover ${categoryNames.toLowerCase()} job opportunities. Search thousands of positions from top companies.`,
     type: 'home',
     category: 'all',
     entryPoint: 'index',
-  },
-  {
-    path: '/crypto-jobs.html',
-    title: 'Crypto Jobs - Find Web3 & Blockchain Opportunities',
-    description: 'Browse all cryptocurrency and blockchain job opportunities. Find your next Web3 role at leading crypto companies.',
-    type: 'jobs',
-    category: 'crypto',
-    entryPoint: 'crypto-jobs',
-  },
-  {
-    path: '/crypto-new-jobs.html',
-    title: 'New Crypto Jobs - Latest Web3 Opportunities',
-    description: 'Discover the newest cryptocurrency and blockchain job listings. Updated daily with fresh Web3 opportunities.',
-    type: 'new-jobs',
-    category: 'crypto',
-    entryPoint: 'crypto-new-jobs',
-  },
-  {
-    path: '/crypto-companies.html',
-    title: 'Crypto Companies - Find Top Web3 Organizations',
-    description: 'Explore leading cryptocurrency and blockchain companies hiring. Browse by company size, location, and specialization.',
-    type: 'companies',
-    category: 'crypto',
-    entryPoint: 'crypto-companies',
-  },
-  {
-    path: '/ai-jobs.html',
-    title: 'AI Jobs - Artificial Intelligence & ML Careers',
-    description: 'Find artificial intelligence, machine learning, and data science job opportunities. Explore careers at AI-focused companies.',
-    type: 'jobs',
-    category: 'ai',
-    entryPoint: 'ai-jobs',
-  },
-  {
-    path: '/ai-new-jobs.html',
-    title: 'New AI Jobs - Latest ML & AI Opportunities',
-    description: 'Discover the newest AI, machine learning, and data science job listings. Updated daily with fresh opportunities.',
-    type: 'new-jobs',
-    category: 'ai',
-    entryPoint: 'ai-new-jobs',
-  },
-  {
-    path: '/ai-companies.html',
-    title: 'AI Companies - Find Top AI Organizations',
-    description: 'Explore leading AI and machine learning companies hiring. Browse by company size, location, and specialization.',
-    type: 'companies',
-    category: 'ai',
-    entryPoint: 'ai-companies',
-  },
-  {
+  });
+
+  // Category pages
+  for (const category of CATEGORIES) {
+    const catName = category.name;
+    const catId = category.id;
+
+    // Jobs page
+    pages.push({
+      path: `/${catId}-jobs.html`,
+      title: `${catName} Jobs - Find Great Opportunities`,
+      description: `Browse all ${catName.toLowerCase()} job opportunities. Find your next role at leading companies.`,
+      type: 'jobs',
+      category: catId,
+      entryPoint: `${catId}-jobs`,
+    });
+
+    // New Jobs page
+    pages.push({
+      path: `/${catId}-new-jobs.html`,
+      title: `New ${catName} Jobs - Latest Opportunities`,
+      description: `Discover the newest ${catName.toLowerCase()} job listings. Updated daily with fresh opportunities.`,
+      type: 'new-jobs',
+      category: catId,
+      entryPoint: `${catId}-new-jobs`,
+    });
+
+    // Companies page
+    pages.push({
+      path: `/${catId}-companies.html`,
+      title: `${catName} Companies - Find Top Organizations`,
+      description: `Explore leading ${catName.toLowerCase()} companies hiring. Browse by company size, location, and specialization.`,
+      type: 'companies',
+      category: catId,
+      entryPoint: `${catId}-companies`,
+    });
+  }
+
+  // Favorites page
+  pages.push({
     path: '/favorites.html',
     title: 'Favorites - Your Saved Job Listings',
     description: 'View all your saved favorite job listings in one place. Organize your job search effectively.',
     type: 'favorites',
     category: 'all',
     entryPoint: 'favorites',
-  },
-];
+  });
+
+  return pages;
+}
+
+const pagesConfig = generatePagesConfig();
 
 /**
  * Generate HTML template for a page
@@ -211,6 +213,9 @@ Crawl-delay: 1
 async function generateEntryPoints() {
   console.log('🔧 Generating entry point files...');
 
+  // Generate constants.ts with dynamic endpoints
+  generateConstantsFile();
+
   // Generate HTML files
   for (const page of pagesConfig) {
     const filePath = path.join(rootDir, page.path);
@@ -226,6 +231,9 @@ async function generateEntryPoints() {
     fs.writeFileSync(filePath, jsContent, 'utf-8');
     console.log(`✓ Generated src/${page.entryPoint}.js`);
   }
+
+  // Generate categories.ts for frontend
+  generateCategoriesTypeScriptFile();
 
   // Generate sitemap.xml
   const publicDir = path.join(rootDir, 'public');
@@ -275,6 +283,130 @@ export default defineConfig({
 
   console.log('\n✅ Entry point generation complete!');
   console.log(`Generated ${pagesConfig.length} HTML files and ${pagesConfig.length} JS entry points.`);
+  console.log(`Configured ${CATEGORIES.length} categories: ${CATEGORIES.map(c => c.name).join(', ')}`);
+}
+
+/**
+ * Generate constants.ts file with dynamic endpoints
+ */
+function generateConstantsFile() {
+  const endpointsCode = CATEGORIES.map((category) => {
+    const upperCaseId = category.id.toUpperCase();
+    return `  ${upperCaseId}_JOBS: '${category.endpoints.jobs}',
+  ${upperCaseId}_COMPANIES: '${category.endpoints.companies}',
+  ${upperCaseId}_CURRENT: '${category.endpoints.current}',
+  ${upperCaseId}_NEW_JOBS: '${category.endpoints.newJobs}',`;
+  }).join('\n');
+
+  const routesCode = CATEGORIES.map((category) => {
+    const upperCaseId = category.id.toUpperCase();
+    const id = category.id;
+    return `  ${upperCaseId}_JOBS: '/${id}-jobs.html',
+  ${upperCaseId}_COMPANIES: '/${id}-companies.html',
+  ${upperCaseId}_NEW_JOBS: '/${id}-new-jobs.html',`;
+  }).join('\n');
+
+  const categoriesEnumCode = CATEGORIES.map((category) => {
+    const upperCaseId = category.id.toUpperCase();
+    return `  ${upperCaseId}: '${category.id}',`;
+  }).join('\n');
+
+  const constantsContent = `/**
+ * Configuration constants used throughout the application
+ * 
+ * This file is auto-generated by scripts/generate-entry-points.js
+ * DO NOT EDIT MANUALLY - Edit categories.config.js instead
+ */
+
+// Job Data Endpoints
+export const ENDPOINTS = {
+${endpointsCode}
+} as const;
+
+// LocalStorage Keys
+export const STORAGE_KEYS = {
+  FAVORITES: 'favoriteJobs',
+  FILTERS: 'jobFilters',
+  LAST_UPDATED: 'lastUpdated',
+};
+
+// UI Configuration
+export const UI_CONFIG = {
+  ITEMS_PER_PAGE: 50,
+  TIMEOUT_MS: 15000,
+  QUICK_FILTERS: {
+    QA: ['QA', 'test', 'sdet', 'quality'],
+    DEVOPS: ['DevOps', 'SRE', 'Reliability', 'Platform Engineering'],
+  },
+};
+
+// Job Categories
+export const JOB_CATEGORIES = {
+${categoriesEnumCode}
+} as const;
+
+// Page Routes
+export const ROUTES = {
+  HOME: '/',
+${routesCode}
+  FAVORITES: '/favorites.html',
+};
+`;
+
+  const constantsPath = path.join(srcDir, 'utils', 'constants.ts');
+  fs.writeFileSync(constantsPath, constantsContent, 'utf-8');
+  console.log('✓ Generated src/utils/constants.ts');
+}
+
+/**
+ * Generate categories.ts file for frontend use
+ */
+function generateCategoriesTypeScriptFile() {
+  const categoriesArray = CATEGORIES.map((cat) => {
+    return `  {
+    id: '${cat.id}',
+    name: '${cat.name}',
+    color: '${cat.color}',
+    hoverColor: '${cat.hoverColor}',
+  }`;
+  }).join(',\n');
+
+  const categoriesContent = `/**
+ * Categories configuration for frontend use
+ * 
+ * This file is auto-generated by scripts/generate-entry-points.js
+ * DO NOT EDIT MANUALLY - Edit categories.config.js instead
+ */
+
+export interface Category {
+  id: string;
+  name: string;
+  color: string;
+  hoverColor: string;
+}
+
+export const CATEGORIES: Category[] = [
+${categoriesArray},
+];
+
+/**
+ * Get category by ID
+ */
+export function getCategoryById(id: string): Category | undefined {
+  return CATEGORIES.find((cat) => cat.id === id);
+}
+
+/**
+ * Get all category IDs
+ */
+export function getCategoryIds(): string[] {
+  return CATEGORIES.map((cat) => cat.id);
+}
+`;
+
+  const categoriesPath = path.join(srcDir, 'utils', 'categories.ts');
+  fs.writeFileSync(categoriesPath, categoriesContent, 'utf-8');
+  console.log('✓ Generated src/utils/categories.ts');
 }
 
 // Run

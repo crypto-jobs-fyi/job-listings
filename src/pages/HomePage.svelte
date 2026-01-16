@@ -1,25 +1,38 @@
 <script>
   import { onMount } from 'svelte';
   import { jobs } from '../stores/jobs';
+  import { CATEGORIES } from '../utils/categories';
 
   export let toggleQR = () => {};
   export let closeQR = () => {};
   export let handleKeyDown = () => {};
   export let showQR = false;
 
-  let cryptoTotal = 0;
-  let aiTotal = 0;
-  let cryptoCompaniesCount = 0;
-  let aiCompaniesCount = 0;
+  // Create reactive category data
+  let categoryData = CATEGORIES.map((cat) => ({
+    ...cat,
+    jobsCount: 0,
+    companiesCount: 0,
+  }));
 
   onMount(() => {
     const unsubscribe = jobs.subscribe((state) => {
-      cryptoTotal = state.cryptoTotal || 0;
-      aiTotal = state.aiTotal || 0;
-      cryptoCompaniesCount = state.cryptoCompanies?.length || 0;
-      aiCompaniesCount = state.aiCompanies?.length || 0;
+      // Update category data with counts from store
+      categoryData = CATEGORIES.map((cat) => {
+        // Type-safe access using mapped values
+        const jobsCount =
+          cat.id === 'crypto' ? state.cryptoTotal : cat.id === 'ai' ? state.aiTotal : 0;
+        const companies =
+          cat.id === 'crypto' ? state.cryptoCompanies : cat.id === 'ai' ? state.aiCompanies : [];
 
-      // Only fetch if data is missing and we aren't already loading
+        return {
+          ...cat,
+          jobsCount: jobsCount || 0,
+          companiesCount: companies?.length || 0,
+        };
+      });
+
+      // Fetch data for categories that don't have it yet
       if (state.cryptoTotal === null && !state.loading) {
         jobs.fetchCryptoJobs();
       }
@@ -95,30 +108,28 @@
     </div>
   {/if}
   <div class="main-links">
-    <a class="main-link-btn crypto" href="/crypto-jobs.html">
-      Crypto Jobs
-      {#if cryptoTotal > 0}
-        <span class="job-count-badge">{cryptoTotal}</span>
-      {/if}
-    </a>
-    <a class="main-link-btn crypto" href="/crypto-companies.html">
-      Crypto Companies
-      {#if cryptoCompaniesCount > 0}
-        <span class="job-count-badge">{cryptoCompaniesCount}</span>
-      {/if}
-    </a>
-    <a class="main-link-btn ai" href="/ai-jobs.html">
-      AI Jobs
-      {#if aiTotal > 0}
-        <span class="job-count-badge">{aiTotal}</span>
-      {/if}
-    </a>
-    <a class="main-link-btn ai" href="/ai-companies.html">
-      AI Companies
-      {#if aiCompaniesCount > 0}
-        <span class="job-count-badge">{aiCompaniesCount}</span>
-      {/if}
-    </a>
+    {#each categoryData as category (category.id)}
+      <a
+        class="main-link-btn"
+        style="background: {category.color}; --hover-color: {category.hoverColor};"
+        href="/{category.id}-jobs.html"
+      >
+        {category.name} Jobs
+        {#if category.jobsCount > 0}
+          <span class="job-count-badge">{category.jobsCount}</span>
+        {/if}
+      </a>
+      <a
+        class="main-link-btn"
+        style="background: {category.color}; --hover-color: {category.hoverColor};"
+        href="/{category.id}-companies.html"
+      >
+        {category.name} Companies
+        {#if category.companiesCount > 0}
+          <span class="job-count-badge">{category.companiesCount}</span>
+        {/if}
+      </a>
+    {/each}
   </div>
 </main>
 
@@ -266,6 +277,11 @@
     width: 100%;
   }
 
+  .main-link-btn:hover {
+    background: var(--hover-color);
+    transform: translateY(-1px);
+  }
+
   .job-count-badge {
     position: absolute;
     top: -8px;
@@ -299,21 +315,8 @@
     }
   }
 
-  .main-link-btn.crypto {
-    background: #059669;
-  }
-
-  .main-link-btn.crypto:hover {
-    background: #047857;
-    transform: translateY(-1px);
-  }
-
-  .main-link-btn.ai {
-    background: #8b5cf6;
-  }
-
-  .main-link-btn.ai:hover {
-    background: #7c3aed;
+  .main-link-btn:hover {
+    background: var(--hover-color);
     transform: translateY(-1px);
   }
 

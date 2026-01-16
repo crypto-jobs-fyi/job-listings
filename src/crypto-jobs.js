@@ -6,9 +6,8 @@ import './app.css';
 const pageConfig = {
   type: 'jobs',
   category: 'crypto',
-  title: 'Crypto Jobs - Find Web3 & Blockchain Opportunities',
-  description:
-    'Browse all cryptocurrency and blockchain job opportunities. Find your next Web3 role at leading crypto companies.',
+  title: 'Crypto Jobs - Find Great Opportunities',
+  description: 'Browse all crypto job opportunities. Find your next role at leading companies.',
 };
 
 // Store in window for App.svelte to access
