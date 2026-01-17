@@ -22,6 +22,14 @@ export const ENDPOINTS = {
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_current.json',
   AI_NEW_JOBS:
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs_new.json',
+  FIN_JOBS:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_jobs.json',
+  FIN_COMPANIES:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_companies.json',
+  FIN_CURRENT:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_current.json',
+  FIN_NEW_JOBS:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_jobs_new.json',
 } as const;
 
 // LocalStorage Keys
@@ -45,6 +53,7 @@ export const UI_CONFIG = {
 export const JOB_CATEGORIES = {
   CRYPTO: 'crypto',
   AI: 'ai',
+  FIN: 'fin',
 } as const;
 
 // Page Routes
@@ -56,5 +65,8 @@ export const ROUTES = {
   AI_JOBS: '/ai-jobs.html',
   AI_COMPANIES: '/ai-companies.html',
   AI_NEW_JOBS: '/ai-new-jobs.html',
+  FIN_JOBS: '/fin-jobs.html',
+  FIN_COMPANIES: '/fin-companies.html',
+  FIN_NEW_JOBS: '/fin-new-jobs.html',
   FAVORITES: '/favorites.html',
 };

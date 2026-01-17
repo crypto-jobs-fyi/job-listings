@@ -25,6 +25,12 @@ export const CATEGORIES: Category[] = [
     color: '#8b5cf6',
     hoverColor: '#7c3aed',
   },
+  {
+    id: 'fin',
+    name: 'FinTech',
+    color: '#8b5cf6',
+    hoverColor: '#7c3aed',
+  },
 ];
 
 /**

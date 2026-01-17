@@ -6,7 +6,7 @@
   import type { Job } from '../types/job';
   import type { Company } from '../types/company';
 
-  export let pageConfig: { type: string; category: 'crypto' | 'ai' } = {
+  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' } = {
     type: 'jobs',
     category: 'crypto',
   };
@@ -21,6 +21,8 @@
     'crypto-new-jobs': '🆕 New Crypto Jobs',
     'ai-jobs': '🤖 AI & ML Jobs',
     'ai-new-jobs': '🆕 New AI Jobs',
+    'fin-jobs': '💰 FinTech Jobs',
+    'fin-new-jobs': '🆕 New FinTech Jobs',
   };
 
   $: bannerKey = `${pageConfig.category}-${isNewJobs ? 'new-' : ''}jobs`;
@@ -34,22 +36,30 @@
     ? isNewJobs
       ? pageConfig.category === 'crypto'
         ? storeData.cryptoNewJobs
-        : storeData.aiNewJobs
+        : pageConfig.category === 'ai'
+          ? storeData.aiNewJobs
+          : storeData.finNewJobs
       : pageConfig.category === 'crypto'
         ? storeData.cryptoJobs
-        : storeData.aiJobs
+        : pageConfig.category === 'ai'
+          ? storeData.aiJobs
+          : storeData.finJobs
     : [];
 
   $: companies = storeData
     ? pageConfig.category === 'crypto'
       ? storeData.cryptoCompanies
-      : storeData.aiCompanies
+      : pageConfig.category === 'ai'
+        ? storeData.aiCompanies
+        : storeData.finCompanies
     : [];
 
   $: totalJobs = storeData
     ? pageConfig.category === 'crypto'
       ? storeData.cryptoTotal || 0
-      : storeData.aiTotal || 0
+      : pageConfig.category === 'ai'
+        ? storeData.aiTotal || 0
+        : storeData.finTotal || 0
     : 0;
 
   // Subscribe to store
@@ -72,9 +82,13 @@
         ? isNewJobs
           ? jobsStore.fetchCryptoNewJobs()
           : jobsStore.fetchCryptoJobs()
-        : isNewJobs
-          ? jobsStore.fetchAINewJobs()
-          : jobsStore.fetchAIJobs();
+        : pageConfig.category === 'ai'
+          ? isNewJobs
+            ? jobsStore.fetchAINewJobs()
+            : jobsStore.fetchAIJobs()
+          : isNewJobs
+            ? jobsStore.fetchFinNewJobs()
+            : jobsStore.fetchFinJobs();
 
     fetchPromise
       .then(() => {

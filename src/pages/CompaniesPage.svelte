@@ -6,7 +6,7 @@
   import type { Company } from '../types/company';
   import type { Job } from '../types/job';
 
-  export let pageConfig: { type: string; category: 'crypto' | 'ai' } = {
+  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' } = {
     type: 'companies',
     category: 'crypto',
   };
@@ -18,6 +18,7 @@
   const bannerTitles = {
     crypto: '🏢 Crypto Companies',
     ai: '🏢 AI Companies',
+    fin: '🏢 FinTech Companies',
   };
 
   $: bannerTitle = bannerTitles[pageConfig.category] || 'Companies';
@@ -29,13 +30,17 @@
   $: companies = storeData
     ? pageConfig.category === 'crypto'
       ? storeData.cryptoCompanies
-      : storeData.aiCompanies
+      : pageConfig.category === 'ai'
+        ? storeData.aiCompanies
+        : storeData.finCompanies
     : [];
 
   $: jobs = storeData
     ? pageConfig.category === 'crypto'
       ? storeData.cryptoJobs
-      : storeData.aiJobs
+      : pageConfig.category === 'ai'
+        ? storeData.aiJobs
+        : storeData.finJobs
     : [];
 
   // Subscribe to store
@@ -60,8 +65,10 @@
     // Load companies
     if (pageConfig.category === 'crypto') {
       jobsStore.fetchCryptoJobs(); // This also fetches jobs for counts
-    } else {
+    } else if (pageConfig.category === 'ai') {
       jobsStore.fetchAIJobs(); // This also fetches jobs for counts
+    } else {
+      jobsStore.fetchFinJobs(); // This also fetches jobs for counts
     }
 
     return unsubscribe;

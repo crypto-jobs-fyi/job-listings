@@ -21,9 +21,21 @@
       categoryData = CATEGORIES.map((cat) => {
         // Type-safe access using mapped values
         const jobsCount =
-          cat.id === 'crypto' ? state.cryptoTotal : cat.id === 'ai' ? state.aiTotal : 0;
+          cat.id === 'crypto'
+            ? state.cryptoTotal
+            : cat.id === 'ai'
+              ? state.aiTotal
+              : cat.id === 'fin'
+                ? state.finTotal
+                : 0;
         const companies =
-          cat.id === 'crypto' ? state.cryptoCompanies : cat.id === 'ai' ? state.aiCompanies : [];
+          cat.id === 'crypto'
+            ? state.cryptoCompanies
+            : cat.id === 'ai'
+              ? state.aiCompanies
+              : cat.id === 'fin'
+                ? state.finCompanies
+                : [];
 
         return {
           ...cat,
@@ -38,6 +50,9 @@
       }
       if (state.aiTotal === null && !state.loading) {
         jobs.fetchAIJobs();
+      }
+      if (state.finTotal === null && !state.loading) {
+        jobs.fetchFinJobs();
       }
     });
 

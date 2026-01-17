@@ -40,6 +40,18 @@ export const CATEGORIES = [
       newJobs: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs_new.json',
     },
   },
+  {
+    id: 'fin',
+    name: 'FinTech',
+    color: '#8b5cf6',
+    hoverColor: '#7c3aed',
+    endpoints: {
+      jobs: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_jobs.json',
+      companies: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_companies.json',
+      current: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_current.json',
+      newJobs: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_jobs_new.json',
+    },
+  },
   // Add new categories here following the same structure
   // Example:
   // {

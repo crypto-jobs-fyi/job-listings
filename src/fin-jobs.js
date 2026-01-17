@@ -4,11 +4,10 @@ import './app.css';
 
 // Import the page configuration
 const pageConfig = {
-  type: 'home',
-  category: 'all',
-  title: 'Job Finder - Crypto & AI & FinTech Jobs | Find Your Next Opportunity',
-  description:
-    'Discover crypto & ai & fintech job opportunities. Search thousands of positions from top companies.',
+  type: 'jobs',
+  category: 'fin',
+  title: 'FinTech Jobs - Find Great Opportunities',
+  description: 'Browse all fintech job opportunities. Find your next role at leading companies.',
 };
 
 // Store in window for App.svelte to access

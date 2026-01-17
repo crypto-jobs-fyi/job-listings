@@ -17,6 +17,9 @@ export default defineConfig({
         './/ai-jobs.html',
         './/ai-new-jobs.html',
         './/ai-companies.html',
+        './/fin-jobs.html',
+        './/fin-new-jobs.html',
+        './/fin-companies.html',
         './/favorites.html',
       ],
       output: {
