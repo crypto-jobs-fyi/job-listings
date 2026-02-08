@@ -82,12 +82,28 @@ Open `src/pages/HomePage.svelte`:
 - [ ] Add `fetch{Category}Jobs()` call in data fetching section
 - [ ] Save file
 
-## Step 5: Verification
+## Step 5: Update Navigation Header
+
+Open `src/components/TopMenu.svelte`:
+
+- [ ] Add `/{category}-jobs.html` link to navigation
+- [ ] Add `/{category}-companies.html` link to navigation
+- [ ] Links use correct `active` prop values
+- [ ] Links display correct category name
+- [ ] Save file
+
+## Step 6: Verification
 
 ### Development Server
 - [ ] Start/restart dev server: `npm run dev`
 - [ ] Server starts without errors
 - [ ] No console errors in terminal
+
+### Navigation Header Tests
+- [ ] Category links appear in top navigation
+- [ ] Links have correct colors and styling
+- [ ] Active state works when on category pages
+- [ ] Mobile menu includes new category links
 
 ### Homepage Tests
 - [ ] Visit `http://localhost:5173`
@@ -151,14 +167,14 @@ Open `src/pages/HomePage.svelte`:
 - [ ] No warnings about missing data
 - [ ] API calls succeed (check Network tab)
 
-## Step 6: TypeScript & Linting
+## Step 7: TypeScript & Linting
 
 - [ ] Run: `npm run lint`
 - [ ] No errors reported
 - [ ] No warnings reported (max-warnings=0)
 - [ ] All files pass TypeScript checks
 
-## Step 7: Build Test
+## Step 8: Build Test
 
 - [ ] Run: `npm run build`
 - [ ] Build completes successfully
@@ -168,13 +184,13 @@ Open `src/pages/HomePage.svelte`:
 - [ ] Visit preview site
 - [ ] New category works in production build
 
-## Step 8: Documentation
+## Step 9: Documentation
 
 - [ ] Update `categories.config.js` with comments if needed
 - [ ] Add any special notes to `ADDING_CATEGORIES.md` if needed
 - [ ] Update main `README.md` if new category type
 
-## Step 9: Git Commit
+## Step 10: Git Commit
 
 - [ ] Stage all changes: `git add .`
 - [ ] Review changes: `git status`
@@ -190,7 +206,7 @@ Open `src/pages/HomePage.svelte`:
   ```
 - [ ] Push to repository: `git push origin main`
 
-## Step 10: Deployment
+## Step 11: Deployment
 
 For Vercel (auto-deploy):
 - [ ] Push triggers automatic deployment

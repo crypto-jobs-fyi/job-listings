@@ -125,21 +125,33 @@
     </div>
 
     <nav class:open class="top-actions" aria-label="Main menu">
-      <a href="/ai-jobs.html" class="new-jobs-btn" class:active={active === 'ai'}>AI Jobs</a>
-      <a href="/ai-companies.html" class="new-jobs-btn" class:active={active === 'ai-companies'}
-        >AI Companies</a
-      >
-      <a
-        href="/crypto-companies.html"
-        class="new-jobs-btn"
-        class:active={active === 'crypto-companies'}>Crypto Companies</a
-      >
-      <a href="/crypto-jobs.html" class="new-jobs-btn" class:active={active === 'crypto'}
-        >Crypto Jobs</a
-      >
-      <a href="/favorites.html" class="new-jobs-btn" class:active={active === 'favorites'}
-        >Favorites</a
-      >
+      <div class="nav-row nav-row-jobs">
+        <a href="/crypto-jobs.html" class="new-jobs-btn" class:active={active === 'crypto'}
+          >Crypto Jobs</a
+        >
+        <a href="/ai-jobs.html" class="new-jobs-btn" class:active={active === 'ai'}>AI Jobs</a>
+        <a href="/fin-jobs.html" class="new-jobs-btn" class:active={active === 'fin'}
+          >FinTech Jobs</a
+        >
+      </div>
+      <div class="nav-row nav-row-companies">
+        <a
+          href="/crypto-companies.html"
+          class="new-jobs-btn"
+          class:active={active === 'crypto-companies'}>Crypto Companies</a
+        >
+        <a href="/ai-companies.html" class="new-jobs-btn" class:active={active === 'ai-companies'}
+          >AI Companies</a
+        >
+        <a href="/fin-companies.html" class="new-jobs-btn" class:active={active === 'fin-companies'}
+          >FinTech Companies</a
+        >
+      </div>
+      <div class="nav-row nav-row-extras">
+        <a href="/favorites.html" class="new-jobs-btn" class:active={active === 'favorites'}
+          >Favorites</a
+        >
+      </div>
     </nav>
   </div>
 </div>
@@ -191,8 +203,24 @@
   }
   .top-actions {
     display: flex;
+    flex-direction: column;
     gap: 0.5rem;
     align-items: center;
+  }
+  .nav-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+  }
+  .nav-row-extras {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.25rem;
   }
   .top-actions .new-jobs-btn,
   .logo.new-jobs-btn {
@@ -206,6 +234,8 @@
       background 0.15s,
       transform 0.12s;
     border: none;
+    text-align: center;
+    white-space: nowrap;
   }
   .top-actions .new-jobs-btn.active {
     background: var(--nav-link-active-bg);
@@ -253,6 +283,15 @@
       opacity: 1;
       pointer-events: auto;
       transform: scale(1);
+    }
+    .nav-row {
+      grid-template-columns: 1fr;
+      width: 100%;
+      max-width: 100%;
+    }
+    .nav-row-extras {
+      flex-direction: column;
+      width: 100%;
     }
     .top-actions .new-jobs-btn {
       width: 100%;

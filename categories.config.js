@@ -43,8 +43,8 @@ export const CATEGORIES = [
   {
     id: 'fin',
     name: 'FinTech',
-    color: '#dacc0b',
-    hoverColor: '#d9c706',
+    color: '#f59e0b',
+    hoverColor: '#d97706',
     endpoints: {
       jobs: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_jobs.json',
       companies: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_companies.json',

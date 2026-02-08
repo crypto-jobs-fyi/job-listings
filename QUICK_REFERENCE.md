@@ -34,6 +34,23 @@ node scripts/generate-entry-points.js
 
 Add fetch methods in `src/stores/jobs.ts` - see [EXAMPLE_ADD_CATEGORY.js](EXAMPLE_ADD_CATEGORY.js)
 
+### 4. Update Navigation Header
+
+Add links in `src/components/TopMenu.svelte`:
+
+```svelte
+<a href="/{category}-jobs.html" class="new-jobs-btn" 
+   class:active={active === '{category}'}>{Category} Jobs</a>
+<a href="/{category}-companies.html" class="new-jobs-btn" 
+   class:active={active === '{category}-companies'}>{Category} Companies</a>
+```
+
+### 5. Restart and Test
+
+```bash
+npm run dev
+```
+
 ## 📁 Key Files
 
 | File | Purpose | Edit? |
@@ -44,6 +61,7 @@ Add fetch methods in `src/stores/jobs.ts` - see [EXAMPLE_ADD_CATEGORY.js](EXAMPL
 | `src/utils/categories.ts` | Category metadata | ❌ AUTO-GENERATED |
 | `src/stores/jobs.ts` | Data fetching | ✅ YES |
 | `src/pages/HomePage.svelte` | Homepage | ✅ YES (minor) |
+| `src/components/TopMenu.svelte` | Navigation header | ✅ YES |
 
 ## 🔄 What Gets Auto-Generated
 
@@ -130,6 +148,9 @@ When you run `node scripts/generate-entry-points.js`:
 
 After adding a category, verify:
 
+- [ ] Navigation header shows new category links
+- [ ] Navigation links work correctly
+- [ ] Active state highlights current page
 - [ ] Homepage shows new category buttons
 - [ ] Job count badge appears (if > 0)
 - [ ] Company count badge appears (if > 0)
@@ -208,8 +229,16 @@ node scripts/generate-entry-points.js
 // Add: fetchDeFiJobs(), fetchDeFiNewJobs()
 ```
 
+```svelte
+<!-- 4. Update src/components/TopMenu.svelte -->
+<a href="/defi-jobs.html" class="new-jobs-btn" 
+   class:active={active === 'defi'}>DeFi Jobs</a>
+<a href="/defi-companies.html" class="new-jobs-btn" 
+   class:active={active === 'defi-companies'}>DeFi Companies</a>
+```
+
 ```bash
-# 4. Restart and test
+# 5. Restart and test
 npm run dev
 ```
 
@@ -230,5 +259,6 @@ npm run dev
 - Generation Script: `scripts/generate-entry-points.js`
 - Jobs Store: `src/stores/jobs.ts`
 - Homepage: `src/pages/HomePage.svelte`
+- Navigation: `src/components/TopMenu.svelte`
 - Constants: `src/utils/constants.ts` (auto-generated)
 - Categories: `src/utils/categories.ts` (auto-generated)
