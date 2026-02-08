@@ -6,3 +6,4 @@ dist
 MODERNIZATION_PLAN.md
 test-results
 playwright-report
+.env
