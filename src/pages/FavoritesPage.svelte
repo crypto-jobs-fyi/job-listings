@@ -53,7 +53,13 @@
   });
 
   function clearAllFavorites() {
-    favorites.clear();
+    if (
+      confirm(
+        'Are you sure you want to clear all favorites? This will remove them from all your devices.'
+      )
+    ) {
+      favorites.clear();
+    }
   }
 
   // Convert FavoriteJob back to Job for JobBoard component

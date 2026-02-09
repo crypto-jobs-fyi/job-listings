@@ -101,9 +101,28 @@ function createFavoritesStore() {
     /**
      * Clear all favorites
      */
-    clear: () => {
+    clear: async () => {
       set(new Map());
       localStorage.removeItem('favoriteJobs');
+
+      // Also clear from backend if authenticated
+      const authState = get(auth);
+      if (authState.isAuthenticated && authState.user?.email) {
+        try {
+          await fetch('/api/favorites/sync', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: authState.user.email,
+              favorites: {},
+            }),
+          });
+        } catch (error) {
+          console.error('Failed to clear favorites from backend:', error);
+        }
+      }
     },
     /**
      * Sync favorites to backend (Redis)
