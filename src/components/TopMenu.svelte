@@ -12,80 +12,105 @@
   }
 </script>
 
-<!-- Sticky header with theme toggle and login -->
+<!-- Unified sticky header -->
 <div class="page-header">
   <div class="header-container">
+    <!-- Home button / Logo -->
     {#if showHome}
       <button
         type="button"
-        class="logo-mobile"
+        class="logo"
         on:click={() => (window.location.href = '/')}
         aria-label="Home">Home</button
       >
     {/if}
 
-    <!-- hamburger for mobile - shown on same level as other controls -->
-    <button class="menu-toggle" aria-expanded={open} aria-label="Toggle menu" on:click={toggle}>
-      {#if open}
-        <!-- close icon -->
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+    <!-- Desktop navigation - horizontal links -->
+    <nav class="desktop-nav" aria-label="Main menu">
+      <a href="/crypto-jobs.html" class="nav-link" class:active={active === 'crypto'}>Crypto Jobs</a
+      >
+      <a href="/ai-jobs.html" class="nav-link" class:active={active === 'ai'}>AI Jobs</a>
+      <a href="/fin-jobs.html" class="nav-link" class:active={active === 'fin'}>FinTech Jobs</a>
+      <span class="nav-separator">|</span>
+      <a href="/crypto-companies.html" class="nav-link" class:active={active === 'crypto-companies'}
+        >Crypto Companies</a
+      >
+      <a href="/ai-companies.html" class="nav-link" class:active={active === 'ai-companies'}
+        >AI Companies</a
+      >
+      <a href="/fin-companies.html" class="nav-link" class:active={active === 'fin-companies'}
+        >FinTech Companies</a
+      >
+      {#if $auth.isAuthenticated}
+        <span class="nav-separator">|</span>
+        <a href="/favorites.html" class="nav-link" class:active={active === 'favorites'}
+          >Favorites</a
         >
-          <path
-            d="M18 6L6 18"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M6 6L18 18"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      {:else}
-        <!-- hamburger icon -->
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M3 6h18"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M3 12h18"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M3 18h18"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
       {/if}
-    </button>
+    </nav>
 
+    <!-- Right side controls -->
     <div class="header-actions">
-      <button class="theme-toggle-header" on:click={theme.toggle} aria-label="Toggle theme">
+      <!-- Mobile hamburger menu -->
+      <button class="menu-toggle" aria-expanded={open} aria-label="Toggle menu" on:click={toggle}>
+        {#if open}
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M18 6L6 18"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M6 6L18 18"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        {:else}
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 6h18"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M3 12h18"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M3 18h18"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        {/if}
+      </button>
+
+      <!-- Theme toggle -->
+      <button class="theme-toggle" on:click={theme.toggle} aria-label="Toggle theme">
         {#if $theme === 'light'}
           <svg
             width="20"
@@ -118,6 +143,8 @@
           </svg>
         {/if}
       </button>
+
+      <!-- Auth button -->
       {#if $auth.isAuthenticated}
         <a href="/account.html" class="auth-btn">My Account</a>
       {:else}
@@ -127,86 +154,37 @@
   </div>
 
   <!-- Mobile dropdown navigation -->
-  <nav class:open class="top-actions" aria-label="Main menu">
-    <div class="nav-row nav-row-jobs">
-      <a href="/crypto-jobs.html" class="new-jobs-btn" class:active={active === 'crypto'}
-        >Crypto Jobs</a
+  <nav class:open class="mobile-nav" aria-label="Main menu">
+    <a href="/crypto-jobs.html" class="mobile-nav-link" class:active={active === 'crypto'}
+      >Crypto Jobs</a
+    >
+    <a href="/ai-jobs.html" class="mobile-nav-link" class:active={active === 'ai'}>AI Jobs</a>
+    <a href="/fin-jobs.html" class="mobile-nav-link" class:active={active === 'fin'}>FinTech Jobs</a
+    >
+    <div class="mobile-nav-divider"></div>
+    <a
+      href="/crypto-companies.html"
+      class="mobile-nav-link"
+      class:active={active === 'crypto-companies'}>Crypto Companies</a
+    >
+    <a href="/ai-companies.html" class="mobile-nav-link" class:active={active === 'ai-companies'}
+      >AI Companies</a
+    >
+    <a href="/fin-companies.html" class="mobile-nav-link" class:active={active === 'fin-companies'}
+      >FinTech Companies</a
+    >
+    {#if $auth.isAuthenticated}
+      <div class="mobile-nav-divider"></div>
+      <a href="/favorites.html" class="mobile-nav-link" class:active={active === 'favorites'}
+        >Favorites</a
       >
-      <a href="/ai-jobs.html" class="new-jobs-btn" class:active={active === 'ai'}>AI Jobs</a>
-      <a href="/fin-jobs.html" class="new-jobs-btn" class:active={active === 'fin'}>FinTech Jobs</a>
-    </div>
-    <div class="nav-row nav-row-companies">
-      <a
-        href="/crypto-companies.html"
-        class="new-jobs-btn"
-        class:active={active === 'crypto-companies'}>Crypto Companies</a
-      >
-      <a href="/ai-companies.html" class="new-jobs-btn" class:active={active === 'ai-companies'}
-        >AI Companies</a
-      >
-      <a href="/fin-companies.html" class="new-jobs-btn" class:active={active === 'fin-companies'}
-        >FinTech Companies</a
-      >
-    </div>
-    <div class="nav-row nav-row-extras">
-      {#if $auth.isAuthenticated}
-        <a href="/favorites.html" class="new-jobs-btn" class:active={active === 'favorites'}
-          >Favorites</a
-        >
-        <a href="/account.html" class="new-jobs-btn btn-account">My Account</a>
-      {/if}
-    </div>
+      <a href="/account.html" class="mobile-nav-link btn-account">My Account</a>
+    {/if}
   </nav>
 </div>
 
-<!-- Reusable top menu: use this component at the top of pages -->
-<div class="top-menu">
-  <div class="top-menu-inner">
-    {#if showHome}
-      <button
-        type="button"
-        class="logo new-jobs-btn"
-        on:click={() => (window.location.href = '/')}
-        aria-label="Home">Home</button
-      >
-    {/if}
-
-    <nav class="top-actions-desktop" aria-label="Main menu">
-      <div class="nav-row nav-row-jobs">
-        <a href="/crypto-jobs.html" class="new-jobs-btn" class:active={active === 'crypto'}
-          >Crypto Jobs</a
-        >
-        <a href="/ai-jobs.html" class="new-jobs-btn" class:active={active === 'ai'}>AI Jobs</a>
-        <a href="/fin-jobs.html" class="new-jobs-btn" class:active={active === 'fin'}
-          >FinTech Jobs</a
-        >
-      </div>
-      <div class="nav-row nav-row-companies">
-        <a
-          href="/crypto-companies.html"
-          class="new-jobs-btn"
-          class:active={active === 'crypto-companies'}>Crypto Companies</a
-        >
-        <a href="/ai-companies.html" class="new-jobs-btn" class:active={active === 'ai-companies'}
-          >AI Companies</a
-        >
-        <a href="/fin-companies.html" class="new-jobs-btn" class:active={active === 'fin-companies'}
-          >FinTech Companies</a
-        >
-      </div>
-      <div class="nav-row nav-row-extras">
-        {#if $auth.isAuthenticated}
-          <a href="/favorites.html" class="new-jobs-btn" class:active={active === 'favorites'}
-            >Favorites</a
-          >
-          <a href="/account.html" class="new-jobs-btn btn-account">My Account</a>
-        {/if}
-      </div>
-    </nav>
-  </div>
-</div>
-
 <style>
+  /* Unified sticky header */
   .page-header {
     position: sticky;
     top: 0;
@@ -214,29 +192,93 @@
     background: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
     padding: 0.75rem 1rem;
-    position: relative;
   }
 
   .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: flex-end;
-    gap: 0.5rem;
+    gap: 1.5rem;
   }
 
-  .logo-mobile {
-    display: none;
+  /* Logo / Home button */
+  .logo {
+    font-weight: 700;
+    color: var(--text-color);
+    font-size: 1.05rem;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
+  .logo:hover {
+    opacity: 0.8;
+  }
+
+  /* Desktop horizontal navigation */
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex: 1;
+  }
+
+  .nav-link {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    transition: background 0.2s;
+  }
+
+  .nav-link:hover {
+    background: var(--hover-bg);
+  }
+
+  .nav-link.active {
+    background: var(--nav-link-active-bg);
+    font-weight: 600;
+  }
+
+  .nav-separator {
+    color: var(--border-color);
+    font-weight: 300;
+  }
+
+  /* Right side controls */
   .header-actions {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 1rem;
+    gap: 0.75rem;
+    flex-shrink: 0;
   }
 
-  .theme-toggle-header {
+  /* Mobile menu toggle */
+  .menu-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-color);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menu-toggle:hover {
+    background: var(--hover-bg);
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
     background: transparent;
     border: none;
     padding: 0.5rem;
@@ -249,18 +291,21 @@
     transition: background 0.2s;
   }
 
-  .theme-toggle-header:hover {
+  .theme-toggle:hover {
     background: var(--hover-bg);
   }
 
+  /* Auth buttons */
   .auth-btn {
     padding: 0.5rem 1rem;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 500;
+    font-size: 0.9rem;
     transition: all 0.2s;
     background: #6b7280;
     color: white;
+    white-space: nowrap;
   }
 
   .auth-btn:hover {
@@ -275,162 +320,98 @@
     background: #d97706;
   }
 
-  .top-menu {
-    width: 100%;
-    background: transparent;
-    border-bottom: 1px solid transparent;
-  }
-  .top-menu-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-  }
-  .logo {
-    font-weight: 700;
-    color: var(--text-color);
-    text-decoration: none;
-    font-size: 1.05rem;
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-  .top-actions-desktop {
-    display: flex;
+  /* Mobile dropdown navigation */
+  .mobile-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     flex-direction: column;
-    gap: 0.5rem;
-    align-items: center;
-  }
-  .top-actions {
-    display: none;
-  }
-  .nav-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-    align-items: center;
-    width: 100%;
-    max-width: 600px;
-  }
-  .nav-row-extras {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 0.25rem;
-  }
-  .top-actions .new-jobs-btn,
-  .logo.new-jobs-btn {
-    padding: 0.5rem 0.85rem;
-    border-radius: 8px;
-    text-decoration: none;
-    color: var(--nav-link-color);
-    font-weight: 600;
-    background: transparent;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    max-height: 0;
+    overflow: hidden;
     transition:
-      background 0.15s,
-      transform 0.12s;
-    border: none;
-    text-align: center;
-    white-space: nowrap;
+      opacity 200ms ease,
+      max-height 200ms ease;
+    z-index: 99;
   }
-  .btn-account {
-    background: #6b7280 !important;
-    color: white !important;
+
+  .mobile-nav.open {
+    opacity: 1;
+    pointer-events: auto;
+    max-height: 600px;
   }
-  .btn-account:hover {
-    background: #4b5563 !important;
-  }
-  .top-actions .new-jobs-btn.active {
-    background: var(--nav-link-active-bg);
-  }
-  .menu-toggle {
-    display: none;
-    background: transparent;
-    border: 1px solid var(--border-color);
-    padding: 0.5rem;
-    border-radius: 6px;
-    cursor: pointer;
+
+  .mobile-nav-link {
+    display: block;
+    padding: 0.75rem 1rem;
     color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: background 0.2s;
   }
-  .menu-toggle:hover {
+
+  .mobile-nav-link:hover {
     background: var(--hover-bg);
   }
 
-  /* Mobile styles */
+  .mobile-nav-link.active {
+    background: var(--nav-link-active-bg);
+    font-weight: 600;
+  }
+
+  .mobile-nav-link.btn-account {
+    background: #6b7280;
+    color: white;
+  }
+
+  .mobile-nav-link.btn-account:hover {
+    background: #4b5563;
+  }
+
+  .mobile-nav-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 0.5rem 0;
+  }
+
+  /* Mobile responsive styles */
+  @media (max-width: 1024px) {
+    .desktop-nav {
+      gap: 0.75rem;
+    }
+
+    .nav-link {
+      font-size: 0.85rem;
+      padding: 0.3rem 0.4rem;
+    }
+  }
+
   @media (max-width: 768px) {
     .header-container {
-      justify-content: space-between;
+      gap: 0.75rem;
     }
 
-    .logo-mobile {
-      display: block;
-      font-weight: 700;
-      color: var(--text-color);
-      text-decoration: none;
-      font-size: 1.05rem;
-      background: transparent;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-    }
-
-    .menu-toggle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .top-menu {
+    /* Hide desktop navigation on mobile */
+    .desktop-nav {
       display: none;
     }
 
-    .top-actions {
+    /* Show mobile menu toggle */
+    .menu-toggle {
+      display: inline-flex;
+    }
+
+    /* Show mobile dropdown */
+    .mobile-nav {
       display: flex;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      left: 0;
-      flex-direction: column;
-      gap: 0.5rem;
-      background: var(--card-bg);
-      border-bottom: 1px solid var(--border-color);
-      padding: 0.75rem 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      opacity: 0;
-      pointer-events: none;
-      max-height: 0;
-      overflow: hidden;
-      transition:
-        opacity 200ms ease,
-        max-height 200ms ease;
-      z-index: 99;
-    }
-    .top-actions.open {
-      opacity: 1;
-      pointer-events: auto;
-      max-height: 600px;
-    }
-    .nav-row {
-      grid-template-columns: 1fr;
-      width: 100%;
-      max-width: 100%;
-    }
-    .nav-row-extras {
-      flex-direction: column;
-      width: 100%;
-    }
-    .top-actions .new-jobs-btn {
-      width: 100%;
-      display: block;
-      padding: 0.6rem 0.75rem;
-      color: var(--text-color);
-      background: transparent;
-      border-radius: 6px;
     }
   }
 </style>
