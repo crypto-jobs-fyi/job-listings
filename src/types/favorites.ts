@@ -4,6 +4,6 @@ export interface FavoriteJob {
   title: string;
   location: string;
   link: string;
-  category: 'crypto' | 'ai' | 'all';
+  category: 'crypto' | 'ai' | 'fin' | 'all';
   addedAt?: number;
 }

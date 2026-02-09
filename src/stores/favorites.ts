@@ -1,8 +1,10 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import type { FavoriteJob } from '../types/favorites';
+import { auth } from './auth';
 
 /**
  * Favorites store - manages all favorite jobs with persistence to localStorage
+ * Note: Favorites are stored locally but require login to sync across devices
  */
 function createFavoritesStore() {
   // Load from localStorage on initialization
@@ -25,6 +27,13 @@ function createFavoritesStore() {
   return {
     subscribe,
     /**
+     * Check if user is authenticated (for UI feedback)
+     */
+    requiresAuth: (): boolean => {
+      const authState = get(auth);
+      return !authState.isAuthenticated;
+    },
+    /**
      * Add or remove a favorite
      */
     toggle: (job: FavoriteJob) => {
@@ -37,6 +46,13 @@ function createFavoritesStore() {
         }
         // Persist to localStorage
         localStorage.setItem('favoriteJobs', JSON.stringify(Array.from(next.values())));
+
+        // Sync to backend if authenticated
+        const authState = get(auth);
+        if (authState.isAuthenticated) {
+          favorites.syncToBackend();
+        }
+
         return next;
       });
     },
@@ -88,6 +104,93 @@ function createFavoritesStore() {
     clear: () => {
       set(new Map());
       localStorage.removeItem('favoriteJobs');
+    },
+    /**
+     * Sync favorites to backend (Redis)
+     */
+    syncToBackend: async () => {
+      const authState = get(auth);
+      if (!authState.isAuthenticated || !authState.user?.email) {
+        console.warn('Cannot sync favorites: user not authenticated');
+        return;
+      }
+
+      try {
+        const currentFavorites = get({ subscribe });
+        const favoritesObject: Record<string, FavoriteJob> = {};
+        currentFavorites.forEach((job, id) => {
+          favoritesObject[id] = job;
+        });
+
+        const response = await fetch('/api/favorites/sync', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: authState.user.email,
+            favorites: favoritesObject,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to sync favorites to backend');
+        }
+
+        await response.json();
+      } catch (error) {
+        console.error('Backend sync error:', error);
+      }
+    },
+    /**
+     * Load favorites from backend (Redis)
+     */
+    loadFromBackend: async () => {
+      const authState = get(auth);
+      if (!authState.isAuthenticated || !authState.user?.email) {
+        console.warn('Cannot load favorites: user not authenticated');
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/api/favorites/sync?email=${encodeURIComponent(authState.user.email)}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to load favorites from backend');
+        }
+
+        const data = await response.json();
+        const favoritesObject =
+          typeof data.favorites === 'string' ? JSON.parse(data.favorites) : data.favorites;
+
+        if (favoritesObject && typeof favoritesObject === 'object') {
+          const favoritesMap = new Map<string, FavoriteJob>();
+          Object.entries(favoritesObject).forEach(([id, job]) => {
+            favoritesMap.set(id, job as FavoriteJob);
+          });
+
+          // Merge with local favorites (keep union of both)
+          const localFavorites = get({ subscribe });
+          localFavorites.forEach((job, id) => {
+            if (!favoritesMap.has(id)) {
+              favoritesMap.set(id, job);
+            }
+          });
+
+          set(favoritesMap);
+          localStorage.setItem('favoriteJobs', JSON.stringify(Array.from(favoritesMap.values())));
+        }
+      } catch (error) {
+        console.error('Failed to load favorites from backend:', error);
+      }
     },
   };
 }

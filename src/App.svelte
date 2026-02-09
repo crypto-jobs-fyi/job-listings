@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
   import { theme } from './stores/theme';
@@ -7,9 +7,17 @@
   import JobsPage from './pages/JobsPage.svelte';
   import CompaniesPage from './pages/CompaniesPage.svelte';
   import FavoritesPage from './pages/FavoritesPage.svelte';
+  import LoginPage from './pages/LoginPage.svelte';
+  import AccountPage from './pages/AccountPage.svelte';
+  import AdminPage from './pages/AdminPage.svelte';
 
   // Accept pageConfig as prop, but also allow window override
-  export let pageConfig = {
+  export let pageConfig: {
+    type: string;
+    category: 'crypto' | 'ai' | 'fin' | 'all';
+    title: string;
+    description: string;
+  } = {
     type: 'home',
     category: 'all',
     title: 'Job Finder',
@@ -48,7 +56,7 @@
     showQR = false;
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: KeyboardEvent) {
     if (e.key === 'Escape') closeQR();
   }
 
@@ -59,6 +67,9 @@
   $: isNewJobsPage = pageConfig.type === 'new-jobs';
   $: isNewJobs = isNewJobsPage;
   $: isFavoritesPage = pageConfig.type === 'favorites';
+  $: isLoginPage = pageConfig.type === 'login';
+  $: isAccountPage = pageConfig.type === 'account';
+  $: isAdminPage = pageConfig.type === 'admin';
 </script>
 
 <svelte:head>
@@ -66,7 +77,7 @@
   <meta name="description" content={pageConfig.description} />
 </svelte:head>
 
-<TopMenu showHome={!isHomePage} />
+<TopMenu showHome={!isHomePage && !isLoginPage} />
 
 <div in:fade={{ duration: 300, delay: 100 }}>
   {#if isHomePage}
@@ -77,6 +88,12 @@
     <CompaniesPage {pageConfig} />
   {:else if isFavoritesPage}
     <FavoritesPage />
+  {:else if isLoginPage}
+    <LoginPage />
+  {:else if isAccountPage}
+    <AccountPage />
+  {:else if isAdminPage}
+    <AdminPage />
   {/if}
 </div>
 

@@ -1,5 +1,7 @@
 <script>
   import { theme } from '../stores/theme';
+  import { auth } from '../stores/auth';
+
   // simple top menu component shared across pages
   export let active = ''; // expected values: 'ai', 'crypto', 'favorites'
   export let showHome = true;
@@ -10,22 +12,81 @@
   }
 </script>
 
-<!-- Reusable top menu: use this component at the top of pages -->
-<div class="top-menu">
-  <div class="top-menu-inner">
+<!-- Sticky header with theme toggle and login -->
+<div class="page-header">
+  <div class="header-container">
     {#if showHome}
       <button
         type="button"
-        class="logo new-jobs-btn"
+        class="logo-mobile"
         on:click={() => (window.location.href = '/')}
         aria-label="Home">Home</button
       >
     {/if}
 
-    <div class="top-menu-right">
-      <button class="theme-toggle" on:click={theme.toggle} aria-label="Toggle theme">
+    <!-- hamburger for mobile - shown on same level as other controls -->
+    <button class="menu-toggle" aria-expanded={open} aria-label="Toggle menu" on:click={toggle}>
+      {#if open}
+        <!-- close icon -->
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18 6L6 18"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M6 6L18 18"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      {:else}
+        <!-- hamburger icon -->
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 6h18"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M3 12h18"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M3 18h18"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      {/if}
+    </button>
+
+    <div class="header-actions">
+      <button class="theme-toggle-header" on:click={theme.toggle} aria-label="Toggle theme">
         {#if $theme === 'light'}
-          <!-- moon icon -->
           <svg
             width="20"
             height="20"
@@ -33,13 +94,10 @@
             fill="none"
             stroke="currentColor"
             stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
           >
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         {:else}
-          <!-- sun icon -->
           <svg
             width="20"
             height="20"
@@ -47,8 +105,6 @@
             fill="none"
             stroke="currentColor"
             stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
           >
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -62,69 +118,60 @@
           </svg>
         {/if}
       </button>
-
-      <!-- hamburger for small screens -->
-      <button class="menu-toggle" aria-expanded={open} aria-label="Toggle menu" on:click={toggle}>
-        {#if open}
-          <!-- close icon -->
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M18 6L6 18"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M6 6L18 18"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        {:else}
-          <!-- hamburger icon -->
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 6h18"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M3 12h18"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M3 18h18"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        {/if}
-      </button>
+      {#if $auth.isAuthenticated}
+        <a href="/account.html" class="auth-btn">My Account</a>
+      {:else}
+        <a href="/login.html" class="auth-btn auth-btn-login">Log In</a>
+      {/if}
     </div>
+  </div>
 
-    <nav class:open class="top-actions" aria-label="Main menu">
+  <!-- Mobile dropdown navigation -->
+  <nav class:open class="top-actions" aria-label="Main menu">
+    <div class="nav-row nav-row-jobs">
+      <a href="/crypto-jobs.html" class="new-jobs-btn" class:active={active === 'crypto'}
+        >Crypto Jobs</a
+      >
+      <a href="/ai-jobs.html" class="new-jobs-btn" class:active={active === 'ai'}>AI Jobs</a>
+      <a href="/fin-jobs.html" class="new-jobs-btn" class:active={active === 'fin'}>FinTech Jobs</a>
+    </div>
+    <div class="nav-row nav-row-companies">
+      <a
+        href="/crypto-companies.html"
+        class="new-jobs-btn"
+        class:active={active === 'crypto-companies'}>Crypto Companies</a
+      >
+      <a href="/ai-companies.html" class="new-jobs-btn" class:active={active === 'ai-companies'}
+        >AI Companies</a
+      >
+      <a href="/fin-companies.html" class="new-jobs-btn" class:active={active === 'fin-companies'}
+        >FinTech Companies</a
+      >
+    </div>
+    <div class="nav-row nav-row-extras">
+      {#if $auth.isAuthenticated}
+        <a href="/favorites.html" class="new-jobs-btn" class:active={active === 'favorites'}
+          >Favorites</a
+        >
+        <a href="/account.html" class="new-jobs-btn btn-account">My Account</a>
+      {/if}
+    </div>
+  </nav>
+</div>
+
+<!-- Reusable top menu: use this component at the top of pages -->
+<div class="top-menu">
+  <div class="top-menu-inner">
+    {#if showHome}
+      <button
+        type="button"
+        class="logo new-jobs-btn"
+        on:click={() => (window.location.href = '/')}
+        aria-label="Home">Home</button
+      >
+    {/if}
+
+    <nav class="top-actions-desktop" aria-label="Main menu">
       <div class="nav-row nav-row-jobs">
         <a href="/crypto-jobs.html" class="new-jobs-btn" class:active={active === 'crypto'}
           >Crypto Jobs</a
@@ -148,15 +195,86 @@
         >
       </div>
       <div class="nav-row nav-row-extras">
-        <a href="/favorites.html" class="new-jobs-btn" class:active={active === 'favorites'}
-          >Favorites</a
-        >
+        {#if $auth.isAuthenticated}
+          <a href="/favorites.html" class="new-jobs-btn" class:active={active === 'favorites'}
+            >Favorites</a
+          >
+          <a href="/account.html" class="new-jobs-btn btn-account">My Account</a>
+        {/if}
       </div>
     </nav>
   </div>
 </div>
 
 <style>
+  .page-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    position: relative;
+  }
+
+  .header-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .logo-mobile {
+    display: none;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
+  .theme-toggle-header {
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .theme-toggle-header:hover {
+    background: var(--hover-bg);
+  }
+
+  .auth-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: #6b7280;
+    color: white;
+  }
+
+  .auth-btn:hover {
+    background: #4b5563;
+  }
+
+  .auth-btn-login {
+    background: #f59e0b;
+  }
+
+  .auth-btn-login:hover {
+    background: #d97706;
+  }
+
   .top-menu {
     width: 100%;
     background: transparent;
@@ -171,26 +289,6 @@
     justify-content: center;
     gap: 1.5rem;
   }
-  .top-menu-right {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .theme-toggle {
-    background: transparent;
-    border: none;
-    padding: 0.4rem;
-    border-radius: 6px;
-    cursor: pointer;
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-  }
-  .theme-toggle:hover {
-    background: var(--hover-bg);
-  }
   .logo {
     font-weight: 700;
     color: var(--text-color);
@@ -201,11 +299,14 @@
     padding: 0;
     cursor: pointer;
   }
-  .top-actions {
+  .top-actions-desktop {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     align-items: center;
+  }
+  .top-actions {
+    display: none;
   }
   .nav-row {
     display: grid;
@@ -237,14 +338,21 @@
     text-align: center;
     white-space: nowrap;
   }
+  .btn-account {
+    background: #6b7280 !important;
+    color: white !important;
+  }
+  .btn-account:hover {
+    background: #4b5563 !important;
+  }
   .top-actions .new-jobs-btn.active {
     background: var(--nav-link-active-bg);
   }
   .menu-toggle {
     display: none;
     background: transparent;
-    border: none;
-    padding: 0.4rem;
+    border: 1px solid var(--border-color);
+    padding: 0.5rem;
     border-radius: 6px;
     cursor: pointer;
     color: var(--text-color);
@@ -255,34 +363,57 @@
 
   /* Mobile styles */
   @media (max-width: 768px) {
+    .header-container {
+      justify-content: space-between;
+    }
+
+    .logo-mobile {
+      display: block;
+      font-weight: 700;
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.05rem;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
     .menu-toggle {
       display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
+
+    .top-menu {
+      display: none;
+    }
+
     .top-actions {
+      display: flex;
       position: absolute;
-      top: 64px;
-      right: 1rem;
-      left: 1rem;
+      top: 100%;
+      right: 0;
+      left: 0;
       flex-direction: column;
       gap: 0.5rem;
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      padding: 0.75rem;
-      border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-      transform-origin: top right;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       opacity: 0;
       pointer-events: none;
-      transform: scale(0.98);
+      max-height: 0;
+      overflow: hidden;
       transition:
-        opacity 140ms ease,
-        transform 140ms ease;
-      z-index: 60;
+        opacity 200ms ease,
+        max-height 200ms ease;
+      z-index: 99;
     }
     .top-actions.open {
       opacity: 1;
       pointer-events: auto;
-      transform: scale(1);
+      max-height: 600px;
     }
     .nav-row {
       grid-template-columns: 1fr;

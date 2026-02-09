@@ -84,6 +84,34 @@ function generatePagesConfig() {
     entryPoint: 'favorites',
   });
 
+  // Login page
+  pages.push({
+    path: '/login.html',
+    title: 'Log In - Job Finder',
+    description: 'Log in to save your favorite job listings and access personalized features.',
+    type: 'login',
+    category: 'all',
+    entryPoint: 'login',
+  });
+
+  // Account page
+  pages.push({
+    path: '/account.html',
+    title: 'My Account - Job Finder',
+    description: 'Manage your account settings and view your saved job preferences.',
+    type: 'account',
+    category: 'all',
+    entryPoint: 'account',
+  });
+  // Admin page
+  pages.push({
+    path: '/admin.html',
+    title: 'Admin Dashboard - Job Finder',
+    description: 'Redis administration dashboard for authorized users only.',
+    type: 'admin',
+    category: 'all',
+    entryPoint: 'admin',
+  });
   return pages;
 }
 

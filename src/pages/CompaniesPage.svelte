@@ -6,7 +6,7 @@
   import type { Company } from '../types/company';
   import type { Job } from '../types/job';
 
-  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' } = {
+  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' | 'all' } = {
     type: 'companies',
     category: 'crypto',
   };
@@ -15,10 +15,11 @@
   let loading = true;
   let error: string | null = null;
 
-  const bannerTitles = {
+  const bannerTitles: Record<'crypto' | 'ai' | 'fin' | 'all', string> = {
     crypto: '🏢 Crypto Companies',
     ai: '🏢 AI Companies',
     fin: '🏢 FinTech Companies',
+    all: '🏢 All Companies',
   };
 
   $: bannerTitle = bannerTitles[pageConfig.category] || 'Companies';

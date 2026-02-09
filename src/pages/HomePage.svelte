@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { jobs } from '../stores/jobs';
   import { CATEGORIES } from '../utils/categories';

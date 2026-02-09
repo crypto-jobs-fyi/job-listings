@@ -69,4 +69,25 @@ export const ROUTES = {
   FIN_COMPANIES: '/fin-companies.html',
   FIN_NEW_JOBS: '/fin-new-jobs.html',
   FAVORITES: '/favorites.html',
+  LOGIN: '/login.html',
+  ACCOUNT: '/account.html',
+  ADMIN: '/admin.html',
 };
+
+// Authentication Configuration
+export const AUTH_CONFIG = {
+  ENDPOINTS: {
+    SEND_CODE: '/api/auth/send-code',
+    VERIFY_CODE: '/api/auth/verify-code',
+  },
+  CODE_LENGTH: 4,
+  CODE_EXPIRATION: 600, // 10 minutes in seconds
+  SESSION_DURATION: {
+    DEFAULT: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+    REMEMBER_ME: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+  },
+  RATE_LIMIT: {
+    MAX_ATTEMPTS: 3,
+    WINDOW: 600, // 10 minutes in seconds
+  },
+} as const;

@@ -6,7 +6,7 @@
   import type { Job } from '../types/job';
   import type { Company } from '../types/company';
 
-  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' } = {
+  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' | 'all' } = {
     type: 'jobs',
     category: 'crypto',
   };

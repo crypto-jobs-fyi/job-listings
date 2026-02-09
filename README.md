@@ -6,9 +6,10 @@ A modern job search platform for **AI** and **Crypto** industries, built with Sv
 
 ## Features
 
-- 🔍 **Multi-page Search**: Browse jobs by industry (Crypto, AI) and type (active, new job listings, companies)
+- 🔍 **Multi-page Search**: Browse jobs by industry (Crypto, AI, FinTech) and type (active, new job listings, companies)
 - 🎯 **Dynamic Categories**: Easily add new job categories with automatic page generation
-- ⭐ **Favorites Management**: Save jobs locally with persistent localStorage
+- 🔐 **Email Authentication**: Secure login with verification codes (Resend + Upstash Redis)
+- ⭐ **Favorites Management**: Save jobs with authentication and persistent storage
 - 🏢 **Company Directory**: Browse companies by industry with logos and links
 - 📱 **Mobile Responsive**: Touch-friendly UI with responsive design
 - ⚡ **Fast Search & Filtering**: Real-time multi-term search (company, location, title)
@@ -41,8 +42,12 @@ Quick references:
 - **TypeScript** (strict mode)
 - **Svelte Stores** for state management
 - **Vitest** for testing
+- **Playwright** for E2E testing
 - **ESLint + Prettier** for code quality
-- **GitHub Raw CDN** for job data (no backend required)
+- **Vercel Serverless Functions** for authentication API
+- **Upstash Redis** for verification code storage and rate limiting
+- **Resend** for email delivery
+- **GitHub Raw CDN** for job data
 
 ## Quick Start
 
@@ -55,7 +60,13 @@ npm install
 ```sh
 npm run dev
 ```
-Opens http://localhost:5173 with live reload.
+Opens http://localhost:3000 with Vercel dev server (includes serverless functions).
+
+For frontend-only development without API functions:
+```sh
+npm run dev:vite
+```
+Opens http://localhost:5173 with Vite dev server.
 
 ### Build & Preview
 ```sh
@@ -77,7 +88,7 @@ src/
 
 ### Pages (Auto-Generated)
 
-8 HTML entry points served from `scripts/generate-entry-points.js`:
+13 HTML entry points served from `scripts/generate-entry-points.js`:
 
 - `/` — Homepage with job categories
 - `/crypto-jobs.html` — All crypto job listings
@@ -86,13 +97,20 @@ src/
 - `/ai-jobs.html` — All AI job listings
 - `/ai-new-jobs.html` — New AI jobs (24-48h)
 - `/ai-companies.html` — AI companies directory
-- `/favorites.html` — Saved favorite jobs
+- `/fin-jobs.html` — All FinTech job listings
+- `/fin-new-jobs.html` — New FinTech jobs (24-48h)
+- `/fin-companies.html` — FinTech companies directory
+- `/favorites.html` — Saved favorite jobs (requires login)
+- `/login.html` — Email authentication login
+- `/account.html` — User account management
 
 ## Commands
 
 ```bash
-npm run dev          # Start dev server
+npm run dev          # Start Vercel dev server (with API functions)
+npm run dev:vite     # Start Vite dev server (frontend only)
 npm run build        # Build for production
+npm run preview      # Preview production build
 npm run lint         # Check for linting errors
 npm run lint:fix     # Auto-fix linting issues
 npm run format       # Format with Prettier

@@ -21,6 +21,9 @@ export default defineConfig({
         './/fin-new-jobs.html',
         './/fin-companies.html',
         './/favorites.html',
+        './/login.html',
+        './/account.html',
+        './/admin.html',
       ],
       output: {
         entryFileNames: '[name].js',
