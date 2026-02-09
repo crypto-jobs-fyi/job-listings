@@ -3,13 +3,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import FavoritesPage from '../FavoritesPage.svelte';
 import { favorites } from '../../stores/favorites';
 
-// Hoist the mock store so it can be used in vi.mock
-const { mockStore } = vi.hoisted(() => {
+// Hoist the mock stores so they can be used in vi.mock
+const { mockStore, mockAuthStore } = vi.hoisted(() => {
   type StoreValue = Map<string, unknown>;
   type Subscriber = (value: StoreValue) => void;
+  type AuthState = { isAuthenticated: boolean; user: { email: string } | null };
+  type AuthSubscriber = (value: AuthState) => void;
 
   const subscribers = new Set<Subscriber>();
   let value: StoreValue = new Map();
+
+  const authSubscribers = new Set<AuthSubscriber>();
+  let authValue: AuthState = { isAuthenticated: true, user: { email: 'test@example.com' } };
 
   return {
     mockStore: {
@@ -23,12 +28,29 @@ const { mockStore } = vi.hoisted(() => {
         subscribers.forEach((run) => run(value));
       },
       clear: vi.fn(),
+      loadFromBackend: vi.fn().mockResolvedValue(undefined),
+    },
+    mockAuthStore: {
+      subscribe: (run: AuthSubscriber) => {
+        run(authValue);
+        authSubscribers.add(run);
+        return () => authSubscribers.delete(run);
+      },
+      set: (val: AuthState) => {
+        authValue = val;
+        authSubscribers.forEach((run) => run(authValue));
+      },
+      checkAuth: vi.fn(),
     },
   };
 });
 
 vi.mock('../../stores/favorites', () => ({
   favorites: mockStore,
+}));
+
+vi.mock('../../stores/auth', () => ({
+  auth: mockAuthStore,
 }));
 
 vi.mock('../../services/companyService', () => ({
@@ -44,6 +66,11 @@ describe('FavoritesPage', () => {
   beforeEach(() => {
     mockStore.set(new Map());
     vi.clearAllMocks();
+    // Mock window.confirm
+    vi.stubGlobal(
+      'confirm',
+      vi.fn(() => true)
+    );
   });
 
   it('renders empty state when no favorites', async () => {
