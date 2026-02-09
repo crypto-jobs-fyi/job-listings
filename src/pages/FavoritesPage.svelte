@@ -94,6 +94,7 @@
       <p>Browse jobs and click the ★ icon to save your favorite opportunities.</p>
       <a href="/crypto-jobs.html" class="cta-link">Browse Crypto Jobs</a>
       <a href="/ai-jobs.html" class="cta-link">Browse AI Jobs</a>
+      <a href="/fin-jobs.html" class="cta-link">Browse FinTech Jobs</a>
     </div>
   {:else}
     <JobBoard
