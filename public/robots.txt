@@ -9,10 +9,10 @@ Allow: /ai-companies.html
 Allow: /fin-jobs.html
 Allow: /fin-new-jobs.html
 Allow: /fin-companies.html
+Disallow: /favorites.html
 Disallow: /login.html
 Disallow: /account.html
 Disallow: /admin.html
-Disallow: /favorites.html
 
 Sitemap: https://www.job-finder.org/sitemap.xml
 
