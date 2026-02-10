@@ -37,7 +37,7 @@ function createFavoritesStore() {
      * Add or remove a favorite
      */
     toggle: (job: FavoriteJob) => {
-      let updatedFavorites: Map<string, FavoriteJob>;
+      let updatedFavorites!: Map<string, FavoriteJob>;
       
       update((map) => {
         const next = new Map(map);
