@@ -50,7 +50,6 @@ test.describe('Favorites Feature', () => {
     await expect(firstJobRow).toBeVisible();
     
     const favoriteBtn = firstJobRow.locator('.favorite-btn');
-    const jobId = await firstJobRow.getAttribute('data-job-id');
     
     // Add to favorites
     await favoriteBtn.click();
