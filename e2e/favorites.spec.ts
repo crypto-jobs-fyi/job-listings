@@ -9,9 +9,17 @@ test.describe('Favorites Feature', () => {
 
   test('favorites page should require authentication', async ({ page }) => {
     await page.goto('/favorites.html');
-    
-    // Should redirect to login
-    await expect(page).toHaveURL(/\/login\.html/);
+
+    // Should show in-page "Login Required" panel rather than redirect
+    await expect(page).toHaveURL(/\/favorites\.html/);
+
+    // Verify the login required message is visible
+    await expect(page.getByText(/login required/i)).toBeVisible();
+
+    // Verify there is a login link pointing to /login.html
+    const loginLink = page.getByRole('link', { name: /login/i });
+    await expect(loginLink).toBeVisible();
+    await expect(loginLink).toHaveAttribute('href', /\/login\.html/);
   });
 
   test('should add a job to favorites (localStorage)', async ({ page }) => {
