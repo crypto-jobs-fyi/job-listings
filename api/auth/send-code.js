@@ -76,11 +76,6 @@ export default async function handler(req, res) {
       `,
     });
 
-    // Development only - log code for testing
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(`DEV: Code sent to ${email}: ${code}`);
-    }
-
     return res.status(200).json({ success: true });
   } catch (error) {
     console.error('Send code error:', error);
