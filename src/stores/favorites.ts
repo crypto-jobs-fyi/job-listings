@@ -37,7 +37,7 @@ function createFavoritesStore() {
      * Add or remove a favorite
      */
     toggle: (job: FavoriteJob) => {
-      let stateSnapshot: Map<string, FavoriteJob> | null = null;
+      let updatedFavorites: Map<string, FavoriteJob>;
       
       update((map) => {
         const next = new Map(map);
@@ -50,16 +50,14 @@ function createFavoritesStore() {
         localStorage.setItem('favoriteJobs', JSON.stringify(Array.from(next.values())));
         
         // Store the updated map to sync after state is committed
-        stateSnapshot = next;
+        updatedFavorites = next;
         return next;
       });
 
       // Sync to backend if authenticated (after state update is committed)
-      if (stateSnapshot) {
-        const authState = get(auth);
-        if (authState.isAuthenticated) {
-          favorites.syncToBackendWithData(stateSnapshot);
-        }
+      const authState = get(auth);
+      if (authState.isAuthenticated) {
+        favorites.syncToBackendWithData(updatedFavorites);
       }
     },
     /**
