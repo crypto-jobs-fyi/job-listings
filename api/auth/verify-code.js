@@ -7,10 +7,11 @@ const redis = new Redis({
   token: process.env.KV_REST_API_TOKEN,
 });
 
-// JWT secret from environment variable
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'default-secret-change-in-production'
-);
+// JWT secret from environment variable (required)
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required but not set');
+}
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 // JWT expiration (7 days for default, 30 days for remember me)
 const JWT_EXPIRATION_DEFAULT = '7d';

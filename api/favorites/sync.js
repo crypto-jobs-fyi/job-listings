@@ -7,10 +7,11 @@ const redis = new Redis({
   token: process.env.KV_REST_API_TOKEN,
 });
 
-// JWT secret from environment variable
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'default-secret-change-in-production'
-);
+// JWT secret from environment variable (required)
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required but not set');
+}
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export default async function handler(req, res) {
   // Set CORS headers
@@ -32,7 +33,9 @@ export default async function handler(req, res) {
   let authenticatedEmail;
   
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, JWT_SECRET, {
+      algorithms: ['HS256']
+    });
     authenticatedEmail = payload.email;
     
     if (!authenticatedEmail || typeof authenticatedEmail !== 'string') {
