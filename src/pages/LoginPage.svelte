@@ -30,10 +30,32 @@
     };
   });
 
+  function isValidRedirectUrl(url: string | null): boolean {
+    if (!url) return false;
+    
+    // Allow relative URLs starting with /
+    if (url.startsWith('/')) {
+      // Prevent protocol-relative URLs like //evil.com
+      if (url.startsWith('//')) return false;
+      return true;
+    }
+    
+    // Allow same-origin absolute URLs
+    try {
+      const urlObj = new URL(url, window.location.href);
+      return urlObj.origin === window.location.origin;
+    } catch {
+      // Invalid URL format
+      return false;
+    }
+  }
+
   function redirectToAccount() {
     const returnUrl = sessionStorage.getItem('auth_return_url');
     sessionStorage.removeItem('auth_return_url');
-    window.location.href = returnUrl || '/account.html';
+    
+    const targetUrl = isValidRedirectUrl(returnUrl) ? returnUrl : '/account.html';
+    window.location.href = targetUrl;
   }
 
   function startCooldown() {
