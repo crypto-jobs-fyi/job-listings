@@ -1,4 +1,5 @@
 import { Redis } from '@upstash/redis';
+import { applyCorsHeaders } from '../config.js';
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
@@ -6,15 +7,8 @@ const redis = new Redis({
 });
 
 export default async function handler(req, res) {
-  // Set CORS headers - restrict to allowed origins only
-  const ALLOWED_ORIGINS = ['https://job-finder.org', 'https://www.job-finder.org', 'http://localhost:3000'];
-  const origin = req.headers.origin;
-  if (ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  // Set CORS headers
+  applyCorsHeaders(req, res, ['GET', 'OPTIONS'], ['Content-Type', 'Authorization']);
 
   // Handle OPTIONS request
   if (req.method === 'OPTIONS') {

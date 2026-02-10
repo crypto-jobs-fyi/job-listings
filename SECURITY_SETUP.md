@@ -9,15 +9,39 @@ This document describes the security improvements made to the Job Finder applica
 
 **What was changed:**
 - Removed `Access-Control-Allow-Origin: *` from all API endpoints
+- Centralized CORS configuration in `api/config.js`:
+  - `ALLOWED_ORIGINS` constant with allowed domains
+  - `applyCorsHeaders()` helper function for consistent CORS application
 - Restricted CORS to only allowed origins:
   - `https://job-finder.org`
   - `https://www.job-finder.org`
   - `http://localhost:3000` (development only)
+- All endpoints now use `applyCorsHeaders(req, res, methods, headers)` for consistency
 
 **Files updated:**
-- `api/admin/redis-data.js`
-- `api/auth/send-code.js`
-- `api/auth/verify-code.js`
+- `api/config.js` (new shared config file with CORS helper)
+- `api/admin/redis-data.js` (uses `applyCorsHeaders`)
+- `api/auth/send-code.js` (uses `applyCorsHeaders`)
+- `api/auth/verify-code.js` (uses `applyCorsHeaders`)
+- `api/favorites/sync.js` (uses `applyCorsHeaders`)
+
+**How to update allowed origins:**
+Edit the `ALLOWED_ORIGINS` constant in `api/config.js` to add/remove domains. All endpoints will automatically inherit the changes.
+
+**Example usage:**
+```javascript
+import { applyCorsHeaders } from '../config.js';
+
+export default async function handler(req, res) {
+  // Apply CORS with specific methods and headers
+  applyCorsHeaders(req, res, ['GET', 'POST'], ['Content-Type']);
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  // ... rest of handler
+}
+```
 
 ---
 

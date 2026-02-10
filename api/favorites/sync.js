@@ -1,4 +1,5 @@
 import { Redis } from '@upstash/redis';
+import { applyCorsHeaders } from '../config.js';
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
@@ -7,10 +8,7 @@ const redis = new Redis({
 
 export default async function handler(req, res) {
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  applyCorsHeaders(req, res, ['GET', 'POST', 'OPTIONS'], ['Content-Type']);
 
   // Handle OPTIONS request
   if (req.method === 'OPTIONS') {
