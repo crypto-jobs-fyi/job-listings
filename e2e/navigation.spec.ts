@@ -76,17 +76,17 @@ test.describe('Navigation and Header', () => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/ai-jobs.html');
     
-    const logoMobile = page.locator('.logo-mobile');
+    const logoButton = page.locator('.logo');
     const menuToggle = page.locator('.menu-toggle');
     const headerActions = page.locator('.header-actions');
     
     // All should be visible on mobile
-    await expect(logoMobile).toBeVisible();
+    await expect(logoButton).toBeVisible();
     await expect(menuToggle).toBeVisible();
     await expect(headerActions).toBeVisible();
     
     // Logo should be clickable and navigate to home
-    await logoMobile.click();
+    await logoButton.click();
     await page.waitForURL('/');
   });
 
