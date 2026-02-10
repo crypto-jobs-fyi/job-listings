@@ -39,8 +39,12 @@
     loading = true;
     error = '';
     try {
-      // Generate admin token from email (admin users have a special token)
-      const adminToken = process.env.PUBLIC_ADMIN_TOKEN || btoa('admin-access');
+      // Get admin token from environment (required for security)
+      const adminToken = process.env.PUBLIC_ADMIN_TOKEN;
+      if (!adminToken) {
+        error = 'Admin token not configured. Please set PUBLIC_ADMIN_TOKEN environment variable.';
+        return;
+      }
 
       const response = await fetch('/api/admin/redis-data', {
         method: 'GET',
