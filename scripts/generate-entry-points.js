@@ -125,7 +125,7 @@ function generateHtmlTemplate(page) {
   const jsPath = `src/${page.entryPoint}.js`;
   
   // Private pages should not be indexed by search engines
-  const robotsContent = (page.type === 'account' || page.type === 'admin') 
+  const robotsContent = (page.type === 'login' || page.type === 'account' || page.type === 'admin') 
     ? 'noindex, nofollow' 
     : 'index, follow';
 
