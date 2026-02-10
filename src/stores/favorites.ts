@@ -37,7 +37,7 @@ function createFavoritesStore() {
      * Add or remove a favorite
      */
     toggle: (job: FavoriteJob) => {
-      let updatedMap: Map<string, FavoriteJob> | null = null;
+      let stateSnapshot: Map<string, FavoriteJob> | null = null;
       
       update((map) => {
         const next = new Map(map);
@@ -50,15 +50,15 @@ function createFavoritesStore() {
         localStorage.setItem('favoriteJobs', JSON.stringify(Array.from(next.values())));
         
         // Store the updated map to sync after state is committed
-        updatedMap = next;
+        stateSnapshot = next;
         return next;
       });
 
       // Sync to backend if authenticated (after state update is committed)
-      if (updatedMap) {
+      if (stateSnapshot) {
         const authState = get(auth);
         if (authState.isAuthenticated) {
-          favorites.syncToBackendWithData(updatedMap);
+          favorites.syncToBackendWithData(stateSnapshot);
         }
       }
     },
@@ -134,38 +134,8 @@ function createFavoritesStore() {
      * Sync favorites to backend (Redis)
      */
     syncToBackend: async () => {
-      const authState = get(auth);
-      if (!authState.isAuthenticated || !authState.user?.email) {
-        console.warn('Cannot sync favorites: user not authenticated');
-        return;
-      }
-
-      try {
-        const currentFavorites = get({ subscribe });
-        const favoritesObject: Record<string, FavoriteJob> = {};
-        currentFavorites.forEach((job, id) => {
-          favoritesObject[id] = job;
-        });
-
-        const response = await fetch('/api/favorites/sync', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: authState.user.email,
-            favorites: favoritesObject,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to sync favorites to backend');
-        }
-
-        await response.json();
-      } catch (error) {
-        console.error('Backend sync error:', error);
-      }
+      const currentFavorites = get({ subscribe });
+      await favorites.syncToBackendWithData(currentFavorites);
     },
     /**
      * Sync specific favorites data to backend (Redis)
