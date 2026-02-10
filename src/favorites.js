@@ -7,8 +7,7 @@ const pageConfig = {
   type: 'favorites',
   category: 'all',
   title: 'Favorites - Your Saved Job Listings',
-  description:
-    'View all your saved favorite job listings in one place. Organize your job search effectively.',
+  description: 'View all your saved favorite job listings in one place. Organize your job search effectively.',
 };
 
 // Store in window for App.svelte to access

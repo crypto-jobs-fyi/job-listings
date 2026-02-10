@@ -123,6 +123,11 @@ const pagesConfig = generatePagesConfig();
 function generateHtmlTemplate(page) {
   const ogImage = 'https://www.job-finder.org/crypto-logo.svg';
   const jsPath = `src/${page.entryPoint}.js`;
+  
+  // Private pages should not be indexed by search engines
+  const robotsContent = (page.type === 'account' || page.type === 'admin') 
+    ? 'noindex, nofollow' 
+    : 'index, follow';
 
   return `<!doctype html>
 <html lang="en">
@@ -141,7 +146,7 @@ function generateHtmlTemplate(page) {
     <meta name="twitter:title" content="${page.title}" />
     <meta name="twitter:description" content="${page.description}" />
     <meta name="twitter:image" content="${ogImage}" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="${robotsContent}" />
     <link rel="canonical" href="https://www.job-finder.org${page.path}" />
   </head>
   <body>
@@ -378,7 +383,28 @@ export const ROUTES = {
   HOME: '/',
 ${routesCode}
   FAVORITES: '/favorites.html',
+  LOGIN: '/login.html',
+  ACCOUNT: '/account.html',
+  ADMIN: '/admin.html',
 };
+
+// Authentication Configuration
+export const AUTH_CONFIG = {
+  ENDPOINTS: {
+    SEND_CODE: '/api/auth/send-code',
+    VERIFY_CODE: '/api/auth/verify-code',
+  },
+  CODE_LENGTH: 4,
+  CODE_EXPIRATION: 600, // 10 minutes in seconds
+  SESSION_DURATION: {
+    DEFAULT: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+    REMEMBER_ME: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+  },
+  RATE_LIMIT: {
+    MAX_ATTEMPTS: 3,
+    WINDOW: 600, // 10 minutes in seconds
+  },
+} as const;
 `;
 
   const constantsPath = path.join(srcDir, 'utils', 'constants.ts');
