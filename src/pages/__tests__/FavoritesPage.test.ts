@@ -57,6 +57,7 @@ vi.mock('../../services/companyService', () => ({
   companyService: {
     fetchCryptoCompanies: vi.fn().mockResolvedValue([]),
     fetchAICompanies: vi.fn().mockResolvedValue([]),
+    fetchFinTechCompanies: vi.fn().mockResolvedValue([]),
   },
   getCompanyUrl: vi.fn(),
   getCompanyLogoUrl: vi.fn(),

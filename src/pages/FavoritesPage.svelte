@@ -33,11 +33,12 @@
     // Load companies
     (async () => {
       try {
-        const [cryptoCompanies, aiCompanies] = await Promise.all([
+        const [cryptoCompanies, aiCompanies, finCompanies] = await Promise.all([
           companyService.fetchCryptoCompanies(),
           companyService.fetchAICompanies(),
+          companyService.fetchFinTechCompanies(),
         ]);
-        companies = [...cryptoCompanies, ...aiCompanies] as Company[];
+        companies = [...cryptoCompanies, ...aiCompanies, ...finCompanies] as Company[];
       } catch (e) {
         error = `Failed to load companies: ${e}`;
         console.error(error, e);
