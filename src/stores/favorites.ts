@@ -37,6 +37,8 @@ function createFavoritesStore() {
      * Add or remove a favorite
      */
     toggle: (job: FavoriteJob) => {
+      let updatedMap: Map<string, FavoriteJob> | null = null;
+      
       update((map) => {
         const next = new Map(map);
         if (next.has(job.id)) {
@@ -46,15 +48,19 @@ function createFavoritesStore() {
         }
         // Persist to localStorage
         localStorage.setItem('favoriteJobs', JSON.stringify(Array.from(next.values())));
-
-        // Sync to backend if authenticated
-        const authState = get(auth);
-        if (authState.isAuthenticated) {
-          favorites.syncToBackend();
-        }
-
+        
+        // Store the updated map to sync after state is committed
+        updatedMap = next;
         return next;
       });
+
+      // Sync to backend if authenticated (after state update is committed)
+      if (updatedMap) {
+        const authState = get(auth);
+        if (authState.isAuthenticated) {
+          favorites.syncToBackendWithData(updatedMap);
+        }
+      }
     },
     /**
      * Add a favorite
@@ -138,6 +144,43 @@ function createFavoritesStore() {
         const currentFavorites = get({ subscribe });
         const favoritesObject: Record<string, FavoriteJob> = {};
         currentFavorites.forEach((job, id) => {
+          favoritesObject[id] = job;
+        });
+
+        const response = await fetch('/api/favorites/sync', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: authState.user.email,
+            favorites: favoritesObject,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to sync favorites to backend');
+        }
+
+        await response.json();
+      } catch (error) {
+        console.error('Backend sync error:', error);
+      }
+    },
+    /**
+     * Sync specific favorites data to backend (Redis)
+     * Used when we have the updated state and don't want to read stale data
+     */
+    syncToBackendWithData: async (favoritesMap: Map<string, FavoriteJob>) => {
+      const authState = get(auth);
+      if (!authState.isAuthenticated || !authState.user?.email) {
+        console.warn('Cannot sync favorites: user not authenticated');
+        return;
+      }
+
+      try {
+        const favoritesObject: Record<string, FavoriteJob> = {};
+        favoritesMap.forEach((job, id) => {
           favoritesObject[id] = job;
         });
 
