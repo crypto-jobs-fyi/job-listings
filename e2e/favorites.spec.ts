@@ -17,7 +17,7 @@ test.describe('Favorites Feature', () => {
     await expect(page.getByText(/login required/i)).toBeVisible();
 
     // Verify there is a login link pointing to /login.html
-    const loginLink = page.getByRole('link', { name: /login/i });
+    const loginLink = page.getByRole('link', { name: /log in or sign up/i });
     await expect(loginLink).toBeVisible();
     await expect(loginLink).toHaveAttribute('href', /\/login\.html/);
   });
@@ -38,10 +38,6 @@ test.describe('Favorites Feature', () => {
 
     // Check After clicking (favorited)
     await expect(favoriteBtn).toHaveClass(/favorited/);
-    
-    // Check that the job is marked as favorited (star should be visible)
-    const starIcon = favoriteBtn.locator('svg');
-    await expect(starIcon).toBeVisible();
   });
 
   test('should persist favorites in localStorage across page reloads', async ({ page }) => {

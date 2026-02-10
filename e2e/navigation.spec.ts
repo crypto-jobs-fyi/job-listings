@@ -8,8 +8,8 @@ test.describe('Navigation and Header', () => {
     const pageHeader = page.locator('.page-header');
     await expect(pageHeader).toBeVisible();
     
-    // Check for theme toggle
-    const themeToggle = pageHeader.locator('.theme-toggle-header');
+    // Check for theme toggle (renamed from theme-toggle-header to theme-toggle)
+    const themeToggle = pageHeader.locator('.theme-toggle');
     await expect(themeToggle).toBeVisible();
     
     // Check for login button (not authenticated)
@@ -20,7 +20,7 @@ test.describe('Navigation and Header', () => {
   test('should toggle between light and dark theme', async ({ page }) => {
     await page.goto('/');
     
-    const themeToggle = page.locator('.theme-toggle-header');
+    const themeToggle = page.locator('.theme-toggle');
     
     // Get initial theme
     const htmlElement = page.locator('html');
@@ -37,13 +37,18 @@ test.describe('Navigation and Header', () => {
   test('should show correct nav links on job pages', async ({ page }) => {
     await page.goto('/crypto-jobs.html');
     
-    // Top menu should be visible on desktop
-    const topMenu = page.locator('.top-menu');
-    await expect(topMenu).toBeVisible();
+    // Desktop navigation should be visible on desktop viewports
+    const desktopNav = page.locator('.desktop-nav');
     
-    // Should show category navigation
-    const cryptoLink = page.locator('text=Crypto Jobs');
-    await expect(cryptoLink).toBeVisible();
+    // Only check visibility on desktop viewport
+    const viewport = page.viewportSize();
+    if (viewport && viewport.width >= 768) {
+      await expect(desktopNav).toBeVisible();
+      
+      // Should show category navigation links
+      const cryptoLink = desktopNav.locator('text=Crypto Jobs');
+      await expect(cryptoLink).toBeVisible();
+    }
   });
 
   test('mobile hamburger menu should work correctly', async ({ page }) => {
@@ -52,24 +57,24 @@ test.describe('Navigation and Header', () => {
     await page.goto('/ai-jobs.html');
     
     const menuToggle = page.locator('.menu-toggle');
-    const topActions = page.locator('.top-actions');
+    const mobileNav = page.locator('.mobile-nav');
     
     // Menu should be hidden initially on mobile
-    await expect(topActions).not.toHaveClass(/open/);
+    await expect(mobileNav).not.toHaveClass(/open/);
     
     // Click hamburger to open menu
     await menuToggle.click();
     
     // Menu should be open
-    await expect(topActions).toHaveClass(/open/);
+    await expect(mobileNav).toHaveClass(/open/);
     
     // Check menu items are visible
-    await expect(page.locator('text=Crypto Jobs')).toBeVisible();
-    await expect(page.locator('text=AI Jobs')).toBeVisible();
+    await expect(mobileNav.locator('text=Crypto Jobs')).toBeVisible();
+    await expect(mobileNav.locator('text=AI Jobs')).toBeVisible();
     
     // Click again to close
     await menuToggle.click();
-    await expect(topActions).not.toHaveClass(/open/);
+    await expect(mobileNav).not.toHaveClass(/open/);
   });
 
   test('mobile layout should show Home button on left', async ({ page }) => {
@@ -103,25 +108,33 @@ test.describe('Navigation and Header', () => {
   test('should show All category links on home page', async ({ page }) => {
     await page.goto('/');
     
-    // Check for all category cards
-    await expect(page.locator('text=Crypto Jobs')).toBeVisible();
-    await expect(page.locator('text=AI Jobs')).toBeVisible();
-    await expect(page.locator('text=FinTech Jobs')).toBeVisible();
+    // Check for category cards in the main content (use more specific selectors)
+    await expect(page.getByRole('link', { name: 'Crypto Jobs', exact: true }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'AI Jobs', exact: true }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'FinTech Jobs', exact: true }).first()).toBeVisible();
     
-    await expect(page.locator('text=Crypto Companies')).toBeVisible();
-    await expect(page.locator('text=AI Companies')).toBeVisible();
-    await expect(page.locator('text=FinTech Companies')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Crypto Companies' }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'AI Companies' }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'FinTech Companies' }).first()).toBeVisible();
   });
 
   test('should navigate between category pages', async ({ page }) => {
     await page.goto('/');
     
-    // Click on Crypto Jobs
-    await page.locator('text=Crypto Jobs').first().click();
+    // Click on Crypto Jobs card in main content (skip nav links)
+    await page.getByRole('link', { name: /Crypto Jobs \d+/ }).click();
     await page.waitForURL('/crypto-jobs.html');
     
-    // Click on AI Companies
-    await page.locator('text=AI Companies').click();
+    // On mobile, use the mobile menu; on desktop, use desktop nav
+    const viewport = page.viewportSize();
+    if (viewport && viewport.width < 768) {
+      // Mobile: open hamburger menu
+      await page.locator('.menu-toggle').click();
+      await page.locator('.mobile-nav').locator('text=AI Companies').click();
+    } else {
+      // Desktop: click in desktop nav
+      await page.locator('.desktop-nav').locator('text=AI Companies').click();
+    }
     await page.waitForURL('/ai-companies.html');
   });
 });

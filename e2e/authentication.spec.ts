@@ -25,11 +25,17 @@ test.describe('Authentication Flow', () => {
     await expect(page).toHaveURL(/\/login\.html/);
   });
 
-  test('should redirect to login when accessing favorites page without auth', async ({ page }) => {
+  test('favorites page should show login required message when not authenticated', async ({ page }) => {
     await page.goto('/favorites.html');
     
-    // Should redirect to login with return URL
-    await expect(page).toHaveURL(/\/login\.html/);
+    // Should NOT redirect, but stay on favorites page
+    await expect(page).toHaveURL(/\/favorites\.html/);
+    
+    // Should show login required message
+    await expect(page.getByText(/login required/i)).toBeVisible();
+    
+    // Should show login link
+    await expect(page.getByRole('link', { name: /log in or sign up/i })).toBeVisible();
   });
 
   test('should display error for invalid email', async ({ page }) => {
@@ -42,9 +48,10 @@ test.describe('Authentication Flow', () => {
     await emailInput.fill('invalid-email');
     await sendCodeBtn.click();
     
-    // Should show error
-    const errorMsg = page.locator('text=/invalid|error/i');
-    await expect(errorMsg).toBeVisible();
+    // HTML5 validation should prevent form submission
+    // or error message should appear
+    const isInvalid = await emailInput.evaluate((el: HTMLInputElement) => !el.validity.valid);
+    expect(isInvalid).toBe(true);
   });
 
   test('should show rate limit message after multiple attempts', async ({ page }) => {
