@@ -111,13 +111,13 @@ function createFavoritesStore() {
 
       // Also clear from backend if authenticated
       const authState = get(auth);
-      if (authState.isAuthenticated && authState.user?.email) {
+      if (authState.isAuthenticated && authState.user?.email && authState.user?.token) {
         try {
           await fetch('/api/favorites/sync', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${authState.user.email}`,
+              'Authorization': `Bearer ${authState.user.token}`,
             },
             body: JSON.stringify({
               email: authState.user.email,
@@ -142,7 +142,7 @@ function createFavoritesStore() {
      */
     syncToBackendWithData: async (favoritesMap: Map<string, FavoriteJob>) => {
       const authState = get(auth);
-      if (!authState.isAuthenticated || !authState.user?.email) {
+      if (!authState.isAuthenticated || !authState.user?.email || !authState.user?.token) {
         console.warn('Cannot sync favorites: user not authenticated');
         return;
       }
@@ -157,7 +157,7 @@ function createFavoritesStore() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authState.user.email}`,
+            'Authorization': `Bearer ${authState.user.token}`,
           },
           body: JSON.stringify({
             email: authState.user.email,
@@ -179,7 +179,7 @@ function createFavoritesStore() {
      */
     loadFromBackend: async () => {
       const authState = get(auth);
-      if (!authState.isAuthenticated || !authState.user?.email) {
+      if (!authState.isAuthenticated || !authState.user?.email || !authState.user?.token) {
         console.warn('Cannot load favorites: user not authenticated');
         return;
       }
@@ -191,7 +191,7 @@ function createFavoritesStore() {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${authState.user.email}`,
+              'Authorization': `Bearer ${authState.user.token}`,
             },
           }
         );

@@ -52,7 +52,7 @@ export async function sendVerificationCode(email: string): Promise<LoginResponse
 /**
  * Verifies the 4-digit code entered by the user
  */
-export async function verifyCode(email: string, code: string): Promise<LoginResponse> {
+export async function verifyCode(email: string, code: string, rememberMe: boolean = false): Promise<LoginResponse> {
   if (!email || !code) {
     return { success: false, error: 'Email and code are required' };
   }
@@ -71,7 +71,7 @@ export async function verifyCode(email: string, code: string): Promise<LoginResp
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, code } as VerifyCodeRequest),
+      body: JSON.stringify({ email, code, rememberMe } as VerifyCodeRequest),
     });
 
     const data = await response.json();
@@ -85,7 +85,12 @@ export async function verifyCode(email: string, code: string): Promise<LoginResp
       sessionStorage.removeItem('pending_verification_email');
     }
 
-    return { success: true, email: data.email };
+    return { 
+      success: true, 
+      email: data.email,
+      token: data.token,
+      rememberMe: data.rememberMe
+    };
   } catch (error) {
     console.error('Verify code error:', error);
     return { success: false, error: 'Network error. Please try again.' };
