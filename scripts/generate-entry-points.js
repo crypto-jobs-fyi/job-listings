@@ -194,8 +194,10 @@ function generateSitemap(pages) {
   const today = new Date().toISOString().split('T')[0];
 
   const urls = pages.map(page => {
-    // Skip favorites page in sitemap
-    if (page.type === 'favorites') return '';
+    // Skip pages with noindex robots meta tag
+    if (page.type === 'favorites' || page.type === 'login' || page.type === 'account' || page.type === 'admin') {
+      return '';
+    }
     
     const priority = page.path === '/index.html' ? '1.0' : '0.8';
     const changefreq = page.type === 'new-jobs' ? 'daily' : 'weekly';
@@ -222,16 +224,31 @@ function generateRobotsTxt(pages) {
   const baseUrl = 'https://www.job-finder.org';
   
   const allowRules = pages
-    .filter(page => page.type !== 'favorites')
+    .filter(page => 
+      page.type !== 'favorites' && 
+      page.type !== 'login' && 
+      page.type !== 'account' && 
+      page.type !== 'admin'
+    )
     .map(page => {
       const urlPath = page.path === '/index.html' ? '/' : page.path;
       return `Allow: ${urlPath}`;
     })
     .join('\n');
+  
+  const disallowRules = pages
+    .filter(page => 
+      page.type === 'favorites' || 
+      page.type === 'login' || 
+      page.type === 'account' || 
+      page.type === 'admin'
+    )
+    .map(page => `Disallow: ${page.path}`)
+    .join('\n');
 
   return `User-agent: *
 ${allowRules}
-Disallow: /favorites.html
+${disallowRules}
 
 Sitemap: ${baseUrl}/sitemap.xml
 
