@@ -10,7 +10,9 @@
   let isAdmin = false;
 
   onMount(() => {
-    // Check if user is authenticated
+    // Check if user is authenticated (validates current session state from storage)
+    auth.checkAuth();
+
     if (!$auth.isAuthenticated) {
       window.location.href = '/login.html?return=/account.html';
       return;
