@@ -117,6 +117,7 @@ function createFavoritesStore() {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authState.user.email}`,
             },
             body: JSON.stringify({
               email: authState.user.email,
@@ -156,6 +157,7 @@ function createFavoritesStore() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authState.user.email}`,
           },
           body: JSON.stringify({
             email: authState.user.email,
@@ -189,6 +191,7 @@ function createFavoritesStore() {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authState.user.email}`,
             },
           }
         );
