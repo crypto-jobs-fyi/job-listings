@@ -60,9 +60,8 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Favorites sync error:', error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       error: 'Failed to sync favorites',
-      message: error.message,
     });
   }
 }
