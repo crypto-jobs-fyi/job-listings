@@ -1,4 +1,4 @@
-export type JobCategory = 'crypto' | 'ai';
+export type JobCategory = 'crypto' | 'ai' | 'fin' | 'all';
 
 export interface Job {
   id?: string;

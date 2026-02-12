@@ -84,6 +84,34 @@ function generatePagesConfig() {
     entryPoint: 'favorites',
   });
 
+  // Login page
+  pages.push({
+    path: '/login.html',
+    title: 'Log In - Job Finder',
+    description: 'Log in to save your favorite job listings and access personalized features.',
+    type: 'login',
+    category: 'all',
+    entryPoint: 'login',
+  });
+
+  // Account page
+  pages.push({
+    path: '/account.html',
+    title: 'My Account - Job Finder',
+    description: 'Manage your account settings and view your saved job preferences.',
+    type: 'account',
+    category: 'all',
+    entryPoint: 'account',
+  });
+  // Admin page
+  pages.push({
+    path: '/admin.html',
+    title: 'Admin Dashboard - Job Finder',
+    description: 'Redis administration dashboard for authorized users only.',
+    type: 'admin',
+    category: 'all',
+    entryPoint: 'admin',
+  });
   return pages;
 }
 
@@ -95,6 +123,11 @@ const pagesConfig = generatePagesConfig();
 function generateHtmlTemplate(page) {
   const ogImage = 'https://www.job-finder.org/crypto-logo.svg';
   const jsPath = `src/${page.entryPoint}.js`;
+  
+  // Private pages should not be indexed by search engines
+  const robotsContent = (page.type === 'login' || page.type === 'account' || page.type === 'admin') 
+    ? 'noindex, nofollow' 
+    : 'index, follow';
 
   return `<!doctype html>
 <html lang="en">
@@ -113,7 +146,7 @@ function generateHtmlTemplate(page) {
     <meta name="twitter:title" content="${page.title}" />
     <meta name="twitter:description" content="${page.description}" />
     <meta name="twitter:image" content="${ogImage}" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="${robotsContent}" />
     <link rel="canonical" href="https://www.job-finder.org${page.path}" />
   </head>
   <body>
@@ -161,8 +194,10 @@ function generateSitemap(pages) {
   const today = new Date().toISOString().split('T')[0];
 
   const urls = pages.map(page => {
-    // Skip favorites page in sitemap
-    if (page.type === 'favorites') return '';
+    // Skip pages with noindex robots meta tag
+    if (page.type === 'favorites' || page.type === 'login' || page.type === 'account' || page.type === 'admin') {
+      return '';
+    }
     
     const priority = page.path === '/index.html' ? '1.0' : '0.8';
     const changefreq = page.type === 'new-jobs' ? 'daily' : 'weekly';
@@ -189,16 +224,31 @@ function generateRobotsTxt(pages) {
   const baseUrl = 'https://www.job-finder.org';
   
   const allowRules = pages
-    .filter(page => page.type !== 'favorites')
+    .filter(page => 
+      page.type !== 'favorites' && 
+      page.type !== 'login' && 
+      page.type !== 'account' && 
+      page.type !== 'admin'
+    )
     .map(page => {
       const urlPath = page.path === '/index.html' ? '/' : page.path;
       return `Allow: ${urlPath}`;
     })
     .join('\n');
+  
+  const disallowRules = pages
+    .filter(page => 
+      page.type === 'favorites' || 
+      page.type === 'login' || 
+      page.type === 'account' || 
+      page.type === 'admin'
+    )
+    .map(page => `Disallow: ${page.path}`)
+    .join('\n');
 
   return `User-agent: *
 ${allowRules}
-Disallow: /favorites.html
+${disallowRules}
 
 Sitemap: ${baseUrl}/sitemap.xml
 
@@ -350,7 +400,28 @@ export const ROUTES = {
   HOME: '/',
 ${routesCode}
   FAVORITES: '/favorites.html',
+  LOGIN: '/login.html',
+  ACCOUNT: '/account.html',
+  ADMIN: '/admin.html',
 };
+
+// Authentication Configuration
+export const AUTH_CONFIG = {
+  ENDPOINTS: {
+    SEND_CODE: '/api/auth/send-code',
+    VERIFY_CODE: '/api/auth/verify-code',
+  },
+  CODE_LENGTH: 4,
+  CODE_EXPIRATION: 600, // 10 minutes in seconds
+  SESSION_DURATION: {
+    DEFAULT: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+    REMEMBER_ME: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+  },
+  RATE_LIMIT: {
+    MAX_ATTEMPTS: 3,
+    WINDOW: 600, // 10 minutes in seconds
+  },
+} as const;
 `;
 
   const constantsPath = path.join(srcDir, 'utils', 'constants.ts');

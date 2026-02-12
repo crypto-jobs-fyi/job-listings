@@ -4,10 +4,10 @@ import './app.css';
 
 // Import the page configuration
 const pageConfig = {
-  type: 'favorites',
+  type: 'account',
   category: 'all',
-  title: 'Favorites - Your Saved Job Listings',
-  description: 'View all your saved favorite job listings in one place. Organize your job search effectively.',
+  title: 'My Account - Job Finder',
+  description: 'Manage your account settings and view your saved job preferences.',
 };
 
 // Store in window for App.svelte to access

@@ -31,6 +31,18 @@ export const companyService = {
   },
 
   /**
+   * Fetch FinTech companies
+   */
+  fetchFinTechCompanies: async (): Promise<Company[]> => {
+    try {
+      return await fetchJSON<Company[]>(ENDPOINTS.FIN_COMPANIES);
+    } catch (error) {
+      console.error('Error fetching FinTech companies:', error);
+      throw error;
+    }
+  },
+
+  /**
    * Get company logo URL from a list of companies
    */
   getCompanyLogoUrl: (companies: Company[], name: string): string | null => {
@@ -65,6 +77,10 @@ export async function fetchCryptoCompanies(): Promise<Company[]> {
 
 export async function fetchAICompanies(): Promise<Company[]> {
   return companyService.fetchAICompanies();
+}
+
+export async function fetchFinTechCompanies(): Promise<Company[]> {
+  return companyService.fetchFinTechCompanies();
 }
 
 export function getCompanyLogoUrl(companies: Company[], name: string): string | null {

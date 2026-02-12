@@ -4,10 +4,10 @@ import './app.css';
 
 // Import the page configuration
 const pageConfig = {
-  type: 'favorites',
+  type: 'admin',
   category: 'all',
-  title: 'Favorites - Your Saved Job Listings',
-  description: 'View all your saved favorite job listings in one place. Organize your job search effectively.',
+  title: 'Admin Dashboard - Job Finder',
+  description: 'Redis administration dashboard for authorized users only.',
 };
 
 // Store in window for App.svelte to access

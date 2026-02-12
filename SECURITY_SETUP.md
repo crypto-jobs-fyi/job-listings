@@ -1,0 +1,244 @@
+# Security Setup Guide
+
+## Critical Security Fixes Applied
+
+This document describes the security improvements made to the Job Finder application and the required environment configuration.
+
+### 1. CORS Restrictions ✅
+**Status:** FIXED
+
+**What was changed:**
+- Removed `Access-Control-Allow-Origin: *` from all API endpoints
+- Centralized CORS configuration in `api/config.js`:
+  - `ALLOWED_ORIGINS` constant with allowed domains
+  - `applyCorsHeaders()` helper function for consistent CORS application
+- Restricted CORS to only allowed origins:
+  - `https://job-finder.org`
+  - `https://www.job-finder.org`
+  - `http://localhost:3000` (development only)
+- All endpoints now use `applyCorsHeaders(req, res, methods, headers)` for consistency
+
+**Files updated:**
+- `api/config.js` (new shared config file with CORS helper)
+- `api/admin/redis-data.js` (uses `applyCorsHeaders`)
+- `api/auth/send-code.js` (uses `applyCorsHeaders`)
+- `api/auth/verify-code.js` (uses `applyCorsHeaders`)
+- `api/favorites/sync.js` (uses `applyCorsHeaders`)
+
+**How to update allowed origins:**
+Edit the `ALLOWED_ORIGINS` constant in `api/config.js` to add/remove domains. All endpoints will automatically inherit the changes.
+
+**Example usage:**
+```javascript
+import { applyCorsHeaders } from '../config.js';
+
+export default async function handler(req, res) {
+  // Apply CORS with specific methods and headers
+  applyCorsHeaders(req, res, ['GET', 'POST'], ['Content-Type']);
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  // ... rest of handler
+}
+```
+
+---
+
+### 2. Admin Endpoint Authentication ✅
+**Status:** FIXED
+
+**What was changed:**
+- Added Bearer token authentication to `/api/admin/redis-data`
+- Blocks all requests without valid `ADMIN_AUTH_TOKEN`
+- Returns 403 Unauthorized for invalid tokens
+
+**Required Environment Variable:**
+```bash
+ADMIN_AUTH_TOKEN=your-secure-random-token-here
+```
+
+**How to generate a secure token:**
+```bash
+# On macOS/Linux
+openssl rand -base64 32
+
+# Or use Node.js
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
+
+**Files updated:**
+- `api/admin/redis-data.js`
+- `src/pages/AdminPage.svelte`
+
+---
+
+### 3. Error Message Sanitization ✅
+**Status:** FIXED
+
+**What was changed:**
+- Removed `error.message` from error responses (exposed implementation details)
+- Returns generic "Internal server error" message to clients
+- Full error details logged server-side only
+
+**Files updated:**
+- `api/admin/redis-data.js`
+
+---
+
+### 4. JWT Token Authentication ✅
+**Status:** FIXED
+
+**What was changed:**
+- Replaced forgeable email-based authentication with JWT tokens
+- Server now generates signed JWT tokens after successful email verification
+- All API requests require valid JWT token in Authorization header
+- Tokens expire in 7 days (default) or 30 days (with "remember me")
+
+**Required Environment Variable:**
+```bash
+JWT_SECRET=your-secure-random-secret-here
+```
+
+**How to generate a secure secret:**
+```bash
+# On macOS/Linux
+openssl rand -base64 64
+
+# Or use Node.js
+node -e "console.log(require('crypto').randomBytes(64).toString('base64'))"
+```
+
+**Files updated:**
+- `api/auth/verify-code.js` (generates JWT tokens)
+- `api/favorites/sync.js` (verifies JWT tokens)
+- `src/stores/auth.ts` (stores JWT tokens)
+- `src/stores/favorites.ts` (sends JWT tokens)
+- `src/services/authService.ts` (handles JWT responses)
+- `src/types/user.ts` (includes token in User type)
+
+**Security benefits:**
+- Prevents unauthorized access to user favorites
+- Tokens are cryptographically signed and cannot be forged
+- Server-side validation ensures only authenticated users can access their data
+- No trust in client-provided email addresses
+
+---
+
+### 5. Debug Logging Protection ✅
+**Status:** FIXED
+
+**What was changed:**
+- Removed logging of verification codes in debug output
+- Kept only email address in development logs
+- Prevents code exposure via log aggregation services
+
+**Files updated:**
+- `api/auth/verify-code.js`
+
+---
+
+## Environment Configuration
+
+### Required for Production
+```bash
+# Upstash Redis (full access token)
+KV_REST_API_URL=https://...
+KV_REST_API_TOKEN=AayoZQ...
+
+# Email service
+RESEND_API_KEY=re_...
+
+# JWT authentication secret (required for user auth)
+JWT_SECRET=<secure-random-secret-64-bytes>
+
+# Admin authentication
+ADMIN_AUTH_TOKEN=<secure-random-token>
+
+# Public admin token (optional, for development)
+PUBLIC_ADMIN_TOKEN=<same-as-ADMIN_AUTH_TOKEN>
+```
+
+### Vercel Deployment
+1. Set all environment variables in Vercel project settings
+2. Ensure ALLOWED_ORIGINS includes your production domain
+3. Test admin access: `curl -H "Authorization: Bearer $ADMIN_AUTH_TOKEN" https://your-domain.com/api/admin/redis-data`
+
+---
+
+## Testing Security
+
+### 1. Test CORS Restriction
+```bash
+# This should fail (wrong origin)
+curl -X GET http://evil.com/api/admin/redis-data \
+  -H "Origin: http://evil.com"
+
+# This should succeed (correct origin)
+curl -X GET https://job-finder.org/api/admin/redis-data \
+  -H "Origin: https://job-finder.org" \
+  -H "Authorization: Bearer $ADMIN_AUTH_TOKEN"
+```
+
+### 2. Test Admin Authentication
+```bash
+# This should fail (no token)
+curl -X GET https://job-finder.org/api/admin/redis-data
+
+# This should fail (wrong token)
+curl -X GET https://job-finder.org/api/admin/redis-data \
+  -H "Authorization: Bearer wrong-token"
+
+# This should succeed (correct token)
+curl -X GET https://job-finder.org/api/admin/redis-data \
+  -H "Authorization: Bearer $ADMIN_AUTH_TOKEN"
+```
+
+### 3. Test Error Messages
+```bash
+# Should return generic error only
+curl -X GET https://job-finder.org/api/admin/redis-data \
+  -H "Authorization: Bearer valid-but-broken-request" 2>&1 | grep -i message
+# Should NOT expose implementation details
+```
+
+---
+
+## Future Security Recommendations
+
+### High Priority
+- [ ] Rate limiting on auth endpoints (already exists for send-code, add for verify-code)
+- [ ] HTTPS enforcement (redirect HTTP to HTTPS)
+- [ ] Move JWT tokens to secure HTTP-only cookies (currently in localStorage)
+- [ ] Add request signing (prevent request replay attacks)
+
+### Medium Priority
+- [ ] Implement WebAuthn/2FA for admin access
+- [ ] Add audit logging for admin operations
+- [ ] Implement IP whitelisting for admin endpoints
+- [ ] Add request body size limits
+
+### Low Priority
+- [ ] Implement Content Security Policy (CSP) headers
+- [ ] Add security headers (X-Frame-Options, X-Content-Type-Options, etc.)
+- [ ] Implement subdomain isolation
+
+---
+
+## Security Checklist
+
+- [x] CORS properly restricted
+- [x] Admin endpoint authenticated
+- [x] Error messages sanitized
+- [x] Debug logging protected
+- [x] JWT token authentication implemented
+- [x] Favorites sync endpoint properly authenticated
+- [ ] Email regex validation improved (planned)
+- [ ] JWT tokens moved to HTTP-only cookies (planned)
+- [ ] Rate limiting on verify endpoint (planned)
+
+---
+
+## Support
+
+For security concerns, contact: yury.dubinin@gmail.com

@@ -7,8 +7,7 @@ const pageConfig = {
   type: 'companies',
   category: 'ai',
   title: 'AI Companies - Find Top Organizations',
-  description:
-    'Explore leading ai companies hiring. Browse by company size, location, and specialization.',
+  description: 'Explore leading ai companies hiring. Browse by company size, location, and specialization.',
 };
 
 // Store in window for App.svelte to access

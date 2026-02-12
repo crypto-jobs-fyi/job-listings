@@ -7,8 +7,7 @@ const pageConfig = {
   type: 'companies',
   category: 'crypto',
   title: 'Crypto Companies - Find Top Organizations',
-  description:
-    'Explore leading crypto companies hiring. Browse by company size, location, and specialization.',
+  description: 'Explore leading crypto companies hiring. Browse by company size, location, and specialization.',
 };
 
 // Store in window for App.svelte to access

@@ -6,7 +6,7 @@
   import type { Company } from '../types/company';
   import type { Job } from '../types/job';
 
-  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' } = {
+  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' | 'all' } = {
     type: 'companies',
     category: 'crypto',
   };
@@ -15,10 +15,11 @@
   let loading = true;
   let error: string | null = null;
 
-  const bannerTitles = {
+  const bannerTitles: Record<'crypto' | 'ai' | 'fin' | 'all', string> = {
     crypto: '🏢 Crypto Companies',
     ai: '🏢 AI Companies',
     fin: '🏢 FinTech Companies',
+    all: '🏢 All Companies',
   };
 
   $: bannerTitle = bannerTitles[pageConfig.category] || 'Companies';
@@ -110,25 +111,34 @@
   .loading,
   .error {
     text-align: center;
-    padding: 2rem;
-    margin: 2rem auto;
+    padding: 4rem 2rem;
+    margin: 0 auto;
     max-width: 600px;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .loading {
-    display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  .loading p {
+    color: var(--secondary-text);
+    font-size: 1rem;
+    font-weight: 500;
   }
 
   .spinner {
-    border: 4px solid var(--header-bg);
-    border-top: 4px solid var(--link-color);
+    border: 5px solid rgba(59, 130, 246, 0.1);
+    border-top: 5px solid #3b82f6;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
+    width: 56px;
+    height: 56px;
+    animation: spin 0.8s linear infinite;
   }
 
   @keyframes spin {
@@ -137,6 +147,17 @@
     }
     100% {
       transform: rotate(360deg);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
