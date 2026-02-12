@@ -240,7 +240,7 @@ The project uses **Playwright** for E2E testing to ensure critical user flows wo
 
 Automated workflows are defined in `.github/workflows/ci.yml` using GitHub Actions.
 - **Trigger**: On `push` to main and `pull_request`.
-- **Environment**: Node.js v22 (LTS).
+- **Environment**: Node.js v24 (LTS).
 - **Checks**: Linting, Unit Tests (Vitest), and E2E Tests (Playwright).
 
 ##y components and pages are tested using `@testing-library/svelte`:
