@@ -38,6 +38,7 @@ Quick references:
 
 ## Tech Stack
 
+- **Node.js**: v24 (LTS) or higher
 - **Svelte 5** + **Vite** (latest versions)
 - **TypeScript** (strict mode)
 - **Svelte Stores** for state management
@@ -61,12 +62,6 @@ npm install
 npm run dev
 ```
 Opens http://localhost:3000 with Vercel dev server (includes serverless functions).
-
-For frontend-only development without API functions:
-```sh
-npm run dev:vite
-```
-Opens http://localhost:5173 with Vite dev server.
 
 ### Build & Preview
 ```sh
@@ -108,7 +103,6 @@ src/
 
 ```bash
 npm run dev          # Start Vercel dev server (with API functions)
-npm run dev:vite     # Start Vite dev server (frontend only)
 npm run build        # Build for production
 npm run preview      # Preview production build
 npm run lint         # Check for linting errors

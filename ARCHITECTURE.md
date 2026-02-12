@@ -48,6 +48,11 @@ api/                     # Vercel serverless functions
 ├── auth/
 │   ├── send-code.js    # Generate and email verification codes
 │   └── verify-code.js  # Validate verification codes
+├── favorites/
+│   └── sync.js         # Synchronize favorites with Redis backend
+├── admin/
+│   └── redis-data.js   # Admin utility for managing Redis data
+└── config.js           # Centralized CORS and security configuration
 ├── scripts/            # Build and maintenance scripts
 │   └── generate-entry-points.js # Auto-generates HTML/JS entry points
 ├── e2e/                # End-to-End tests (Playwright)
@@ -89,9 +94,11 @@ The application uses email-based authentication with verification codes:
   - `checkAuth()`: Validate session expiration
   - `getSessionExpiration()`: Get session end date
   - Session durations: 7 days (default) or 30 days (remember me)
-- **favorites.ts**: Manages favorite jobs with localStorage persistence
+- **favorites.ts**: Manages favorite jobs with localStorage and Redis persistence
   - Uses a `Map<string, FavoriteJob>` for $O(1)$ lookups.
-  - `toggle(job)`: Add/remove favorite
+  - **Cloud Sync**: Synchronizes favorites with Redis when the user is logged in.
+  - `toggle(job)`: Add/remove favorite and sync to backend.
+  - `clear()`: Removes all favorites locally and in the cloud.
   - `isFavorite(jobId)`: Check if favorited
   - `getAll()`: Get all favorites as an array
   - `requiresAuth()`: Check if user needs to login
@@ -198,8 +205,12 @@ All endpoints use the GitHub raw content CDN:
 - `/api/auth/send-code` - Generate and email 4-digit verification code
 - `/api/auth/verify-code` - Validate verification code
 
+### Favorites Sync (Vercel Serverless Functions)
+- `/api/favorites/sync` - Synchronize favorites between local storage and the Redis backend.
+
 **Rate Limiting**: 3 code requests per 10 minutes per email
 **Code Expiration**: 10 minutes
+**Security**: Centralized CORS handling in `api/config.js`.
 **Services**: Resend (email), Upstash Redis (storage)
 
 ## Constants
@@ -243,7 +254,8 @@ Automated workflows are defined in `.github/workflows/ci.yml` using GitHub Actio
 - **Environment**: Node.js v24 (LTS).
 - **Checks**: Linting, Unit Tests (Vitest), and E2E Tests (Playwright).
 
-##y components and pages are tested using `@testing-library/svelte`:
+### Component Tests
+Key components and pages are tested using `@testing-library/svelte`:
 - `HomePage.svelte`
 - `FavoritesPage.svelte`
 - `JobBoard.svelte`
@@ -305,6 +317,6 @@ The migration from the legacy duplicated architecture to the modernized generic 
 ## Future Improvements
 
 1. **SvelteKit Migration** - Transition to SvelteKit for better routing and SSR.
-2. **E2E Testing** - Implement Playwright for end-to-end testing.
-3. **PWA Support** - Add service workers for offline functionality.
+2. **Skeleton Loading States** - Transition from spinners to skeleton UI for listings.
+3. **EPWA Support** - Add service workers for offline functionality.
 4. **Enhanced Analytics** - Deeper integration with Vercel Analytics.
