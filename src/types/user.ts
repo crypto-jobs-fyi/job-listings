@@ -6,6 +6,7 @@ export interface User {
   email: string;
   loginTime: number; // Unix timestamp
   rememberMe: boolean;
+  token: string; // JWT token
 }
 
 export interface AuthState {
@@ -24,12 +25,15 @@ export interface VerificationCode {
 export interface LoginResponse {
   success: boolean;
   email?: string;
+  token?: string;
+  rememberMe?: boolean;
   error?: string;
 }
 
 export interface VerifyCodeRequest {
   email: string;
   code: string;
+  rememberMe?: boolean;
 }
 
 export interface SendCodeRequest {

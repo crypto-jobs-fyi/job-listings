@@ -1,10 +1,21 @@
 import { Redis } from '@upstash/redis';
+import { SignJWT } from 'jose';
 import { applyCorsHeaders } from '../config.js';
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
   token: process.env.KV_REST_API_TOKEN,
 });
+
+// JWT secret from environment variable (required)
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required but not set');
+}
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
+
+// JWT expiration (7 days for default, 30 days for remember me)
+const JWT_EXPIRATION_DEFAULT = '7d';
+const JWT_EXPIRATION_REMEMBER = '30d';
 
 export default async function handler(req, res) {
   // Set CORS headers
@@ -19,7 +30,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, code } = req.body;
+  const { email, code, rememberMe = false } = req.body;
 
   // Validate input
   if (!email || !code) {
@@ -59,7 +70,19 @@ export default async function handler(req, res) {
     const rateLimitKey = `ratelimit:${email.toLowerCase()}`;
     await redis.del(rateLimitKey);
 
-    return res.status(200).json({ success: true, email });
+    // Generate JWT token
+    const token = await new SignJWT({ email: email.toLowerCase() })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime(rememberMe ? JWT_EXPIRATION_REMEMBER : JWT_EXPIRATION_DEFAULT)
+      .sign(JWT_SECRET);
+
+    return res.status(200).json({ 
+      success: true, 
+      email: email.toLowerCase(),
+      token,
+      rememberMe
+    });
   } catch (error) {
     console.error('Verify code error:', error);
     return res.status(500).json({ error: 'Failed to verify code. Please try again.' });

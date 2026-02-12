@@ -86,7 +86,46 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 ---
 
-### 4. Debug Logging Protection ✅
+### 4. JWT Token Authentication ✅
+**Status:** FIXED
+
+**What was changed:**
+- Replaced forgeable email-based authentication with JWT tokens
+- Server now generates signed JWT tokens after successful email verification
+- All API requests require valid JWT token in Authorization header
+- Tokens expire in 7 days (default) or 30 days (with "remember me")
+
+**Required Environment Variable:**
+```bash
+JWT_SECRET=your-secure-random-secret-here
+```
+
+**How to generate a secure secret:**
+```bash
+# On macOS/Linux
+openssl rand -base64 64
+
+# Or use Node.js
+node -e "console.log(require('crypto').randomBytes(64).toString('base64'))"
+```
+
+**Files updated:**
+- `api/auth/verify-code.js` (generates JWT tokens)
+- `api/favorites/sync.js` (verifies JWT tokens)
+- `src/stores/auth.ts` (stores JWT tokens)
+- `src/stores/favorites.ts` (sends JWT tokens)
+- `src/services/authService.ts` (handles JWT responses)
+- `src/types/user.ts` (includes token in User type)
+
+**Security benefits:**
+- Prevents unauthorized access to user favorites
+- Tokens are cryptographically signed and cannot be forged
+- Server-side validation ensures only authenticated users can access their data
+- No trust in client-provided email addresses
+
+---
+
+### 5. Debug Logging Protection ✅
 **Status:** FIXED
 
 **What was changed:**
@@ -109,6 +148,9 @@ KV_REST_API_TOKEN=AayoZQ...
 
 # Email service
 RESEND_API_KEY=re_...
+
+# JWT authentication secret (required for user auth)
+JWT_SECRET=<secure-random-secret-64-bytes>
 
 # Admin authentication
 ADMIN_AUTH_TOKEN=<secure-random-token>
@@ -165,9 +207,9 @@ curl -X GET https://job-finder.org/api/admin/redis-data \
 ## Future Security Recommendations
 
 ### High Priority
-- [ ] Rate limiting on auth endpoints (already exists for codes, add for verify)
+- [ ] Rate limiting on auth endpoints (already exists for send-code, add for verify-code)
 - [ ] HTTPS enforcement (redirect HTTP to HTTPS)
-- [ ] Implement user session tokens (move from localStorage to secure HTTP-only cookies)
+- [ ] Move JWT tokens to secure HTTP-only cookies (currently in localStorage)
 - [ ] Add request signing (prevent request replay attacks)
 
 ### Medium Priority
@@ -189,8 +231,10 @@ curl -X GET https://job-finder.org/api/admin/redis-data \
 - [x] Admin endpoint authenticated
 - [x] Error messages sanitized
 - [x] Debug logging protected
+- [x] JWT token authentication implemented
+- [x] Favorites sync endpoint properly authenticated
 - [ ] Email regex validation improved (planned)
-- [ ] Session tokens moved to HTTP-only cookies (planned)
+- [ ] JWT tokens moved to HTTP-only cookies (planned)
 - [ ] Rate limiting on verify endpoint (planned)
 
 ---

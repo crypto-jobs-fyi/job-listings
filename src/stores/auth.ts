@@ -61,9 +61,10 @@ function createAuthStore() {
   return {
     subscribe,
 
-    login: (email: string, rememberMe: boolean = false) => {
+    login: (email: string, token: string, rememberMe: boolean = false) => {
       const user: User = {
         email,
+        token,
         loginTime: Date.now(),
         rememberMe,
       };

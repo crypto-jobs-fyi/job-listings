@@ -123,11 +123,11 @@
     }
 
     loading = true;
-    const result = await verifyCode(email.trim().toLowerCase(), code.trim());
+    const result = await verifyCode(email.trim().toLowerCase(), code.trim(), rememberMe);
     loading = false;
 
-    if (result.success && result.email) {
-      auth.login(result.email, rememberMe);
+    if (result.success && result.email && result.token) {
+      auth.login(result.email, result.token, result.rememberMe || rememberMe);
       redirectToAccount();
     } else {
       error = result.error || 'Invalid or expired code';
