@@ -7,14 +7,14 @@ import { STORAGE_KEYS } from '../../utils/constants';
  * Test suite for the preferences store
  */
 describe('Preferences Store', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear();
-    preferences.clear();
+    await preferences.clear();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     localStorage.clear();
-    preferences.clear();
+    await preferences.clear();
   });
 
   describe('Setting locations', () => {
