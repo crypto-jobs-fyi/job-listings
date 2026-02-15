@@ -41,6 +41,9 @@ export default async function handler(req, res) {
     if (!authenticatedEmail || typeof authenticatedEmail !== 'string') {
       return res.status(401).json({ error: 'Invalid authentication token' });
     }
+
+    // Normalize email to lowercase for consistent comparison and storage
+    authenticatedEmail = authenticatedEmail.toLowerCase();
   } catch {
     // JWT verification failed (expired, invalid signature, etc.)
     return res.status(401).json({ error: 'Invalid or expired authentication token' });
