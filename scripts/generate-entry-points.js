@@ -377,6 +377,7 @@ ${endpointsCode}
 export const STORAGE_KEYS = {
   FAVORITES: 'favoriteJobs',
   FILTERS: 'jobFilters',
+  PREFERENCES: 'userPreferences',
   LAST_UPDATED: 'lastUpdated',
 };
 
