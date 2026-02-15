@@ -5,12 +5,18 @@
   export let onQAClick: () => void = () => {};
   export let onDevOpsClick: () => void = () => {};
   export let onClearClick: () => void = () => {};
+  export let onPreferencesClick: () => void = () => {};
+  export let showPreferences: boolean = false;
+  export let hasPreferences: boolean = false;
 </script>
 
 <div class="quick-filters">
   <span class="filter-label">Quick Filters:</span>
   <button class="filter-btn" on:click={onQAClick}>QA</button>
   <button class="filter-btn" on:click={onDevOpsClick}>DevOps</button>
+  {#if showPreferences && hasPreferences}
+    <button class="filter-btn pref-btn" on:click={onPreferencesClick}>My Filters</button>
+  {/if}
   <button class="filter-btn clear-btn" on:click={onClearClick}>Clear</button>
 </div>
 
@@ -55,6 +61,17 @@
     color: #ef4444;
     border-color: #ef4444;
     background-color: rgba(239, 68, 68, 0.05);
+  }
+
+  .pref-btn {
+    border-color: #f59e0b;
+    color: #f59e0b;
+  }
+
+  .pref-btn:hover {
+    background-color: rgba(245, 158, 11, 0.1);
+    border-color: #d97706;
+    color: #d97706;
   }
 
   .filter-btn:active {

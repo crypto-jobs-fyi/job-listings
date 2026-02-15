@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import type { Job } from '../types/job';
   import type { FavoriteJob } from '../types/favorites';
   import type { Company } from '../types/company';
   import { favorites } from '../stores/favorites';
+  import { preferences } from '../stores/preferences';
+  import { auth } from '../stores/auth';
   import { filterJobs, groupJobsByCompany, makeJobId } from '../utils/search';
   import { fade } from 'svelte/transition';
   import SearchBar from './SearchBar.svelte';
@@ -40,6 +43,34 @@
   let locationSearch = '';
   let titleSearch = '';
   let collapsedCompanies = new Set<string>();
+
+  // Preferences state
+  let savedLocations: string[] = [];
+  let savedTitles: string[] = [];
+  $: isAuthenticated = $auth.isAuthenticated;
+  $: hasPreferences = savedLocations.length > 0 || savedTitles.length > 0;
+
+  onMount(() => {
+    const unsubscribe = preferences.subscribe((prefs) => {
+      savedLocations = prefs.locations;
+      savedTitles = prefs.titles;
+    });
+
+    if ($auth.isAuthenticated) {
+      preferences.loadFromBackend();
+    }
+
+    return unsubscribe;
+  });
+
+  function applyPreferences() {
+    if (savedLocations.length > 0) {
+      locationSearch = savedLocations.join(', ');
+    }
+    if (savedTitles.length > 0) {
+      titleSearch = savedTitles.join(', ');
+    }
+  }
 
   $: isCompaniesPage = isCompaniesView;
 
@@ -192,6 +223,9 @@
         locationSearch = '';
         titleSearch = '';
       }}
+      onPreferencesClick={applyPreferences}
+      showPreferences={isAuthenticated}
+      {hasPreferences}
     />
   {/if}
 
