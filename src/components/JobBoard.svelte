@@ -47,6 +47,8 @@
   // Preferences state
   let savedLocations: string[] = [];
   let savedTitles: string[] = [];
+  let isAuthenticated = false;
+  let hasPreferences = false;
   $: isAuthenticated = $auth.isAuthenticated;
   $: hasPreferences = savedLocations.length > 0 || savedTitles.length > 0;
 
