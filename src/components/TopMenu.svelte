@@ -27,19 +27,18 @@
 
     <!-- Desktop navigation - horizontal links -->
     <nav class="desktop-nav" aria-label="Main menu">
-      <a href="/crypto-jobs.html" class="nav-link" class:active={active === 'crypto'}>Crypto Jobs</a
-      >
-      <a href="/ai-jobs.html" class="nav-link" class:active={active === 'ai'}>AI Jobs</a>
-      <a href="/fin-jobs.html" class="nav-link" class:active={active === 'fin'}>FinTech Jobs</a>
+      <span class="nav-section-label">Jobs:</span>
+      <a href="/ai-jobs.html" class="nav-link" class:active={active === 'ai'}>AI</a>
+      <a href="/crypto-jobs.html" class="nav-link" class:active={active === 'crypto'}>Crypto</a>
+      <a href="/fin-jobs.html" class="nav-link" class:active={active === 'fin'}>FinTech</a>
       <span class="nav-separator">|</span>
+      <span class="nav-section-label">Companies:</span>
+      <a href="/ai-companies.html" class="nav-link" class:active={active === 'ai-companies'}>AI</a>
       <a href="/crypto-companies.html" class="nav-link" class:active={active === 'crypto-companies'}
-        >Crypto Companies</a
-      >
-      <a href="/ai-companies.html" class="nav-link" class:active={active === 'ai-companies'}
-        >AI Companies</a
+        >Crypto</a
       >
       <a href="/fin-companies.html" class="nav-link" class:active={active === 'fin-companies'}
-        >FinTech Companies</a
+        >FinTech</a
       >
       {#if $auth.isAuthenticated}
         <span class="nav-separator">|</span>
@@ -155,23 +154,23 @@
 
   <!-- Mobile dropdown navigation -->
   <nav class:open class="mobile-nav" aria-label="Main menu">
-    <a href="/crypto-jobs.html" class="mobile-nav-link" class:active={active === 'crypto'}
-      >Crypto Jobs</a
+    <div class="mobile-nav-section-label">Jobs</div>
+    <a href="/ai-jobs.html" class="mobile-nav-link" class:active={active === 'ai'}>AI</a>
+    <a href="/crypto-jobs.html" class="mobile-nav-link" class:active={active === 'crypto'}>Crypto</a
     >
-    <a href="/ai-jobs.html" class="mobile-nav-link" class:active={active === 'ai'}>AI Jobs</a>
-    <a href="/fin-jobs.html" class="mobile-nav-link" class:active={active === 'fin'}>FinTech Jobs</a
-    >
+    <a href="/fin-jobs.html" class="mobile-nav-link" class:active={active === 'fin'}>FinTech</a>
     <div class="mobile-nav-divider"></div>
+    <div class="mobile-nav-section-label">Companies</div>
+    <a href="/ai-companies.html" class="mobile-nav-link" class:active={active === 'ai-companies'}
+      >AI</a
+    >
     <a
       href="/crypto-companies.html"
       class="mobile-nav-link"
-      class:active={active === 'crypto-companies'}>Crypto Companies</a
-    >
-    <a href="/ai-companies.html" class="mobile-nav-link" class:active={active === 'ai-companies'}
-      >AI Companies</a
+      class:active={active === 'crypto-companies'}>Crypto</a
     >
     <a href="/fin-companies.html" class="mobile-nav-link" class:active={active === 'fin-companies'}
-      >FinTech Companies</a
+      >FinTech</a
     >
     {#if $auth.isAuthenticated}
       <div class="mobile-nav-divider"></div>
@@ -250,6 +249,14 @@
   .nav-separator {
     color: var(--border-color);
     font-weight: 300;
+  }
+
+  .nav-section-label {
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+    opacity: 0.7;
+    white-space: nowrap;
   }
 
   /* Right side controls */
@@ -374,6 +381,14 @@
 
   .mobile-nav-link.btn-account:hover {
     background: #4b5563;
+  }
+
+  .mobile-nav-section-label {
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    padding: 0.5rem 1rem 0.25rem;
   }
 
   .mobile-nav-divider {

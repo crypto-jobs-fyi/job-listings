@@ -45,9 +45,13 @@ test.describe('Navigation and Header', () => {
     if (viewport && viewport.width >= 768) {
       await expect(desktopNav).toBeVisible();
       
-      // Should show category navigation links
-      const cryptoLink = desktopNav.locator('text=Crypto Jobs');
-      await expect(cryptoLink).toBeVisible();
+      // Should show section labels and category navigation links
+      await expect(desktopNav.locator('text=Jobs:')).toBeVisible();
+      await expect(desktopNav.locator('text=Companies:')).toBeVisible();
+      
+      // Check for first AI link (should be in Jobs section)
+      const aiLink = desktopNav.locator('text=AI').first();
+      await expect(aiLink).toBeVisible();
     }
   });
 
@@ -68,9 +72,11 @@ test.describe('Navigation and Header', () => {
     // Menu should be open
     await expect(mobileNav).toHaveClass(/open/);
     
-    // Check menu items are visible
-    await expect(mobileNav.locator('text=Crypto Jobs')).toBeVisible();
-    await expect(mobileNav.locator('text=AI Jobs')).toBeVisible();
+    // Check section labels and first category items are visible
+    await expect(mobileNav.locator('text=Jobs')).toBeVisible();
+    await expect(mobileNav.locator('text=Companies')).toBeVisible();
+    await expect(mobileNav.locator('text=AI').first()).toBeVisible();
+    await expect(mobileNav.locator('text=Crypto').first()).toBeVisible();
     
     // Click again to close
     await menuToggle.click();
@@ -108,14 +114,14 @@ test.describe('Navigation and Header', () => {
   test('should show All category links on home page', async ({ page }) => {
     await page.goto('/');
     
-    // Check for category cards in the main content (use more specific selectors)
-    await expect(page.getByRole('link', { name: 'Crypto Jobs', exact: true }).first()).toBeVisible();
-    await expect(page.getByRole('link', { name: 'AI Jobs', exact: true }).first()).toBeVisible();
-    await expect(page.getByRole('link', { name: 'FinTech Jobs', exact: true }).first()).toBeVisible();
+    // Check for category cards in the main content using more flexible matching for badges
+    await expect(page.getByRole('link', { name: /Crypto Jobs/ }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /AI Jobs/ }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /FinTech Jobs/ }).first()).toBeVisible();
     
-    await expect(page.getByRole('link', { name: 'Crypto Companies' }).first()).toBeVisible();
-    await expect(page.getByRole('link', { name: 'AI Companies' }).first()).toBeVisible();
-    await expect(page.getByRole('link', { name: 'FinTech Companies' }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /Crypto Companies/ }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /AI Companies/ }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /FinTech Companies/ }).first()).toBeVisible();
   });
 
   test('should navigate between category pages', async ({ page }) => {
@@ -130,10 +136,13 @@ test.describe('Navigation and Header', () => {
     if (viewport && viewport.width < 768) {
       // Mobile: open hamburger menu
       await page.locator('.menu-toggle').click();
-      await page.locator('.mobile-nav').locator('text=AI Companies').click();
+      // Use the first "AI" link (under Jobs) or specific one if needed
+      // Actually, original test used "AI Companies" text, which is now just "AI" in the Companies section
+      await page.locator('.mobile-nav').locator('text=AI').nth(1).click();
     } else {
       // Desktop: click in desktop nav
-      await page.locator('.desktop-nav').locator('text=AI Companies').click();
+      // "AI" link in Companies section is the second one (index 1)
+      await page.locator('.desktop-nav').locator('text=AI').nth(1).click();
     }
     await page.waitForURL('/ai-companies.html');
   });
