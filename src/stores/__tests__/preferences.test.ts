@@ -100,6 +100,26 @@ describe('Preferences Store', () => {
       expect(prefs.locations).toEqual(['Remote']);
     });
 
+    it('should not trigger store update when adding duplicate location', () => {
+      let callCount = 0;
+      const unsubscribe = preferences.subscribe(() => {
+        callCount++;
+      });
+
+      // Initial subscription
+      expect(callCount).toBe(1);
+
+      // Add location (should trigger update)
+      preferences.addLocation('Remote');
+      expect(callCount).toBe(2);
+
+      // Add same location again (should NOT trigger update)
+      preferences.addLocation('Remote');
+      expect(callCount).toBe(2); // Still 2, not 3
+
+      unsubscribe();
+    });
+
     it('should not add empty location', () => {
       preferences.addLocation('');
       preferences.addLocation('   ');
@@ -122,6 +142,26 @@ describe('Preferences Store', () => {
 
       const prefs = get(preferences);
       expect(prefs.titles).toEqual(['Engineer']);
+    });
+
+    it('should not trigger store update when adding duplicate title', () => {
+      let callCount = 0;
+      const unsubscribe = preferences.subscribe(() => {
+        callCount++;
+      });
+
+      // Initial subscription
+      expect(callCount).toBe(1);
+
+      // Add title (should trigger update)
+      preferences.addTitle('Engineer');
+      expect(callCount).toBe(2);
+
+      // Add same title again (should NOT trigger update)
+      preferences.addTitle('Engineer');
+      expect(callCount).toBe(2); // Still 2, not 3
+
+      unsubscribe();
     });
 
     it('should not add empty title', () => {
