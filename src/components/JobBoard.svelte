@@ -42,6 +42,10 @@
   let companySearch = '';
   let locationSearch = '';
   let titleSearch = '';
+  // Debounced search values — these drive the actual filtering
+  let debouncedCompanySearch = '';
+  let debouncedLocationSearch = '';
+  let debouncedTitleSearch = '';
   let collapsedCompanies = new Set<string>();
 
   // Preferences state
@@ -76,35 +80,55 @@
 
   $: isCompaniesPage = isCompaniesView;
 
-  // Filter jobs based on search
-  $: filteredJobs = filterJobs(jobs, companySearch, locationSearch, titleSearch);
+  // Pre-compute a Map of jobId → Job for O(1) lookups and deduplication.
+  // This avoids calling makeJobId() repeatedly in templates and reactive blocks.
+  let jobIdCache = new Map<Job, string>();
+  $: {
+    jobIdCache = new Map();
+    for (const job of jobs) {
+      jobIdCache.set(job, makeJobId(job));
+    }
+  }
 
-  // Deduplicate jobs based on their unique ID
-  $: dedupedJobs = (() => {
+  /** Get the cached ID for a job (falls back to computing it) */
+  function getCachedJobId(job: Job): string {
+    return jobIdCache.get(job) ?? makeJobId(job);
+  }
+
+  // Deduplicate jobs once (independent of search) so filtering operates on a clean list
+  $: dedupedAllJobs = (() => {
     const seen = new Set<string>();
-    return filteredJobs.filter((job) => {
-      const id = makeJobId(job);
-      if (seen.has(id)) {
-        return false;
-      }
+    return jobs.filter((job) => {
+      const id = getCachedJobId(job);
+      if (seen.has(id)) return false;
       seen.add(id);
       return true;
     });
   })();
 
-  // Group jobs by company
-  $: groupedJobs = groupJobsByCompany(dedupedJobs);
-
-  // Group ALL jobs by company for the companies view (to show total job counts)
-  $: allGroupedJobs = groupJobsByCompany(jobs);
-
-  // Filter companies based on search
-  $: filteredCompanies = companies.filter(
-    (c) => !companySearch || c.company_name.toLowerCase().includes(companySearch.toLowerCase())
+  // Filter jobs based on debounced search values (only terms >= MIN_SEARCH_LENGTH apply)
+  $: filteredJobs = filterJobs(
+    dedupedAllJobs,
+    debouncedCompanySearch,
+    debouncedLocationSearch,
+    debouncedTitleSearch
   );
 
+  // Group filtered jobs by company
+  $: groupedJobs = groupJobsByCompany(filteredJobs);
+
+  // Group ALL deduplicated jobs by company for the companies view (total job counts)
+  $: allGroupedJobs = groupJobsByCompany(dedupedAllJobs);
+
+  // Filter companies based on debounced search (respects MIN_SEARCH_LENGTH)
+  $: filteredCompanies = (() => {
+    const term = debouncedCompanySearch.trim().toLowerCase();
+    if (term.length < 2) return companies;
+    return companies.filter((c) => c.company_name.toLowerCase().includes(term));
+  })();
+
   function toggleFavorite(job: Job) {
-    const jobId = makeJobId(job);
+    const jobId = getCachedJobId(job);
     const favorite: FavoriteJob = {
       id: jobId,
       company: job.company,
@@ -211,9 +235,9 @@
     {showCompanySearch}
     {showTitleSearch}
     {showLocationSearch}
-    onCompanySearchChange={(val) => (companySearch = val)}
-    onLocationSearchChange={(val) => (locationSearch = val)}
-    onTitleSearchChange={(val) => (titleSearch = val)}
+    onCompanySearchChange={(val) => (debouncedCompanySearch = val)}
+    onLocationSearchChange={(val) => (debouncedLocationSearch = val)}
+    onTitleSearchChange={(val) => (debouncedTitleSearch = val)}
   />
 
   {#if !isCompaniesPage}
@@ -224,6 +248,9 @@
         companySearch = '';
         locationSearch = '';
         titleSearch = '';
+        debouncedCompanySearch = '';
+        debouncedLocationSearch = '';
+        debouncedTitleSearch = '';
       }}
       onPreferencesClick={applyPreferences}
       showPreferences={isAuthenticated}
@@ -338,8 +365,8 @@
             </td>
           </tr>
           {#if !collapsedCompanies.has(companyName)}
-            {#each companyJobs as job (makeJobId(job))}
-              {@const favorited = $favorites.has(makeJobId(job))}
+            {#each companyJobs as job (getCachedJobId(job))}
+              {@const favorited = $favorites.has(getCachedJobId(job))}
               <tr class="job-row" transition:fade={{ duration: 150 }}>
                 <td>
                   <div class="job-title-container">

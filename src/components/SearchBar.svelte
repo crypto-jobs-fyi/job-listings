@@ -1,6 +1,11 @@
 <script lang="ts">
+  import { debounce, SEARCH_DEBOUNCE_MS, MIN_SEARCH_LENGTH } from '../utils/search';
+
   /**
    * SearchBar Component - Reusable search input component
+   *
+   * Debounces user input to avoid excessive re-renders.
+   * Filtering only activates after MIN_SEARCH_LENGTH characters.
    */
   export let companySearch: string = '';
   export let locationSearch: string = '';
@@ -11,6 +16,19 @@
   export let onCompanySearchChange: (value: string) => void = () => {};
   export let onLocationSearchChange: (value: string) => void = () => {};
   export let onTitleSearchChange: (value: string) => void = () => {};
+
+  // Debounced callbacks — fire only after user stops typing for SEARCH_DEBOUNCE_MS
+  const debouncedCompany = debounce(
+    (val: string) => onCompanySearchChange(val),
+    SEARCH_DEBOUNCE_MS
+  );
+  const debouncedLocation = debounce(
+    (val: string) => onLocationSearchChange(val),
+    SEARCH_DEBOUNCE_MS
+  );
+  const debouncedTitle = debounce((val: string) => onTitleSearchChange(val), SEARCH_DEBOUNCE_MS);
+
+  const minLengthHint = `Type at least ${MIN_SEARCH_LENGTH} characters`;
 </script>
 
 <div class="search-bar">
@@ -19,10 +37,11 @@
       type="text"
       class="search-input"
       placeholder="Search company(s)"
+      title={minLengthHint}
       value={companySearch}
       on:input={(e) => {
         companySearch = e.currentTarget.value;
-        onCompanySearchChange(companySearch);
+        debouncedCompany(companySearch);
       }}
     />
   {/if}
@@ -31,10 +50,11 @@
       type="text"
       class="search-input"
       placeholder="Search title(s)"
+      title={minLengthHint}
       value={titleSearch}
       on:input={(e) => {
         titleSearch = e.currentTarget.value;
-        onTitleSearchChange(titleSearch);
+        debouncedTitle(titleSearch);
       }}
     />
   {/if}
@@ -43,10 +63,11 @@
       type="text"
       class="search-input"
       placeholder="Search location(s)"
+      title={minLengthHint}
       value={locationSearch}
       on:input={(e) => {
         locationSearch = e.currentTarget.value;
-        onLocationSearchChange(locationSearch);
+        debouncedLocation(locationSearch);
       }}
     />
   {/if}
