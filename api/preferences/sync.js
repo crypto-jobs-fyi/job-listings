@@ -31,20 +31,20 @@ export default async function handler(req, res) {
   // Extract and verify JWT token
   const token = authHeader.substring(7);
   let authenticatedEmail;
-  
+
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET, {
-      algorithms: ['HS256']
+      algorithms: ['HS256'],
     });
     authenticatedEmail = payload.email;
-    
+
     if (!authenticatedEmail || typeof authenticatedEmail !== 'string') {
       return res.status(401).json({ error: 'Invalid authentication token' });
     }
 
     // Normalize email to lowercase for consistent comparison and storage
     authenticatedEmail = authenticatedEmail.toLowerCase();
-  } catch (error) {
+  } catch {
     // JWT verification failed (expired, invalid signature, etc.)
     return res.status(401).json({ error: 'Invalid or expired authentication token' });
   }
@@ -59,47 +59,44 @@ export default async function handler(req, res) {
 
   const requestedEmailLower = requestedEmail.toLowerCase();
 
-  // Authorization check - user can only access their own favorites
-  // The authenticated email comes from the verified JWT, so it's trusted
+  // Authorization check - user can only access their own preferences
   if (authenticatedEmail !== requestedEmailLower) {
-    return res.status(403).json({ error: 'Forbidden: You can only access your own favorites' });
+    return res.status(403).json({ error: 'Forbidden: You can only access your own preferences' });
   }
 
-  const favoritesKey = `favorites:${authenticatedEmail}`;
+  const preferencesKey = `preferences:${authenticatedEmail}`;
 
   try {
-    // GET - Retrieve favorites from Redis
+    // GET - Retrieve preferences from Redis
     if (req.method === 'GET') {
-      const favorites = await redis.get(favoritesKey);
-      return res.status(200).json({ 
-        favorites: favorites || {},
+      const preferences = await redis.get(preferencesKey);
+      return res.status(200).json({
+        preferences: preferences || { locations: [], titles: [], updatedAt: 0 },
       });
     }
 
-    // POST - Save favorites to Redis
+    // POST - Save preferences to Redis
     if (req.method === 'POST') {
-      const { favorites } = req.body;
+      const { preferences } = req.body;
 
-      if (!favorites || typeof favorites !== 'object') {
-        return res.status(400).json({ error: 'Favorites data is required' });
+      if (!preferences || typeof preferences !== 'object') {
+        return res.status(400).json({ error: 'Preferences data is required' });
       }
 
-      // Store favorites (no expiration - persist until user deletes)
-      await redis.set(favoritesKey, JSON.stringify(favorites));
+      // Store preferences (no expiration - persist until user deletes)
+      await redis.set(preferencesKey, JSON.stringify(preferences));
 
-      return res.status(200).json({ 
+      return res.status(200).json({
         success: true,
-        message: 'Favorites saved',
-        count: Object.keys(favorites).length,
+        message: 'Preferences saved',
       });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
-
   } catch (error) {
-    console.error('Favorites sync error:', error);
+    console.error('Preferences sync error:', error);
     return res.status(500).json({
-      error: 'Failed to sync favorites',
+      error: 'Failed to sync preferences',
     });
   }
 }
