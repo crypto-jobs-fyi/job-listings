@@ -17,7 +17,7 @@
   let newTitle = '';
   let prefSaved = false;
 
-  onMount(() => {
+  onMount(async () => {
     // Check if user is authenticated (validates current session state from storage)
     auth.checkAuth();
 
@@ -32,8 +32,9 @@
     // Load favorites from backend
     favorites.loadFromBackend();
 
-    // Load preferences from backend
-    preferences.loadFromBackend();
+    // Load preferences from backend and wait for completion
+    // to avoid race condition where user edits are overwritten
+    await preferences.loadFromBackend();
 
     // Get session expiration
     sessionExpiration = auth.getSessionExpiration();
