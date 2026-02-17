@@ -72,9 +72,11 @@
   function applyPreferences() {
     if (savedLocations.length > 0) {
       locationSearch = savedLocations.join(', ');
+      debouncedLocationSearch = savedLocations.join(', ');
     }
     if (savedTitles.length > 0) {
       titleSearch = savedTitles.join(', ');
+      debouncedTitleSearch = savedTitles.join(', ');
     }
   }
 
@@ -242,8 +244,14 @@
 
   {#if !isCompaniesPage}
     <QuickFilters
-      onQAClick={() => (titleSearch = 'QA, Test, Quality')}
-      onDevOpsClick={() => (titleSearch = 'DevOps, SRE, Infrastructure, Cloud')}
+      onQAClick={() => {
+        titleSearch = 'QA, Test, Quality';
+        debouncedTitleSearch = 'QA, Test, Quality';
+      }}
+      onDevOpsClick={() => {
+        titleSearch = 'DevOps, SRE, Infrastructure, Cloud';
+        debouncedTitleSearch = 'DevOps, SRE, Infrastructure, Cloud';
+      }}
       onClearClick={() => {
         companySearch = '';
         locationSearch = '';
