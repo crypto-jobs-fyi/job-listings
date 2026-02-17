@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { debounce, SEARCH_DEBOUNCE_MS, MIN_SEARCH_LENGTH } from '../utils/search';
+  import { MIN_SEARCH_LENGTH } from '../utils/search';
 
   /**
    * SearchBar Component - Reusable search input component
    *
-   * Debounces user input to avoid excessive re-renders.
-   * Filtering only activates after MIN_SEARCH_LENGTH characters.
+   * Users type into the inputs and click "Search" (or press Enter) to apply filters.
    */
   export let companySearch: string = '';
   export let locationSearch: string = '';
@@ -13,22 +12,15 @@
   export let showCompanySearch: boolean = true;
   export let showTitleSearch: boolean = true;
   export let showLocationSearch: boolean = true;
-  export let onCompanySearchChange: (value: string) => void = () => {};
-  export let onLocationSearchChange: (value: string) => void = () => {};
-  export let onTitleSearchChange: (value: string) => void = () => {};
-
-  // Debounced callbacks — fire only after user stops typing for SEARCH_DEBOUNCE_MS
-  const debouncedCompany = debounce(
-    (val: string) => onCompanySearchChange(val),
-    SEARCH_DEBOUNCE_MS
-  );
-  const debouncedLocation = debounce(
-    (val: string) => onLocationSearchChange(val),
-    SEARCH_DEBOUNCE_MS
-  );
-  const debouncedTitle = debounce((val: string) => onTitleSearchChange(val), SEARCH_DEBOUNCE_MS);
+  export let onSearch: () => void = () => {};
 
   const minLengthHint = `Type at least ${MIN_SEARCH_LENGTH} characters`;
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (e.key === 'Enter') {
+      onSearch();
+    }
+  }
 </script>
 
 <div class="search-bar">
@@ -38,11 +30,8 @@
       class="search-input"
       placeholder="Search company(s)"
       title={minLengthHint}
-      value={companySearch}
-      on:input={(e) => {
-        companySearch = e.currentTarget.value;
-        debouncedCompany(companySearch);
-      }}
+      bind:value={companySearch}
+      on:keydown={handleKeydown}
     />
   {/if}
   {#if showTitleSearch}
@@ -51,11 +40,8 @@
       class="search-input"
       placeholder="Search title(s)"
       title={minLengthHint}
-      value={titleSearch}
-      on:input={(e) => {
-        titleSearch = e.currentTarget.value;
-        debouncedTitle(titleSearch);
-      }}
+      bind:value={titleSearch}
+      on:keydown={handleKeydown}
     />
   {/if}
   {#if showLocationSearch}
@@ -64,13 +50,11 @@
       class="search-input"
       placeholder="Search location(s)"
       title={minLengthHint}
-      value={locationSearch}
-      on:input={(e) => {
-        locationSearch = e.currentTarget.value;
-        debouncedLocation(locationSearch);
-      }}
+      bind:value={locationSearch}
+      on:keydown={handleKeydown}
     />
   {/if}
+  <button class="search-btn" on:click={onSearch}>Search</button>
 </div>
 
 <style>
@@ -79,6 +63,7 @@
     gap: 0.5rem;
     margin-bottom: 1rem;
     flex-wrap: wrap;
+    align-items: center;
   }
 
   .search-input {
@@ -105,9 +90,35 @@
     color: var(--secondary-text);
   }
 
+  .search-btn {
+    padding: 0.5rem 1.25rem;
+    border: 1px solid var(--text-color);
+    border-radius: 4px;
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+
+  .search-btn:hover {
+    opacity: 0.85;
+  }
+
+  .search-btn:active {
+    transform: scale(0.98);
+  }
+
   @media (max-width: 768px) {
     .search-input {
       max-width: 100%;
+    }
+
+    .search-btn {
+      width: 100%;
     }
   }
 </style>

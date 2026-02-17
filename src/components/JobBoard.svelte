@@ -42,10 +42,10 @@
   let companySearch = '';
   let locationSearch = '';
   let titleSearch = '';
-  // Debounced search values — these drive the actual filtering
-  let debouncedCompanySearch = '';
-  let debouncedLocationSearch = '';
-  let debouncedTitleSearch = '';
+  // Applied search values — these drive the actual filtering (updated on Search button click)
+  let appliedCompanySearch = '';
+  let appliedLocationSearch = '';
+  let appliedTitleSearch = '';
   let collapsedCompanies = new Set<string>();
 
   // Preferences state
@@ -69,14 +69,24 @@
     return unsubscribe;
   });
 
+  /** Copy current input values into the applied search values to trigger filtering */
+  function applySearch() {
+    appliedCompanySearch = companySearch;
+    appliedLocationSearch = locationSearch;
+    appliedTitleSearch = titleSearch;
+  }
+
+  /** Handler passed to SearchBar's Search button and Enter key */
+  function onSearch() {
+    applySearch();
+  }
+
   function applyPreferences() {
     if (savedLocations.length > 0) {
       locationSearch = savedLocations.join(', ');
-      debouncedLocationSearch = savedLocations.join(', ');
     }
     if (savedTitles.length > 0) {
       titleSearch = savedTitles.join(', ');
-      debouncedTitleSearch = savedTitles.join(', ');
     }
   }
 
@@ -108,12 +118,12 @@
     });
   })();
 
-  // Filter jobs based on debounced search values (only terms >= MIN_SEARCH_LENGTH apply)
+  // Filter jobs based on applied search values (updated on Search button click)
   $: filteredJobs = filterJobs(
     dedupedAllJobs,
-    debouncedCompanySearch,
-    debouncedLocationSearch,
-    debouncedTitleSearch
+    appliedCompanySearch,
+    appliedLocationSearch,
+    appliedTitleSearch
   );
 
   // Group filtered jobs by company
@@ -122,9 +132,9 @@
   // Group ALL deduplicated jobs by company for the companies view (total job counts)
   $: allGroupedJobs = groupJobsByCompany(dedupedAllJobs);
 
-  // Filter companies based on debounced search (respects MIN_SEARCH_LENGTH)
+  // Filter companies based on applied search (respects MIN_SEARCH_LENGTH)
   $: filteredCompanies = (() => {
-    const term = debouncedCompanySearch.trim().toLowerCase();
+    const term = appliedCompanySearch.trim().toLowerCase();
     if (term.length < 2) return companies;
     return companies.filter((c) => c.company_name.toLowerCase().includes(term));
   })();
@@ -231,34 +241,28 @@
   {/if}
 
   <SearchBar
-    {companySearch}
-    {locationSearch}
-    {titleSearch}
+    bind:companySearch
+    bind:locationSearch
+    bind:titleSearch
     {showCompanySearch}
     {showTitleSearch}
     {showLocationSearch}
-    onCompanySearchChange={(val) => (debouncedCompanySearch = val)}
-    onLocationSearchChange={(val) => (debouncedLocationSearch = val)}
-    onTitleSearchChange={(val) => (debouncedTitleSearch = val)}
+    {onSearch}
   />
 
   {#if !isCompaniesPage}
     <QuickFilters
       onQAClick={() => {
         titleSearch = 'QA, Test, Quality';
-        debouncedTitleSearch = 'QA, Test, Quality';
       }}
       onDevOpsClick={() => {
         titleSearch = 'DevOps, SRE, Infrastructure, Cloud';
-        debouncedTitleSearch = 'DevOps, SRE, Infrastructure, Cloud';
       }}
       onClearClick={() => {
         companySearch = '';
         locationSearch = '';
         titleSearch = '';
-        debouncedCompanySearch = '';
-        debouncedLocationSearch = '';
-        debouncedTitleSearch = '';
+        applySearch();
       }}
       onPreferencesClick={applyPreferences}
       showPreferences={isAuthenticated}
@@ -288,7 +292,7 @@
         {:else}
           {#each filteredCompanies as company (company.company_name)}
             {@const jobCount = allGroupedJobs[company.company_name]?.length || 0}
-            <tr class="company-row-item" transition:fade={{ duration: 150 }}>
+            <tr class="company-row-item">
               <td>
                 <div class="company-row">
                   {#if getCompanyLogoUrl(company.company_name)}
@@ -339,11 +343,7 @@
         <tr transition:fade><td colspan="2" class="empty-state">No results found.</td></tr>
       {:else}
         {#each Object.entries(groupedJobs) as [companyName, companyJobs] (companyName)}
-          <tr
-            class="company-header"
-            on:click={() => toggleCompany(companyName)}
-            transition:fade={{ duration: 150 }}
-          >
+          <tr class="company-header" on:click={() => toggleCompany(companyName)}>
             <td colspan="2" class="company-cell">
               <div class="company-row">
                 <span class="toggle-icon" class:collapsed={collapsedCompanies.has(companyName)}>
@@ -375,7 +375,7 @@
           {#if !collapsedCompanies.has(companyName)}
             {#each companyJobs as job (getCachedJobId(job))}
               {@const favorited = $favorites.has(getCachedJobId(job))}
-              <tr class="job-row" transition:fade={{ duration: 150 }}>
+              <tr class="job-row">
                 <td>
                   <div class="job-title-container">
                     <a
