@@ -3,6 +3,7 @@
   import JobBoard from '../components/JobBoard.svelte';
   import { jobs as jobsStore, type JobsStoreState } from '../stores/jobs';
   import { getCompanyUrl, getCompanyLogoUrl } from '../services/companyService';
+  import { fetchHistory, type HistoryData } from '../services/historyService';
   import type { Company } from '../types/company';
   import type { Job } from '../types/job';
 
@@ -14,6 +15,7 @@
   let storeData: JobsStoreState | null = null;
   let loading = true;
   let error: string | null = null;
+  let historyData: HistoryData | null = null;
 
   const bannerTitles: Record<'crypto' | 'ai' | 'fin' | 'all', string> = {
     crypto: '🏢 Crypto Companies',
@@ -72,6 +74,16 @@
       jobsStore.fetchFinJobs(); // This also fetches jobs for counts
     }
 
+    // Load history data for charts (non-blocking)
+    const historyCategory = pageConfig.category === 'all' ? 'crypto' : pageConfig.category;
+    fetchHistory(historyCategory)
+      .then((data) => {
+        historyData = data;
+      })
+      .catch((err) => {
+        console.warn('History data unavailable:', err);
+      });
+
     return unsubscribe;
   });
 </script>
@@ -97,6 +109,7 @@
       showTitleSearch={false}
       showLocationSearch={false}
       isCompaniesView={true}
+      companyHistory={historyData}
       getCompanyUrl={(name) => getCompanyUrl(companies, name)}
       getCompanyLogoUrl={(name) => getCompanyLogoUrl(companies, name)}
     />

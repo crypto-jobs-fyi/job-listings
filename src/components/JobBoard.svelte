@@ -10,6 +10,7 @@
   import { fade } from 'svelte/transition';
   import SearchBar from './SearchBar.svelte';
   import QuickFilters from './QuickFilters.svelte';
+  import JobHistoryChart from './JobHistoryChart.svelte';
 
   /**
    * Generic JobBoard Component - Can be used for any job listing type (Crypto/AI, Jobs/NewJobs)
@@ -38,6 +39,9 @@
   export let onClearFavorites: () => void = () => {};
   export let getCompanyUrl: (name: string) => string | null = () => null;
   export let getCompanyLogoUrl: (name: string) => string | null = () => null;
+  export let companyHistory: Record<string, Record<string, number>> | null = null;
+
+  let chartModal: { title: string; data: Record<string, number> } | null = null;
 
   let companySearch = '';
   let locationSearch = '';
@@ -226,6 +230,17 @@
             <span class="icon">⭐</span> Favorites
           </a>
         {/if}
+        {#if isCompaniesView && companyHistory?.['Total Jobs']}
+          <button
+            class="chart-btn"
+            on:click={() => {
+              chartModal = { title: 'Total Jobs', data: companyHistory!['Total Jobs'] };
+            }}
+            title="View total jobs over time"
+          >
+            <span class="icon">📊</span> Total Jobs
+          </button>
+        {/if}
         {#if !isCompaniesView}
           <button class="share-btn" on:click={shareOnLinkedIn} title="Share on LinkedIn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -332,6 +347,19 @@
                       class="careers-link">Careers ↗</a
                     >
                   {/if}
+
+                  {#if companyHistory?.[company.company_name.toLowerCase()]}
+                    <button
+                      class="company-chart-btn"
+                      title="View jobs over time"
+                      on:click|stopPropagation={() => {
+                        chartModal = {
+                          title: company.company_name,
+                          data: companyHistory![company.company_name.toLowerCase()],
+                        };
+                      }}>📊</button
+                    >
+                  {/if}
                 </div>
               </td>
             </tr>
@@ -406,6 +434,14 @@
       {/if}
     </tbody>
   </table>
+
+  {#if chartModal}
+    <JobHistoryChart
+      title={chartModal.title}
+      rawData={chartModal.data}
+      onClose={() => (chartModal = null)}
+    />
+  {/if}
 </main>
 
 <style>
@@ -465,7 +501,8 @@
   /* Notion-style buttons */
   .new-jobs-btn,
   .share-btn,
-  .clear-btn {
+  .clear-btn,
+  .chart-btn {
     padding: 0.5rem 0.75rem;
     border: 1px solid var(--secondary-text);
     border-radius: 4px;
@@ -483,7 +520,8 @@
 
   .new-jobs-btn:hover,
   .share-btn:hover,
-  .clear-btn:hover {
+  .clear-btn:hover,
+  .chart-btn:hover {
     background-color: var(--hover-bg);
     color: var(--text-color);
   }
@@ -591,6 +629,25 @@
     align-items: center;
     gap: 1.5rem;
     justify-content: flex-end;
+  }
+
+  .company-chart-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.15rem 0.3rem;
+    border-radius: 4px;
+    opacity: 0.6;
+    transition:
+      opacity 0.15s ease,
+      background-color 0.15s ease;
+    line-height: 1;
+  }
+
+  .company-chart-btn:hover {
+    opacity: 1;
+    background-color: var(--hover-bg);
   }
 
   .careers-link {
