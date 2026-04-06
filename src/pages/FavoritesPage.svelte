@@ -5,6 +5,8 @@
   import { favorites } from '../stores/favorites';
   import { auth } from '../stores/auth';
   import { companyService, getCompanyUrl, getCompanyLogoUrl } from '../services/companyService';
+  import { fetchCryptoJobs, fetchAIJobs, fetchFinJobs } from '../services/jobService';
+  import { makeJobId } from '../utils/search';
   import JobBoard from '../components/JobBoard.svelte';
 
   let favoriteJobs: FavoriteJob[] = [];
@@ -12,6 +14,8 @@
   let loading = true;
   let error: string | null = null;
   let isAuthenticated = false;
+  let syncing = false;
+  let syncResult: string | null = null;
 
   onMount(() => {
     // Check authentication status
@@ -63,6 +67,39 @@
     }
   }
 
+  async function syncWithCurrentJobs() {
+    syncing = true;
+    syncResult = null;
+    try {
+      const [cryptoResult, aiResult, finResult] = await Promise.all([
+        fetchCryptoJobs(),
+        fetchAIJobs(),
+        fetchFinJobs(),
+      ]);
+
+      const currentIds = new Set(
+        [...cryptoResult.jobs, ...aiResult.jobs, ...finResult.jobs].map((job) => makeJobId(job))
+      );
+
+      const toRemove = favoriteJobs.filter((fav) => !currentIds.has(fav.id));
+      for (const fav of toRemove) {
+        favorites.remove(fav.id);
+      }
+
+      if (toRemove.length > 0) {
+        await favorites.syncToBackend();
+        syncResult = `Removed ${toRemove.length} unavailable job${toRemove.length !== 1 ? 's' : ''}`;
+      } else {
+        syncResult = 'All favorites are up to date';
+      }
+    } catch (e) {
+      syncResult = 'Sync failed — please try again';
+      console.error('Sync error:', e);
+    } finally {
+      syncing = false;
+    }
+  }
+
   // Convert FavoriteJob back to Job for JobBoard component
   $: jobsForBoard = favoriteJobs.map((fav) => ({
     id: fav.id,
@@ -104,6 +141,16 @@
       <a href="/fin-jobs.html" class="cta-link">Browse FinTech Jobs</a>
     </div>
   {:else}
+    <div class="sync-bar">
+      <button class="sync-btn" on:click={syncWithCurrentJobs} disabled={syncing}>
+        🔄 {syncing ? 'Syncing...' : 'Sync'}
+      </button>
+      {#if syncResult}
+        <span class="sync-result" class:removed={syncResult.startsWith('Removed')}>
+          {syncResult}
+        </span>
+      {/if}
+    </div>
     <JobBoard
       jobs={jobsForBoard}
       {companies}
@@ -217,5 +264,48 @@
 
   .login-btn:hover {
     background: #d97706;
+  }
+
+  .sync-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1rem 0.5rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .sync-btn {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--secondary-text);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--secondary-text);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.1s ease;
+  }
+
+  .sync-btn:hover:not(:disabled) {
+    background-color: var(--hover-bg);
+    color: var(--text-color);
+  }
+
+  .sync-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .sync-result {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+  }
+
+  .sync-result.removed {
+    color: #e88c30;
   }
 </style>
