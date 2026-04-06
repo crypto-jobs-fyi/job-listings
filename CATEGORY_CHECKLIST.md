@@ -246,7 +246,7 @@ For Vercel (auto-deploy):
 - [ ] All websites use HTTPS
 
 ### Current JSON
-- [ ] Has `Total Jobs` key (exact spelling)
+- [ ] Has `total_jobs` key (exact spelling)
 - [ ] Value is a number
 - [ ] Number matches actual job count
 

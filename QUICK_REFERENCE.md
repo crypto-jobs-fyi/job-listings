@@ -140,7 +140,7 @@ When you run `node scripts/generate-entry-points.js`:
 
 ```json
 {
-  "Total Jobs": 123
+  "total_jobs": 123
 }
 ```
 

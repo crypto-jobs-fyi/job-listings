@@ -22,7 +22,7 @@ You need to host 4 JSON files for your new category:
 1. **Jobs List** (`{category}_jobs.json`): All job listings
 2. **New Jobs** (`{category}_jobs_new.json`): Recently added jobs
 3. **Companies** (`{category}_companies.json`): List of companies
-4. **Current Stats** (`{category}_current.json`): Total job count (format: `{"Total Jobs": 123}`)
+4. **Current Stats** (`{category}_current.json`): Total job count (format: `{"total_jobs": 123}`)
 
 ### 2. Edit `categories.config.js`
 
@@ -139,7 +139,7 @@ return {
         ...state,
         defiJobs: jobs,
         defiCompanies: companiesData,
-        defiTotal: currentData['Total Jobs'],
+        defiTotal: currentData['total_jobs'],
         loading: false,
       }));
     } catch (error) {
@@ -225,7 +225,7 @@ All new categories automatically get:
 
 ```json
 {
-  "Total Jobs": 123
+  "total_jobs": 123
 }
 ```
 

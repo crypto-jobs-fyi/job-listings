@@ -328,5 +328,5 @@ const companiesJsonExample = [
 
 // current.json format
 const currentJsonExample = {
-  "Total Jobs": 156
+  "total_jobs": 156
 };
