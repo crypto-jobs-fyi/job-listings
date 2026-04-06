@@ -92,7 +92,7 @@ return {
         ...state,
         defiJobs: jobs,
         defiCompanies: companiesData,
-        defiTotal: currentData['Total Jobs'],
+        defiTotal: currentData['total_jobs'],
         loading: false,
       }));
     } catch (error) {

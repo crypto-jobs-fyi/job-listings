@@ -67,7 +67,7 @@ function createJobsStore() {
           ...state,
           cryptoJobs: jobs,
           cryptoCompanies: companiesData,
-          cryptoTotal: currentData['Total Jobs'],
+          cryptoTotal: currentData['total_jobs'],
           loading: false,
         }));
       } catch (error) {
@@ -102,7 +102,7 @@ function createJobsStore() {
           ...state,
           aiJobs: jobs,
           aiCompanies: companiesData,
-          aiTotal: currentData['Total Jobs'],
+          aiTotal: currentData['total_jobs'],
           loading: false,
         }));
       } catch (error) {
@@ -137,7 +137,7 @@ function createJobsStore() {
           ...state,
           finJobs: jobs,
           finCompanies: companiesData,
-          finTotal: currentData['Total Jobs'],
+          finTotal: currentData['total_jobs'],
           loading: false,
         }));
       } catch (error) {

@@ -16,5 +16,5 @@ export interface JobsResponse {
 
 export interface CurrentResponse {
   [key: string]: number | string;
-  'Total Jobs': number;
+  total_jobs: number;
 }

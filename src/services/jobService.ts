@@ -22,7 +22,7 @@ export async function fetchCryptoJobs(): Promise<{
     const jobs = jobsData.data.filter((job) => job.company && job.location);
     return {
       jobs,
-      total: currentData['Total Jobs'] || null,
+      total: currentData['total_jobs'] || null,
     };
   } catch (error) {
     console.error('Error fetching crypto jobs:', error);
@@ -46,7 +46,7 @@ export async function fetchAIJobs(): Promise<{
     const jobs = jobsData.data.filter((job) => job.company && job.location);
     return {
       jobs,
-      total: currentData['Total Jobs'] || null,
+      total: currentData['total_jobs'] || null,
     };
   } catch (error) {
     console.error('Error fetching AI jobs:', error);
