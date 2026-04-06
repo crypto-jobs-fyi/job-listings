@@ -230,11 +230,11 @@
             <span class="icon">⭐</span> Favorites
           </a>
         {/if}
-        {#if isCompaniesView && companyHistory?.['Total Jobs']}
+        {#if isCompaniesView && companyHistory?.['total_jobs']}
           <button
             class="chart-btn"
             on:click={() => {
-              chartModal = { title: 'Total Jobs', data: companyHistory!['Total Jobs'] };
+              chartModal = { title: 'Total Jobs', data: companyHistory!['total_jobs'] };
             }}
             title="View total jobs over time"
           >
