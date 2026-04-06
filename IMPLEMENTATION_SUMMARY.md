@@ -301,7 +301,7 @@ Update type-safe mappings in `HomePage.svelte`
 ### Current JSON
 ```json
 {
-  "Total Jobs": 123
+  "total_jobs": 123
 }
 ```
 

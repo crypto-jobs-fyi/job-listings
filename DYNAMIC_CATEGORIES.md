@@ -167,7 +167,7 @@ Your category needs 4 JSON endpoints:
 ### 3. Current Stats (`{category}_current.json`)
 ```json
 {
-  "Total Jobs": 123
+  "total_jobs": 123
 }
 ```
 
