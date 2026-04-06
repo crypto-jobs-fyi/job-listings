@@ -141,16 +141,6 @@
       <a href="/fin-jobs.html" class="cta-link">Browse FinTech Jobs</a>
     </div>
   {:else}
-    <div class="sync-bar">
-      <button class="sync-btn" on:click={syncWithCurrentJobs} disabled={syncing}>
-        🔄 {syncing ? 'Syncing...' : 'Sync'}
-      </button>
-      {#if syncResult}
-        <span class="sync-result" class:removed={syncResult.startsWith('Removed')}>
-          {syncResult}
-        </span>
-      {/if}
-    </div>
     <JobBoard
       jobs={jobsForBoard}
       {companies}
@@ -158,6 +148,9 @@
       category="all"
       isFavoritesView={true}
       onClearFavorites={clearAllFavorites}
+      onSyncFavorites={syncWithCurrentJobs}
+      isSyncing={syncing}
+      {syncResult}
       getCompanyUrl={(name) => getCompanyUrl(companies, name)}
       getCompanyLogoUrl={(name) => getCompanyLogoUrl(companies, name)}
     />
@@ -264,48 +257,5 @@
 
   .login-btn:hover {
     background: #d97706;
-  }
-
-  .sync-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0 1rem 0.5rem;
-    max-width: 960px;
-    margin: 0 auto;
-  }
-
-  .sync-btn {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--secondary-text);
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    background-color: transparent;
-    color: var(--secondary-text);
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    transition: all 0.1s ease;
-  }
-
-  .sync-btn:hover:not(:disabled) {
-    background-color: var(--hover-bg);
-    color: var(--text-color);
-  }
-
-  .sync-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  .sync-result {
-    font-size: 0.9rem;
-    color: var(--secondary-text);
-  }
-
-  .sync-result.removed {
-    color: #e88c30;
   }
 </style>

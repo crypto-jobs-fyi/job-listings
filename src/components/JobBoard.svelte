@@ -37,6 +37,9 @@
   export let isCompaniesView: boolean = false;
   export let isFavoritesView: boolean = false;
   export let onClearFavorites: () => void = () => {};
+  export let onSyncFavorites: (() => void) | null = null;
+  export let isSyncing: boolean = false;
+  export let syncResult: string | null = null;
   export let getCompanyUrl: (name: string) => string | null = () => null;
   export let getCompanyLogoUrl: (name: string) => string | null = () => null;
   export let companyHistory: Record<string, Record<string, number>> | null = null;
@@ -222,6 +225,22 @@
       </div>
       <div class="banner-actions">
         {#if isFavoritesView}
+          {#if onSyncFavorites}
+            <button
+              class="sync-btn"
+              on:click={onSyncFavorites}
+              disabled={isSyncing}
+              title="Remove unavailable jobs from favorites"
+            >
+              <span class="icon">🔄</span>
+              {isSyncing ? 'Syncing...' : 'Sync'}
+            </button>
+          {/if}
+          {#if syncResult}
+            <span class="sync-result" class:sync-removed={syncResult.startsWith('Removed')}>
+              {syncResult}
+            </span>
+          {/if}
           <button class="clear-btn" on:click={onClearFavorites}>
             <span class="icon">🗑️</span> Clear all
           </button>
@@ -502,6 +521,7 @@
   .new-jobs-btn,
   .share-btn,
   .clear-btn,
+  .sync-btn,
   .chart-btn {
     padding: 0.5rem 0.75rem;
     border: 1px solid var(--secondary-text);
@@ -521,9 +541,24 @@
   .new-jobs-btn:hover,
   .share-btn:hover,
   .clear-btn:hover,
+  .sync-btn:hover:not(:disabled),
   .chart-btn:hover {
     background-color: var(--hover-bg);
     color: var(--text-color);
+  }
+
+  .sync-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .sync-result {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+  }
+
+  .sync-result.sync-removed {
+    color: #e88c30;
   }
 
   .icon {
