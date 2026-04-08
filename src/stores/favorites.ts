@@ -75,9 +75,17 @@ function createFavoritesStore() {
      * Remove a favorite by ID
      */
     remove: (jobId: string) => {
+      favorites.removeMany([jobId]);
+    },
+    /**
+     * Remove multiple favorites by ID in a single store update
+     */
+    removeMany: (jobIds: string[]) => {
       update((map) => {
         const next = new Map(map);
-        next.delete(jobId);
+        for (const id of jobIds) {
+          next.delete(id);
+        }
         localStorage.setItem('favoriteJobs', JSON.stringify(Array.from(next.values())));
         return next;
       });

@@ -82,11 +82,8 @@
       );
 
       const toRemove = favoriteJobs.filter((fav) => !currentIds.has(fav.id));
-      for (const fav of toRemove) {
-        favorites.remove(fav.id);
-      }
-
       if (toRemove.length > 0) {
+        favorites.removeMany(toRemove.map((fav) => fav.id));
         await favorites.syncToBackend();
         syncResult = `Removed ${toRemove.length} unavailable job${toRemove.length !== 1 ? 's' : ''}`;
       } else {
