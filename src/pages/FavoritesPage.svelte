@@ -5,6 +5,8 @@
   import { favorites } from '../stores/favorites';
   import { auth } from '../stores/auth';
   import { companyService, getCompanyUrl, getCompanyLogoUrl } from '../services/companyService';
+  import { fetchCryptoJobs, fetchAIJobs, fetchFinJobs } from '../services/jobService';
+  import { makeJobId } from '../utils/search';
   import JobBoard from '../components/JobBoard.svelte';
 
   let favoriteJobs: FavoriteJob[] = [];
@@ -12,6 +14,8 @@
   let loading = true;
   let error: string | null = null;
   let isAuthenticated = false;
+  let syncing = false;
+  let syncResult: string | null = null;
 
   onMount(() => {
     // Check authentication status
@@ -63,6 +67,36 @@
     }
   }
 
+  async function syncWithCurrentJobs() {
+    syncing = true;
+    syncResult = null;
+    try {
+      const [cryptoResult, aiResult, finResult] = await Promise.all([
+        fetchCryptoJobs(),
+        fetchAIJobs(),
+        fetchFinJobs(),
+      ]);
+
+      const currentIds = new Set(
+        [...cryptoResult.jobs, ...aiResult.jobs, ...finResult.jobs].map((job) => makeJobId(job))
+      );
+
+      const toRemove = favoriteJobs.filter((fav) => !currentIds.has(fav.id));
+      if (toRemove.length > 0) {
+        favorites.removeMany(toRemove.map((fav) => fav.id));
+        await favorites.syncToBackend();
+        syncResult = `Removed ${toRemove.length} unavailable job${toRemove.length !== 1 ? 's' : ''}`;
+      } else {
+        syncResult = 'All favorites are up to date';
+      }
+    } catch (e) {
+      syncResult = 'Sync failed — please try again';
+      console.error('Sync error:', e);
+    } finally {
+      syncing = false;
+    }
+  }
+
   // Convert FavoriteJob back to Job for JobBoard component
   $: jobsForBoard = favoriteJobs.map((fav) => ({
     id: fav.id,
@@ -111,6 +145,9 @@
       category="all"
       isFavoritesView={true}
       onClearFavorites={clearAllFavorites}
+      onSyncFavorites={syncWithCurrentJobs}
+      isSyncing={syncing}
+      {syncResult}
       getCompanyUrl={(name) => getCompanyUrl(companies, name)}
       getCompanyLogoUrl={(name) => getCompanyLogoUrl(companies, name)}
     />

@@ -2,6 +2,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/svelte';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import FavoritesPage from '../FavoritesPage.svelte';
 import { favorites } from '../../stores/favorites';
+import * as jobService from '../../services/jobService';
+import { makeJobId } from '../../utils/search';
 
 // Hoist the mock stores so they can be used in vi.mock
 const { mockStore, mockAuthStore } = vi.hoisted(() => {
@@ -28,6 +30,8 @@ const { mockStore, mockAuthStore } = vi.hoisted(() => {
         subscribers.forEach((run) => run(value));
       },
       clear: vi.fn(),
+      removeMany: vi.fn(),
+      syncToBackend: vi.fn().mockResolvedValue(undefined),
       loadFromBackend: vi.fn().mockResolvedValue(undefined),
     },
     mockAuthStore: {
@@ -61,6 +65,12 @@ vi.mock('../../services/companyService', () => ({
   },
   getCompanyUrl: vi.fn(),
   getCompanyLogoUrl: vi.fn(),
+}));
+
+vi.mock('../../services/jobService', () => ({
+  fetchCryptoJobs: vi.fn().mockResolvedValue({ jobs: [], total: 0 }),
+  fetchAIJobs: vi.fn().mockResolvedValue({ jobs: [], total: 0 }),
+  fetchFinJobs: vi.fn().mockResolvedValue({ jobs: [], total: 0 }),
 }));
 
 describe('FavoritesPage', () => {
@@ -132,5 +142,98 @@ describe('FavoritesPage', () => {
     await fireEvent.click(clearBtn);
 
     expect(favorites.clear).toHaveBeenCalled();
+  });
+
+  it('removes unavailable favorites and calls syncToBackend when Sync is clicked', async () => {
+    const staleJob = { company: 'Stale Co', title: 'Stale Job', location: 'Remote', link: 'url' };
+    const currentJob = {
+      company: 'Current Co',
+      title: 'Current Job',
+      location: 'New York',
+      link: 'url2',
+    };
+    const staleFavId = makeJobId(staleJob);
+    const currentFavId = makeJobId(currentJob);
+
+    const mockFavs = new Map();
+    mockFavs.set(staleFavId, {
+      id: staleFavId,
+      title: staleJob.title,
+      company: staleJob.company,
+      location: staleJob.location,
+      link: staleJob.link,
+      category: 'crypto',
+      addedAt: Date.now(),
+    });
+    mockFavs.set(currentFavId, {
+      id: currentFavId,
+      title: currentJob.title,
+      company: currentJob.company,
+      location: currentJob.location,
+      link: currentJob.link,
+      category: 'ai',
+      addedAt: Date.now(),
+    });
+    mockStore.set(mockFavs);
+
+    // Only the current job is in the live feed
+    vi.mocked(jobService.fetchCryptoJobs).mockResolvedValue({ jobs: [], total: 0 });
+    vi.mocked(jobService.fetchAIJobs).mockResolvedValue({ jobs: [currentJob], total: 1 });
+    vi.mocked(jobService.fetchFinJobs).mockResolvedValue({ jobs: [], total: 0 });
+
+    render(FavoritesPage);
+
+    await waitFor(() => {
+      expect(screen.getByText('Sync')).toBeTruthy();
+    });
+
+    const syncBtn = screen.getByText('Sync');
+    await fireEvent.click(syncBtn);
+
+    await waitFor(() => {
+      expect(favorites.removeMany).toHaveBeenCalledWith([staleFavId]);
+      expect(favorites.syncToBackend).toHaveBeenCalled();
+      expect(screen.getByText('Removed 1 unavailable job')).toBeTruthy();
+    });
+  });
+
+  it('shows up-to-date message when all favorites are still in the live feed', async () => {
+    const currentJob = {
+      company: 'Current Co',
+      title: 'Current Job',
+      location: 'New York',
+      link: 'url',
+    };
+    const favId = makeJobId(currentJob);
+
+    const mockFavs = new Map();
+    mockFavs.set(favId, {
+      id: favId,
+      title: currentJob.title,
+      company: currentJob.company,
+      location: currentJob.location,
+      link: currentJob.link,
+      category: 'ai',
+      addedAt: Date.now(),
+    });
+    mockStore.set(mockFavs);
+
+    vi.mocked(jobService.fetchCryptoJobs).mockResolvedValue({ jobs: [], total: 0 });
+    vi.mocked(jobService.fetchAIJobs).mockResolvedValue({ jobs: [currentJob], total: 1 });
+    vi.mocked(jobService.fetchFinJobs).mockResolvedValue({ jobs: [], total: 0 });
+
+    render(FavoritesPage);
+
+    await waitFor(() => {
+      expect(screen.getByText('Sync')).toBeTruthy();
+    });
+
+    await fireEvent.click(screen.getByText('Sync'));
+
+    await waitFor(() => {
+      expect(favorites.removeMany).not.toHaveBeenCalled();
+      expect(favorites.syncToBackend).not.toHaveBeenCalled();
+      expect(screen.getByText('All favorites are up to date')).toBeTruthy();
+    });
   });
 });

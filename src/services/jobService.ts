@@ -22,7 +22,7 @@ export async function fetchCryptoJobs(): Promise<{
     const jobs = jobsData.data.filter((job) => job.company && job.location);
     return {
       jobs,
-      total: currentData['total_jobs'] || null,
+      total: currentData['total_jobs'] ?? null,
     };
   } catch (error) {
     console.error('Error fetching crypto jobs:', error);
@@ -46,7 +46,7 @@ export async function fetchAIJobs(): Promise<{
     const jobs = jobsData.data.filter((job) => job.company && job.location);
     return {
       jobs,
-      total: currentData['total_jobs'] || null,
+      total: currentData['total_jobs'] ?? null,
     };
   } catch (error) {
     console.error('Error fetching AI jobs:', error);
@@ -76,6 +76,30 @@ export async function fetchAINewJobs(): Promise<Job[]> {
     return jobsData.data.filter((job) => job.company && job.location);
   } catch (error) {
     console.error('Error fetching AI new jobs:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch FinTech jobs
+ */
+export async function fetchFinJobs(): Promise<{
+  jobs: Job[];
+  total: number | null;
+}> {
+  try {
+    const [jobsData, currentData] = await Promise.all([
+      fetchJSON<JobsResponse>(ENDPOINTS.FIN_JOBS),
+      fetchJSON<CurrentResponse>(ENDPOINTS.FIN_CURRENT),
+    ]);
+
+    const jobs = jobsData.data.filter((job) => job.company && job.location);
+    return {
+      jobs,
+      total: currentData['total_jobs'] ?? null,
+    };
+  } catch (error) {
+    console.error('Error fetching FinTech jobs:', error);
     throw error;
   }
 }
