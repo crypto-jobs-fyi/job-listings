@@ -45,13 +45,21 @@
       });
 
       // Fetch data for categories that don't have it yet
-      if (state.cryptoTotal === null && !state.resources.cryptoJobs.loading) {
+      if (
+        state.cryptoTotal === null &&
+        !state.resources.cryptoJobs.loading &&
+        !state.resources.cryptoJobs.error
+      ) {
         jobs.fetchCryptoJobs();
       }
-      if (state.aiTotal === null && !state.resources.aiJobs.loading) {
+      if (state.aiTotal === null && !state.resources.aiJobs.loading && !state.resources.aiJobs.error) {
         jobs.fetchAIJobs();
       }
-      if (state.finTotal === null && !state.resources.finJobs.loading) {
+      if (
+        state.finTotal === null &&
+        !state.resources.finJobs.loading &&
+        !state.resources.finJobs.error
+      ) {
         jobs.fetchFinJobs();
       }
     });
