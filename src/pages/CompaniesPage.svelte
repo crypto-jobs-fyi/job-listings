@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import JobBoard from '../components/JobBoard.svelte';
-  import { jobs as jobsStore, type JobsStoreState } from '../stores/jobs';
+  import { jobs as jobsStore, type JobsResource, type JobsStoreState } from '../stores/jobs';
   import { getCompanyUrl, getCompanyLogoUrl } from '../services/companyService';
   import { fetchHistory, type HistoryData } from '../services/historyService';
   import type { Company } from '../types/company';
@@ -46,6 +46,16 @@
         : storeData.finJobs
     : [];
 
+  let companiesResource: JobsResource = 'cryptoCompanies';
+  $: companiesResource =
+    pageConfig.category === 'crypto'
+      ? 'cryptoCompanies'
+      : pageConfig.category === 'ai'
+        ? 'aiCompanies'
+        : 'finCompanies';
+  $: loading = storeData?.resources[companiesResource].loading ?? true;
+  $: error = storeData?.resources[companiesResource].error ?? null;
+
   // Subscribe to store
   onMount(() => {
     console.log('CompaniesPage mounted with category:', pageConfig.category);
@@ -59,8 +69,6 @@
         error: data.error,
       });
       storeData = data;
-      loading = data.loading;
-      error = data.error;
     });
 
     console.log('Fetching companies for category:', pageConfig.category);

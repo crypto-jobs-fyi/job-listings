@@ -12,6 +12,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { format, resolveConfig } from 'prettier';
 import { CATEGORIES } from '../categories.config.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,10 +22,16 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const srcDir = path.join(rootDir, 'src');
 
+async function writeFormattedFile(filePath, content) {
+  const options = await resolveConfig(filePath);
+  const formatted = await format(content, { ...options, filepath: filePath });
+  fs.writeFileSync(filePath, formatted, 'utf-8');
+}
+
 /**
  * Generate pages configuration from categories
  */
-function generatePagesConfig() {
+export function generatePagesConfig() {
   const pages = [];
 
   // Home page
@@ -191,7 +198,6 @@ export default app;
  */
 function generateSitemap(pages) {
   const baseUrl = 'https://www.job-finder.org';
-  const today = new Date().toISOString().split('T')[0];
 
   const urls = pages.map(page => {
     // Skip pages with noindex robots meta tag
@@ -205,7 +211,6 @@ function generateSitemap(pages) {
 
     return `  <url>
     <loc>${baseUrl}${urlPath}</loc>
-    <lastmod>${today}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`;
@@ -260,11 +265,11 @@ Crawl-delay: 1
 /**
  * Main function
  */
-async function generateEntryPoints() {
+export async function generateEntryPoints() {
   console.log('🔧 Generating entry point files...');
 
   // Generate constants.ts with dynamic endpoints
-  generateConstantsFile();
+  await generateConstantsFile();
 
   // Generate HTML files
   for (const page of pagesConfig) {
@@ -278,12 +283,12 @@ async function generateEntryPoints() {
   for (const page of pagesConfig) {
     const filePath = path.join(srcDir, `${page.entryPoint}.js`);
     const jsContent = generateJsTemplate(page);
-    fs.writeFileSync(filePath, jsContent, 'utf-8');
+    await writeFormattedFile(filePath, jsContent);
     console.log(`✓ Generated src/${page.entryPoint}.js`);
   }
 
   // Generate categories.ts for frontend
-  generateCategoriesTypeScriptFile();
+  await generateCategoriesTypeScriptFile();
 
   // Generate sitemap.xml
   const publicDir = path.join(rootDir, 'public');
@@ -328,7 +333,7 @@ export default defineConfig({
 })
 `;
 
-  fs.writeFileSync(viteConfigPath, viteConfigContent, 'utf-8');
+  await writeFormattedFile(viteConfigPath, viteConfigContent);
   console.log('✓ Updated vite.config.js');
 
   console.log('\n✅ Entry point generation complete!');
@@ -339,13 +344,14 @@ export default defineConfig({
 /**
  * Generate constants.ts file with dynamic endpoints
  */
-function generateConstantsFile() {
+async function generateConstantsFile() {
   const endpointsCode = CATEGORIES.map((category) => {
     const upperCaseId = category.id.toUpperCase();
     return `  ${upperCaseId}_JOBS: '${category.endpoints.jobs}',
   ${upperCaseId}_COMPANIES: '${category.endpoints.companies}',
   ${upperCaseId}_CURRENT: '${category.endpoints.current}',
-  ${upperCaseId}_NEW_JOBS: '${category.endpoints.newJobs}',`;
+  ${upperCaseId}_NEW_JOBS: '${category.endpoints.newJobs}',
+  ${upperCaseId}_HISTORY: '${category.endpoints.history}',`;
   }).join('\n');
 
   const routesCode = CATEGORIES.map((category) => {
@@ -426,14 +432,14 @@ export const AUTH_CONFIG = {
 `;
 
   const constantsPath = path.join(srcDir, 'utils', 'constants.ts');
-  fs.writeFileSync(constantsPath, constantsContent, 'utf-8');
+  await writeFormattedFile(constantsPath, constantsContent);
   console.log('✓ Generated src/utils/constants.ts');
 }
 
 /**
  * Generate categories.ts file for frontend use
  */
-function generateCategoriesTypeScriptFile() {
+async function generateCategoriesTypeScriptFile() {
   const categoriesArray = CATEGORIES.map((cat) => {
     return `  {
     id: '${cat.id}',
@@ -477,9 +483,13 @@ export function getCategoryIds(): string[] {
 `;
 
   const categoriesPath = path.join(srcDir, 'utils', 'categories.ts');
-  fs.writeFileSync(categoriesPath, categoriesContent, 'utf-8');
+  await writeFormattedFile(categoriesPath, categoriesContent);
   console.log('✓ Generated src/utils/categories.ts');
 }
 
-// Run
-generateEntryPoints().catch(console.error);
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+  generateEntryPoints().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

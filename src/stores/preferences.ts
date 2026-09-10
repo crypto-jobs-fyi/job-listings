@@ -76,11 +76,11 @@ function createPreferencesStore() {
     addLocation: (location: string) => {
       const trimmed = location.trim();
       if (!trimmed) return;
-      
+
       // Check for duplicate before calling update to avoid unnecessary store notifications
       const current = get({ subscribe });
       if (current.locations.includes(trimmed)) return;
-      
+
       update((prefs) => {
         const next = {
           ...prefs,
@@ -115,11 +115,11 @@ function createPreferencesStore() {
     addTitle: (title: string) => {
       const trimmed = title.trim();
       if (!trimmed) return;
-      
+
       // Check for duplicate before calling update to avoid unnecessary store notifications
       const current = get({ subscribe });
       if (current.titles.includes(trimmed)) return;
-      
+
       update((prefs) => {
         const next = {
           ...prefs,

@@ -15,6 +15,8 @@ export const ENDPOINTS = {
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_current.json',
   CRYPTO_NEW_JOBS:
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_jobs_new.json',
+  CRYPTO_HISTORY:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_history.json',
   AI_JOBS: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs.json',
   AI_COMPANIES:
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json',
@@ -22,6 +24,8 @@ export const ENDPOINTS = {
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_current.json',
   AI_NEW_JOBS:
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs_new.json',
+  AI_HISTORY:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_history.json',
   FIN_JOBS:
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_jobs.json',
   FIN_COMPANIES:
@@ -30,10 +34,6 @@ export const ENDPOINTS = {
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_current.json',
   FIN_NEW_JOBS:
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_jobs_new.json',
-  AI_HISTORY:
-    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_history.json',
-  CRYPTO_HISTORY:
-    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_history.json',
   FIN_HISTORY:
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_history.json',
 } as const;

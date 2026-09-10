@@ -38,7 +38,7 @@ function createFavoritesStore() {
      */
     toggle: (job: FavoriteJob) => {
       let updatedFavorites!: Map<string, FavoriteJob>;
-      
+
       update((map) => {
         const next = new Map(map);
         if (next.has(job.id)) {
@@ -48,7 +48,7 @@ function createFavoritesStore() {
         }
         // Persist to localStorage
         localStorage.setItem('favoriteJobs', JSON.stringify(Array.from(next.values())));
-        
+
         // Store the updated map to sync after state is committed
         updatedFavorites = next;
         return next;
@@ -125,7 +125,7 @@ function createFavoritesStore() {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${authState.user.token}`,
+              Authorization: `Bearer ${authState.user.token}`,
             },
             body: JSON.stringify({
               email: authState.user.email,
@@ -165,7 +165,7 @@ function createFavoritesStore() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authState.user.token}`,
+            Authorization: `Bearer ${authState.user.token}`,
           },
           body: JSON.stringify({
             email: authState.user.email,
@@ -199,7 +199,7 @@ function createFavoritesStore() {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${authState.user.token}`,
+              Authorization: `Bearer ${authState.user.token}`,
             },
           }
         );
