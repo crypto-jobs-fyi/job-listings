@@ -1,142 +1,99 @@
-# Quick Reference: Dynamic Categories System
+# Quick Reference: Adding a Job Category
 
-## 🎯 Quick Start
+Job Finder currently supports the `crypto`, `ai`, and `fin` categories. `categories.config.js` drives generated routes and derived configuration, but adding a category also requires extending the explicitly typed runtime mappings.
 
-**Want to add a new category?** Follow these 3 simple steps:
+## Category Configuration
 
-### 1. Edit `categories.config.js`
+Add a category with all five data endpoints to [categories.config.js](categories.config.js):
 
-```javascript
-export const CATEGORIES = [
-  // ... existing categories ...
-  {
-    id: 'your-category',
-    name: 'Your Category',
-    color: '#hex-color',
-    hoverColor: '#hex-color',
-    endpoints: {
-      jobs: 'https://url-to/jobs.json',
-      companies: 'https://url-to/companies.json',
-      current: 'https://url-to/current.json',
-      newJobs: 'https://url-to/new_jobs.json',
-    },
-  },
-];
-```
-
-### 2. Run Generation Script
-
-```bash
-node scripts/generate-entry-points.js
-```
-
-### 3. Update Store Methods
-
-Add fetch methods in `src/stores/jobs.ts` - see [EXAMPLE_ADD_CATEGORY.js](EXAMPLE_ADD_CATEGORY.js)
-
-### 4. Update Navigation Header
-
-Add links in `src/components/TopMenu.svelte`:
-
-```svelte
-<a href="/{category}-jobs.html" class="new-jobs-btn" 
-   class:active={active === '{category}'}>{Category} Jobs</a>
-<a href="/{category}-companies.html" class="new-jobs-btn" 
-   class:active={active === '{category}-companies'}>{Category} Companies</a>
-```
-
-### 5. Restart and Test
-
-```bash
-npm run dev
-```
-
-## 📁 Key Files
-
-| File | Purpose | Edit? |
-|------|---------|-------|
-| `categories.config.js` | Category definitions | ✅ YES |
-| `scripts/generate-entry-points.js` | Generates all files | ❌ NO |
-| `src/utils/constants.ts` | API endpoints | ❌ AUTO-GENERATED |
-| `src/utils/categories.ts` | Category metadata | ❌ AUTO-GENERATED |
-| `src/stores/jobs.ts` | Data fetching | ✅ YES |
-| `src/pages/HomePage.svelte` | Homepage | ✅ YES (minor) |
-| `src/components/TopMenu.svelte` | Navigation header | ✅ YES |
-
-## 🔄 What Gets Auto-Generated
-
-When you run `node scripts/generate-entry-points.js`:
-
-✅ HTML files (e.g., `defi-jobs.html`)  
-✅ JS entry points (e.g., `src/defi-jobs.js`)  
-✅ `src/utils/constants.ts` (endpoints, routes)  
-✅ `src/utils/categories.ts` (category data)  
-✅ `vite.config.js` (build config)  
-✅ `public/sitemap.xml` (SEO)  
-✅ `public/robots.txt` (SEO)  
-
-## 📋 Configuration Fields
-
-```javascript
+```js
 {
-  id: 'lowercase-id',        // Used in URLs, no spaces
-  name: 'Display Name',      // Shown to users
-  color: '#059669',          // Button background (hex)
-  hoverColor: '#047857',     // Button hover (hex)
+  id: 'defi',
+  name: 'DeFi',
+  color: '#3b82f6',
+  hoverColor: '#2563eb',
   endpoints: {
-    jobs: 'url',             // All jobs JSON
-    companies: 'url',        // Companies JSON
-    current: 'url',          // Stats JSON
-    newJobs: 'url',          // New jobs JSON
-  }
+    jobs: 'https://example.com/defi_jobs.json',
+    companies: 'https://example.com/defi_companies.json',
+    current: 'https://example.com/defi_current.json',
+    newJobs: 'https://example.com/defi_jobs_new.json',
+    history: 'https://example.com/defi_history.json',
+  },
 }
 ```
 
-## 🎨 Suggested Colors
+| Field                  | Requirement                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| `id`                   | Unique lowercase identifier without spaces; it becomes part of generated URLs. |
+| `name`                 | User-facing category name.                                                     |
+| `color` / `hoverColor` | Valid CSS color values for category controls.                                  |
+| `endpoints`            | HTTPS URLs for `jobs`, `companies`, `current`, `newJobs`, and `history`.       |
 
-| Color | Hex | Hover Hex | Use Case |
-|-------|-----|-----------|----------|
-| Emerald | `#059669` | `#047857` | Crypto, Finance |
-| Purple | `#8b5cf6` | `#7c3aed` | AI, Tech |
-| Amber | `#f59e0b` | `#d97706` | DeFi, Gold |
-| Blue | `#3b82f6` | `#2563eb` | Enterprise, Security |
-| Red | `#ef4444` | `#dc2626` | Gaming, High Energy |
-| Cyan | `#06b6d4` | `#0891b2` | Data, Analytics |
-| Pink | `#ec4899` | `#db2777` | NFT, Creative |
+## Runtime Extension Checklist
 
-## 📦 JSON Format Requirements
+Update every category-specific mapping for the new ID:
 
-### Jobs JSON (`{category}_jobs.json`)
+1. [src/types/job.ts](src/types/job.ts) and [src/App.svelte](src/App.svelte): extend the category union.
+2. [src/services/jobService.ts](src/services/jobService.ts), [src/services/companyService.ts](src/services/companyService.ts), and [src/services/historyService.ts](src/services/historyService.ts): add the new endpoint selection and fetch functions.
+3. [src/stores/jobs.ts](src/stores/jobs.ts): add job/company/new-job resources, totals, default state, and fetch methods.
+4. [src/pages/JobsPage.svelte](src/pages/JobsPage.svelte), [src/pages/CompaniesPage.svelte](src/pages/CompaniesPage.svelte), and [src/pages/FavoritesPage.svelte](src/pages/FavoritesPage.svelte): extend category-specific loading and view mappings.
+5. [src/pages/HomePage.svelte](src/pages/HomePage.svelte): add the category's counts and initial load. Links are already rendered from generated category metadata.
+6. [src/components/TopMenu.svelte](src/components/TopMenu.svelte): add desktop and mobile navigation links.
+7. Update or add focused unit and E2E coverage for the new category flow.
+
+## Generated Outputs
+
+Run the generator only after the configuration and runtime changes are in place:
+
+```sh
+npm run generate
+```
+
+It creates or updates:
+
+- The three HTML and JavaScript entry points for jobs, new jobs, and companies.
+- [src/utils/constants.ts](src/utils/constants.ts) and [src/utils/categories.ts](src/utils/categories.ts).
+- [vite.config.js](vite.config.js), [public/sitemap.xml](public/sitemap.xml), and [public/robots.txt](public/robots.txt).
+
+Do not hand-edit these generated outputs. Commit them with the source configuration change.
+
+## Data Contracts
+
+The runtime validators require these minimum payload shapes:
+
+### Jobs
 
 ```json
 {
   "data": [
     {
-      "title": "Job Title",
-      "company": "Company Name",
-      "location": "Location",
-      "description": "Description...",
-      "apply_url": "https://...",
-      "date_posted": "2026-01-15"
+      "company": "Example Company",
+      "title": "Senior Engineer",
+      "location": "Remote",
+      "link": "https://example.com/jobs/senior-engineer"
     }
   ]
 }
 ```
 
-### Companies JSON (`{category}_companies.json`)
+`id`, `category`, and `postedDate` are optional. Invalid job responses are rejected before they enter store state.
+
+### Companies
 
 ```json
 [
   {
-    "name": "Company Name",
-    "location": "Location",
-    "description": "Description...",
-    "website": "https://..."
+    "company_name": "Example Company",
+    "company_url": "https://example.com",
+    "jobs_url": "https://example.com/jobs",
+    "logo_url": "https://example.com/logo.png"
   }
 ]
 ```
 
-### Current JSON (`{category}_current.json`)
+Only `company_name` is required by the validator. The remaining fields are optional.
+
+### Current Count
 
 ```json
 {
@@ -144,121 +101,53 @@ When you run `node scripts/generate-entry-points.js`:
 }
 ```
 
-## 🔍 Testing Checklist
+### History
 
-After adding a category, verify:
+History is an object of date-to-count series. It must include `total_jobs`; company series use lowercase company names as keys.
 
-- [ ] Navigation header shows new category links
-- [ ] Navigation links work correctly
-- [ ] Active state highlights current page
-- [ ] Homepage shows new category buttons
-- [ ] Job count badge appears (if > 0)
-- [ ] Company count badge appears (if > 0)
-- [ ] `/{category}-jobs.html` loads jobs
-- [ ] `/{category}-new-jobs.html` loads new jobs
-- [ ] `/{category}-companies.html` loads companies
-- [ ] Search works on all pages
-- [ ] Filters work (location, remote, quick filters)
-- [ ] Favorites work (save/unsave)
-- [ ] Share links work
-- [ ] Responsive design works on mobile
-- [ ] Dark/light mode toggle works
-
-## 🐛 Troubleshooting
-
-### Category not showing on homepage
-
-```bash
-# Re-run generation script
-node scripts/generate-entry-points.js
-
-# Restart dev server
-npm run dev
-```
-
-### Jobs not loading
-
-1. Check browser console for errors
-2. Verify JSON URLs are accessible
-3. Check JSON format matches requirements
-4. Ensure store methods were added
-
-### TypeScript errors
-
-```bash
-# Check for errors
-npm run lint
-
-# The error might be in src/pages/HomePage.svelte
-# Update the type-safe mapping (see EXAMPLE_ADD_CATEGORY.js)
-```
-
-## 📚 Full Documentation
-
-- **Complete Guide**: [ADDING_CATEGORIES.md](ADDING_CATEGORIES.md)
-- **Example Code**: [EXAMPLE_ADD_CATEGORY.js](EXAMPLE_ADD_CATEGORY.js)
-- **Architecture**: [ARCHITECTURE.md](ARCHITECTURE.md)
-- **Config README**: [categories.config.README.md](categories.config.README.md)
-
-## 🚀 Example: Adding "DeFi" Category
-
-```javascript
-// 1. Edit categories.config.js
+```json
 {
-  id: 'defi',
-  name: 'DeFi',
-  color: '#f59e0b',
-  hoverColor: '#d97706',
-  endpoints: {
-    jobs: 'https://raw.githubusercontent.com/your-org/crawler/main/defi_jobs.json',
-    companies: 'https://raw.githubusercontent.com/your-org/crawler/main/defi_companies.json',
-    current: 'https://raw.githubusercontent.com/your-org/crawler/main/defi_current.json',
-    newJobs: 'https://raw.githubusercontent.com/your-org/crawler/main/defi_jobs_new.json',
+  "total_jobs": {
+    "2026-09-09": 123
   },
+  "example company": {
+    "2026-09-09": 4
+  }
 }
 ```
 
-```bash
-# 2. Generate files
-node scripts/generate-entry-points.js
+## Verify the Change
+
+```sh
+npm run generate
+npm run lint
+npm run format:check
+npm run test
+npm run build
+npm run test:e2e
 ```
 
-```typescript
-// 3. Update src/stores/jobs.ts (see EXAMPLE_ADD_CATEGORY.js)
-// Add: defiJobs, defiCompanies, defiNewJobs, defiTotal
-// Add: fetchDeFiJobs(), fetchDeFiNewJobs()
+To reproduce CI browser parallelism locally:
+
+```sh
+CI=1 npx playwright test --workers=2
 ```
 
-```svelte
-<!-- 4. Update src/components/TopMenu.svelte -->
-<a href="/defi-jobs.html" class="new-jobs-btn" 
-   class:active={active === 'defi'}>DeFi Jobs</a>
-<a href="/defi-companies.html" class="new-jobs-btn" 
-   class:active={active === 'defi-companies'}>DeFi Companies</a>
-```
+Confirm the three generated routes load, navigation and home-page counts include the category, data failures show resource-specific errors, and company history charts open for the total and individual companies.
 
-```bash
-# 5. Restart and test
-npm run dev
-```
+## Troubleshooting
 
-✅ Done! Your DeFi category is live.
+| Symptom                         | Check                                                                                               |
+| ------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Generated routes are missing    | Confirm the category has all five endpoints, then run `npm run generate`.                           |
+| Route loads but data is empty   | Confirm every runtime mapping listed above includes the category and validate the response shape.   |
+| History controls do not appear  | Ensure `history` is reachable, contains `total_jobs`, and has lowercase company keys.               |
+| CI reports generated-file drift | Run `npm run generate` and commit its output.                                                       |
+| A request fails unexpectedly    | Check the endpoint status and payload; services enforce a 15-second timeout and runtime validation. |
 
-## 💡 Pro Tips
+## Related Documentation
 
-- Use descriptive category names (shown to users)
-- Keep IDs short and lowercase (used in URLs)
-- Pick distinct colors for each category
-- Test JSON URLs before adding
-- Always restart dev server after generation
-- Update HomePage.svelte type mapping for TypeScript safety
-
-## 🔗 Related Files
-
-- Configuration: `categories.config.js`
-- Generation Script: `scripts/generate-entry-points.js`
-- Jobs Store: `src/stores/jobs.ts`
-- Homepage: `src/pages/HomePage.svelte`
-- Navigation: `src/components/TopMenu.svelte`
-- Constants: `src/utils/constants.ts` (auto-generated)
-- Categories: `src/utils/categories.ts` (auto-generated)
+- [README.md](README.md): project setup and commands.
+- [ARCHITECTURE.md](ARCHITECTURE.md): generated-entry-point, data-flow, and CI details.
+- [MODERNIZATION_PLAN.md](MODERNIZATION_PLAN.md): required quality gates and current baseline.
+- [DOCS_INDEX.md](DOCS_INDEX.md): documentation map and supplemental rollout material.
