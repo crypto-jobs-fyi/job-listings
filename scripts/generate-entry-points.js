@@ -350,7 +350,8 @@ async function generateConstantsFile() {
     return `  ${upperCaseId}_JOBS: '${category.endpoints.jobs}',
   ${upperCaseId}_COMPANIES: '${category.endpoints.companies}',
   ${upperCaseId}_CURRENT: '${category.endpoints.current}',
-  ${upperCaseId}_NEW_JOBS: '${category.endpoints.newJobs}',`;
+  ${upperCaseId}_NEW_JOBS: '${category.endpoints.newJobs}',
+  ${upperCaseId}_HISTORY: '${category.endpoints.history}',`;
   }).join('\n');
 
   const routesCode = CATEGORIES.map((category) => {

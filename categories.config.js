@@ -26,6 +26,7 @@ export const CATEGORIES = [
       companies: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_companies.json',
       current: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_current.json',
       newJobs: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_jobs_new.json',
+      history: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_history.json',
     },
   },
   {
@@ -38,6 +39,7 @@ export const CATEGORIES = [
       companies: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_companies.json',
       current: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_current.json',
       newJobs: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_jobs_new.json',
+      history: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_history.json',
     },
   },
   {
@@ -50,6 +52,7 @@ export const CATEGORIES = [
       companies: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_companies.json',
       current: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_current.json',
       newJobs: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_jobs_new.json',
+      history: 'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_history.json',
     },
   },
   // Add new categories here following the same structure
@@ -87,7 +90,7 @@ export function getCategoryIds() {
  */
 export function validateCategory(category) {
   const required = ['id', 'name', 'color', 'hoverColor', 'endpoints'];
-  const endpointKeys = ['jobs', 'companies', 'current', 'newJobs'];
+  const endpointKeys = ['jobs', 'companies', 'current', 'newJobs', 'history'];
 
   for (const field of required) {
     if (!category[field]) {
