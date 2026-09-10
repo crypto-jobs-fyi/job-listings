@@ -52,7 +52,11 @@ export async function sendVerificationCode(email: string): Promise<LoginResponse
 /**
  * Verifies the 4-digit code entered by the user
  */
-export async function verifyCode(email: string, code: string, rememberMe: boolean = false): Promise<LoginResponse> {
+export async function verifyCode(
+  email: string,
+  code: string,
+  rememberMe: boolean = false
+): Promise<LoginResponse> {
   if (!email || !code) {
     return { success: false, error: 'Email and code are required' };
   }
@@ -85,11 +89,11 @@ export async function verifyCode(email: string, code: string, rememberMe: boolea
       sessionStorage.removeItem('pending_verification_email');
     }
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       email: data.email,
       token: data.token,
-      rememberMe: data.rememberMe
+      rememberMe: data.rememberMe,
     };
   } catch (error) {
     console.error('Verify code error:', error);

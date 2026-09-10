@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite --port 3000",
     "dev:vercel": "vercel dev",
+    "generate": "node scripts/generate-entry-points.js",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src --max-warnings 0",

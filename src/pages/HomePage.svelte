@@ -45,13 +45,13 @@
       });
 
       // Fetch data for categories that don't have it yet
-      if (state.cryptoTotal === null && !state.loading) {
+      if (state.cryptoTotal === null && !state.resources.cryptoJobs.loading) {
         jobs.fetchCryptoJobs();
       }
-      if (state.aiTotal === null && !state.loading) {
+      if (state.aiTotal === null && !state.resources.aiJobs.loading) {
         jobs.fetchAIJobs();
       }
-      if (state.finTotal === null && !state.loading) {
+      if (state.finTotal === null && !state.resources.finJobs.loading) {
         jobs.fetchFinJobs();
       }
     });

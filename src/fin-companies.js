@@ -7,7 +7,8 @@ const pageConfig = {
   type: 'companies',
   category: 'fin',
   title: 'FinTech Companies - Find Top Organizations',
-  description: 'Explore leading fintech companies hiring. Browse by company size, location, and specialization.',
+  description:
+    'Explore leading fintech companies hiring. Browse by company size, location, and specialization.',
 };
 
 // Store in window for App.svelte to access

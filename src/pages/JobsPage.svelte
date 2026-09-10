@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import JobBoard from '../components/JobBoard.svelte';
-  import { jobs as jobsStore, type JobsStoreState } from '../stores/jobs';
+  import { jobs as jobsStore, type JobsResource, type JobsStoreState } from '../stores/jobs';
   import { getCompanyUrl, getCompanyLogoUrl } from '../services/companyService';
   import type { Job } from '../types/job';
   import type { Company } from '../types/company';
@@ -62,19 +62,28 @@
         : storeData.finTotal || 0
     : 0;
 
+  let jobsResource: JobsResource = 'cryptoJobs';
+  $: jobsResource = isNewJobs
+    ? pageConfig.category === 'crypto'
+      ? 'cryptoNewJobs'
+      : pageConfig.category === 'ai'
+        ? 'aiNewJobs'
+        : 'finNewJobs'
+    : pageConfig.category === 'crypto'
+      ? 'cryptoJobs'
+      : pageConfig.category === 'ai'
+        ? 'aiJobs'
+        : 'finJobs';
+  $: loading = storeData?.resources[jobsResource].loading ?? true;
+  $: error = storeData?.resources[jobsResource].error ?? null;
+
   // Subscribe to store
   onMount(() => {
     const unsubscribe = jobsStore.subscribe((data) => {
       storeData = data;
-      loading = data.loading;
-      error = data.error;
     });
 
     console.log('Fetching jobs for category:', pageConfig.category, 'isNewJobs:', isNewJobs);
-
-    // Set initial loading state
-    loading = true;
-    error = null;
 
     // Load jobs
     const fetchPromise =

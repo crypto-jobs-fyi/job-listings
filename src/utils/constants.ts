@@ -30,12 +30,6 @@ export const ENDPOINTS = {
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_current.json',
   FIN_NEW_JOBS:
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_jobs_new.json',
-  AI_HISTORY:
-    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/ai_history.json',
-  CRYPTO_HISTORY:
-    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/crypto_history.json',
-  FIN_HISTORY:
-    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_history.json',
 } as const;
 
 // LocalStorage Keys
