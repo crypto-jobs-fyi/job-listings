@@ -52,7 +52,11 @@
       ) {
         jobs.fetchCryptoJobs();
       }
-      if (state.aiTotal === null && !state.resources.aiJobs.loading && !state.resources.aiJobs.error) {
+      if (
+        state.aiTotal === null &&
+        !state.resources.aiJobs.loading &&
+        !state.resources.aiJobs.error
+      ) {
         jobs.fetchAIJobs();
       }
       if (
