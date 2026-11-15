@@ -23,6 +23,7 @@ You need to host 4 JSON files for your new category:
 2. **New Jobs** (`{category}_jobs_new.json`): Recently added jobs
 3. **Companies** (`{category}_companies.json`): List of companies
 4. **Current Stats** (`{category}_current.json`): Total job count (format: `{"total_jobs": 123}`)
+5. **History** (`{category}_history.json`): Historical total and per-company job counts
 
 ### 2. Edit `categories.config.js`
 
@@ -66,11 +67,12 @@ export const CATEGORIES = [
 - **name**: Display name shown to users (can have spaces, capitalization).
 - **color**: CSS color for category buttons (hex or named color).
 - **hoverColor**: CSS color for button hover state.
-- **endpoints**: Object with 4 required URLs:
+- **endpoints**: Object with 5 required URLs:
   - `jobs`: Main jobs list
   - `companies`: Companies list
   - `current`: Current stats (total jobs count)
   - `newJobs`: New/recent jobs
+  - `history`: Historical job counts
 
 ### 3. Generate Entry Points
 

@@ -6,7 +6,7 @@ declare global {
   interface Window {
     __PAGE_CONFIG__?: {
       type: string;
-      category: 'crypto' | 'ai' | 'fin' | 'all';
+      category: 'crypto' | 'ai' | 'fin' | 'tech' | 'all';
       title: string;
       description: string;
     };
