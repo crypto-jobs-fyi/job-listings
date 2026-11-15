@@ -57,7 +57,9 @@
       ? storeData.cryptoCompanies
       : pageConfig.category === 'ai'
         ? storeData.aiCompanies
-        : storeData.finCompanies
+        : pageConfig.category === 'fin'
+          ? storeData.finCompanies
+          : storeData.techCompanies
     : [];
 
   $: totalJobs = storeData
@@ -65,7 +67,9 @@
       ? storeData.cryptoTotal || 0
       : pageConfig.category === 'ai'
         ? storeData.aiTotal || 0
-        : storeData.finTotal || 0
+        : pageConfig.category === 'fin'
+          ? storeData.finTotal || 0
+          : storeData.techTotal || 0
     : 0;
 
   let jobsResource: JobsResource = 'cryptoJobs';
