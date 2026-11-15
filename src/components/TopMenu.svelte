@@ -31,6 +31,7 @@
       <a href="/ai-jobs.html" class="nav-link" class:active={active === 'ai'}>AI</a>
       <a href="/crypto-jobs.html" class="nav-link" class:active={active === 'crypto'}>Crypto</a>
       <a href="/fin-jobs.html" class="nav-link" class:active={active === 'fin'}>FinTech</a>
+      <a href="/tech-jobs.html" class="nav-link" class:active={active === 'tech'}>Tech</a>
       <span class="nav-separator">|</span>
       <span class="nav-section-label">Companies:</span>
       <a href="/ai-companies.html" class="nav-link" class:active={active === 'ai-companies'}>AI</a>
@@ -39,6 +40,9 @@
       >
       <a href="/fin-companies.html" class="nav-link" class:active={active === 'fin-companies'}
         >FinTech</a
+      >
+      <a href="/tech-companies.html" class="nav-link" class:active={active === 'tech-companies'}
+        >Tech</a
       >
       {#if $auth.isAuthenticated}
         <span class="nav-separator">|</span>
@@ -159,6 +163,7 @@
     <a href="/crypto-jobs.html" class="mobile-nav-link" class:active={active === 'crypto'}>Crypto</a
     >
     <a href="/fin-jobs.html" class="mobile-nav-link" class:active={active === 'fin'}>FinTech</a>
+    <a href="/tech-jobs.html" class="mobile-nav-link" class:active={active === 'tech'}>Tech</a>
     <div class="mobile-nav-divider"></div>
     <div class="mobile-nav-section-label">Companies</div>
     <a href="/ai-companies.html" class="mobile-nav-link" class:active={active === 'ai-companies'}
@@ -171,6 +176,11 @@
     >
     <a href="/fin-companies.html" class="mobile-nav-link" class:active={active === 'fin-companies'}
       >FinTech</a
+    >
+    <a
+      href="/tech-companies.html"
+      class="mobile-nav-link"
+      class:active={active === 'tech-companies'}>Tech</a
     >
     {#if $auth.isAuthenticated}
       <div class="mobile-nav-divider"></div>

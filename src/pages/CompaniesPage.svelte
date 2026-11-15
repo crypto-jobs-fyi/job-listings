@@ -7,7 +7,7 @@
   import type { Company } from '../types/company';
   import type { Job } from '../types/job';
 
-  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' | 'all' } = {
+  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' | 'tech' | 'all' } = {
     type: 'companies',
     category: 'crypto',
   };
@@ -17,10 +17,11 @@
   let error: string | null = null;
   let historyData: HistoryData | null = null;
 
-  const bannerTitles: Record<'crypto' | 'ai' | 'fin' | 'all', string> = {
+  const bannerTitles: Record<'crypto' | 'ai' | 'fin' | 'tech' | 'all', string> = {
     crypto: '🏢 Crypto Companies',
     ai: '🏢 AI Companies',
     fin: '🏢 FinTech Companies',
+    tech: '🏢 Tech Companies',
     all: '🏢 All Companies',
   };
 
@@ -35,7 +36,9 @@
       ? storeData.cryptoCompanies
       : pageConfig.category === 'ai'
         ? storeData.aiCompanies
-        : storeData.finCompanies
+        : pageConfig.category === 'fin'
+          ? storeData.finCompanies
+          : storeData.techCompanies
     : [];
 
   $: jobs = storeData
@@ -43,7 +46,9 @@
       ? storeData.cryptoJobs
       : pageConfig.category === 'ai'
         ? storeData.aiJobs
-        : storeData.finJobs
+        : pageConfig.category === 'fin'
+          ? storeData.finJobs
+          : storeData.techJobs
     : [];
 
   let companiesResource: JobsResource = 'cryptoCompanies';
@@ -52,7 +57,9 @@
       ? 'cryptoCompanies'
       : pageConfig.category === 'ai'
         ? 'aiCompanies'
-        : 'finCompanies';
+        : pageConfig.category === 'fin'
+          ? 'finCompanies'
+          : 'techCompanies';
   $: loading = storeData?.resources[companiesResource].loading ?? true;
   $: error = storeData?.resources[companiesResource].error ?? null;
 
@@ -78,8 +85,10 @@
       jobsStore.fetchCryptoJobs(); // This also fetches jobs for counts
     } else if (pageConfig.category === 'ai') {
       jobsStore.fetchAIJobs(); // This also fetches jobs for counts
-    } else {
+    } else if (pageConfig.category === 'fin') {
       jobsStore.fetchFinJobs(); // This also fetches jobs for counts
+    } else {
+      jobsStore.fetchTechJobs(); // This also fetches jobs for counts
     }
 
     // Load history data for charts (non-blocking)

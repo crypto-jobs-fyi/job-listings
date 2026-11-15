@@ -1,6 +1,6 @@
 # Documentation Index
 
-Job Finder is a Svelte 5 and Vite job-search platform for Crypto, AI, and FinTech roles. This index points to the current documentation and the source files that define its generated category pages.
+Job Finder is a Svelte 5 and Vite job-search platform for Crypto, AI, FinTech, and Tech roles. This index points to the current documentation and the source files that define its generated category pages.
 
 ## Start Here
 
@@ -11,14 +11,14 @@ Job Finder is a Svelte 5 and Vite job-search platform for Crypto, AI, and FinTec
 
 ## Category Configuration
 
-- [categories.config.js](categories.config.js): category source of truth for Crypto, AI, and FinTech metadata and data endpoints.
+- [categories.config.js](categories.config.js): category source of truth for Crypto, AI, FinTech, and Tech metadata and data endpoints.
 - [scripts/generate-entry-points.js](scripts/generate-entry-points.js): creates entry points, derived constants and category metadata, Vite inputs, sitemap, and robots rules.
 - [categories.config.README.md](categories.config.README.md): configuration field reference.
 
 ### Adding a Category
 
 1. Add jobs, companies, current-count, new-jobs, and history endpoints to [categories.config.js](categories.config.js).
-2. Extend the typed category, service, store, page, and navigation mappings. The current implementation explicitly supports `crypto`, `ai`, and `fin`.
+2. Extend the typed category, service, store, page, and navigation mappings. The current implementation explicitly supports `crypto`, `ai`, `fin`, and `tech`.
 3. Run `npm run generate` and commit all generated changes.
 4. Run `npm run lint`, `npm run format:check`, `npm run test`, `npm run build`, and relevant E2E coverage.
 

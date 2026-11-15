@@ -123,3 +123,42 @@ export async function fetchFinNewJobs(): Promise<Job[]> {
     throw error;
   }
 }
+
+/**
+ * Fetch Tech jobs
+ */
+export async function fetchTechJobs(): Promise<{
+  jobs: Job[];
+  total: number | null;
+}> {
+  try {
+    const [jobsData, currentData] = await Promise.all([
+      fetchJSON<JobsResponse>(ENDPOINTS.TECH_JOBS, { validate: validateJobsResponse }),
+      fetchJSON<CurrentResponse>(ENDPOINTS.TECH_CURRENT, { validate: validateCurrentResponse }),
+    ]);
+
+    const jobs = jobsData.data.filter((job) => job.company && job.location);
+    return {
+      jobs,
+      total: currentData['total_jobs'] ?? null,
+    };
+  } catch (error) {
+    console.error('Error fetching Tech jobs:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch new Tech jobs
+ */
+export async function fetchTechNewJobs(): Promise<Job[]> {
+  try {
+    const jobsData = await fetchJSON<JobsResponse>(ENDPOINTS.TECH_NEW_JOBS, {
+      validate: validateJobsResponse,
+    });
+    return jobsData.data.filter((job) => job.company && job.location);
+  } catch (error) {
+    console.error('Error fetching new Tech jobs:', error);
+    throw error;
+  }
+}

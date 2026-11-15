@@ -29,7 +29,7 @@
   export let companies: Company[] = [];
   export let bannerTitle: string = 'Jobs';
   export let totalJobs: number | null = null;
-  export let category: 'crypto' | 'ai' | 'fin' | 'all' = 'crypto';
+  export let category: 'crypto' | 'ai' | 'fin' | 'tech' | 'all' = 'crypto';
   export let showBanner: boolean = true;
   export let showCompanySearch: boolean = true;
   export let showTitleSearch: boolean = true;

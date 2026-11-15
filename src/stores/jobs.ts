@@ -4,6 +4,7 @@ import {
   fetchAICompanies,
   fetchCryptoCompanies,
   fetchFinTechCompanies,
+  fetchTechCompanies,
 } from '../services/companyService';
 import {
   fetchAIJobs as loadAIJobs,
@@ -12,6 +13,8 @@ import {
   fetchCryptoNewJobs as loadCryptoNewJobs,
   fetchFinJobs as loadFinJobs,
   fetchFinNewJobs as loadFinNewJobs,
+  fetchTechJobs as loadTechJobs,
+  fetchTechNewJobs as loadTechNewJobs,
 } from '../services/jobService';
 import type { Job } from '../types/job';
 import type { Company } from '../types/company';
@@ -20,12 +23,15 @@ const resourceNames = [
   'cryptoJobs',
   'aiJobs',
   'finJobs',
+  'techJobs',
   'cryptoCompanies',
   'aiCompanies',
   'finCompanies',
+  'techCompanies',
   'cryptoNewJobs',
   'aiNewJobs',
   'finNewJobs',
+  'techNewJobs',
 ] as const;
 
 export type JobsResource = (typeof resourceNames)[number];
@@ -40,15 +46,19 @@ export interface JobsStoreState {
   cryptoJobs: Job[];
   aiJobs: Job[];
   finJobs: Job[];
+  techJobs: Job[];
   cryptoCompanies: Company[];
   aiCompanies: Company[];
   finCompanies: Company[];
+  techCompanies: Company[];
   cryptoNewJobs: Job[];
   aiNewJobs: Job[];
   finNewJobs: Job[];
+  techNewJobs: Job[];
   cryptoTotal: number | null;
   aiTotal: number | null;
   finTotal: number | null;
+  techTotal: number | null;
   resources: Record<JobsResource, ResourceState>;
   loading: boolean;
   error: string | null;
@@ -59,15 +69,19 @@ function createDefaultState(): JobsStoreState {
     cryptoJobs: [],
     aiJobs: [],
     finJobs: [],
+    techJobs: [],
     cryptoCompanies: [],
     aiCompanies: [],
     finCompanies: [],
+    techCompanies: [],
     cryptoNewJobs: [],
     aiNewJobs: [],
     finNewJobs: [],
+    techNewJobs: [],
     cryptoTotal: null,
     aiTotal: null,
     finTotal: null,
+    techTotal: null,
     resources: Object.fromEntries(
       resourceNames.map((resource) => [resource, { loading: false, error: null, loadedAt: null }])
     ) as Record<JobsResource, ResourceState>,
@@ -163,7 +177,7 @@ function createJobsStore() {
   };
 
   const loadCompanyData = async (
-    resource: 'cryptoCompanies' | 'aiCompanies' | 'finCompanies',
+    resource: 'cryptoCompanies' | 'aiCompanies' | 'finCompanies' | 'techCompanies',
     loader: () => Promise<Company[]>
   ) => {
     setResources({ [resource]: { loading: true, error: null } });
@@ -224,6 +238,19 @@ function createJobsStore() {
       ),
 
     /**
+     * Fetch Tech jobs
+     */
+    fetchTechJobs: () =>
+      loadJobsAndCompanies(
+        'techJobs',
+        'techCompanies',
+        loadTechJobs,
+        fetchTechCompanies,
+        ({ jobs, total }) => ({ techJobs: jobs, techTotal: total }),
+        (companies) => ({ techCompanies: companies })
+      ),
+
+    /**
      * Fetch new crypto jobs
      */
     fetchCryptoNewJobs: () =>
@@ -263,14 +290,29 @@ function createJobsStore() {
       ),
 
     /**
+     * Fetch new Tech jobs
+     */
+    fetchTechNewJobs: () =>
+      loadJobsAndCompanies(
+        'techNewJobs',
+        'techCompanies',
+        loadTechNewJobs,
+        fetchTechCompanies,
+        (jobs) => ({ techNewJobs: jobs }),
+        (companies) => ({ techCompanies: companies })
+      ),
+
+    /**
      * Fetch companies
      */
-    fetchCompanies: (type: 'crypto' | 'ai' | 'fin') =>
+    fetchCompanies: (type: 'crypto' | 'ai' | 'fin' | 'tech') =>
       type === 'crypto'
         ? loadCompanyData('cryptoCompanies', fetchCryptoCompanies)
         : type === 'ai'
           ? loadCompanyData('aiCompanies', fetchAICompanies)
-          : loadCompanyData('finCompanies', fetchFinTechCompanies),
+          : type === 'fin'
+            ? loadCompanyData('finCompanies', fetchFinTechCompanies)
+            : loadCompanyData('techCompanies', fetchTechCompanies),
 
     /**
      * Clear all data

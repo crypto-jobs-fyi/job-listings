@@ -36,6 +36,16 @@ export const ENDPOINTS = {
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_jobs_new.json',
   FIN_HISTORY:
     'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/fin_history.json',
+  TECH_JOBS:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/tech_jobs.json',
+  TECH_COMPANIES:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/tech_companies.json',
+  TECH_CURRENT:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/tech_current.json',
+  TECH_NEW_JOBS:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/tech_jobs_new.json',
+  TECH_HISTORY:
+    'https://raw.githubusercontent.com/crypto-jobs-fyi/crawler/refs/heads/main/tech_history.json',
 } as const;
 
 // LocalStorage Keys
@@ -61,6 +71,7 @@ export const JOB_CATEGORIES = {
   CRYPTO: 'crypto',
   AI: 'ai',
   FIN: 'fin',
+  TECH: 'tech',
 } as const;
 
 // Page Routes
@@ -75,6 +86,9 @@ export const ROUTES = {
   FIN_JOBS: '/fin-jobs.html',
   FIN_COMPANIES: '/fin-companies.html',
   FIN_NEW_JOBS: '/fin-new-jobs.html',
+  TECH_JOBS: '/tech-jobs.html',
+  TECH_COMPANIES: '/tech-companies.html',
+  TECH_NEW_JOBS: '/tech-new-jobs.html',
   FAVORITES: '/favorites.html',
   LOGIN: '/login.html',
   ACCOUNT: '/account.html',

@@ -5,7 +5,12 @@
   import { favorites } from '../stores/favorites';
   import { auth } from '../stores/auth';
   import { companyService, getCompanyUrl, getCompanyLogoUrl } from '../services/companyService';
-  import { fetchCryptoJobs, fetchAIJobs, fetchFinJobs } from '../services/jobService';
+  import {
+    fetchCryptoJobs,
+    fetchAIJobs,
+    fetchFinJobs,
+    fetchTechJobs,
+  } from '../services/jobService';
   import { makeJobId } from '../utils/search';
   import JobBoard from '../components/JobBoard.svelte';
 
@@ -37,12 +42,18 @@
     // Load companies
     (async () => {
       try {
-        const [cryptoCompanies, aiCompanies, finCompanies] = await Promise.all([
+        const [cryptoCompanies, aiCompanies, finCompanies, techCompanies] = await Promise.all([
           companyService.fetchCryptoCompanies(),
           companyService.fetchAICompanies(),
           companyService.fetchFinTechCompanies(),
+          companyService.fetchTechCompanies(),
         ]);
-        companies = [...cryptoCompanies, ...aiCompanies, ...finCompanies] as Company[];
+        companies = [
+          ...cryptoCompanies,
+          ...aiCompanies,
+          ...finCompanies,
+          ...techCompanies,
+        ] as Company[];
       } catch (e) {
         error = `Failed to load companies: ${e}`;
         console.error(error, e);
@@ -71,14 +82,17 @@
     syncing = true;
     syncResult = null;
     try {
-      const [cryptoResult, aiResult, finResult] = await Promise.all([
+      const [cryptoResult, aiResult, finResult, techResult] = await Promise.all([
         fetchCryptoJobs(),
         fetchAIJobs(),
         fetchFinJobs(),
+        fetchTechJobs(),
       ]);
 
       const currentIds = new Set(
-        [...cryptoResult.jobs, ...aiResult.jobs, ...finResult.jobs].map((job) => makeJobId(job))
+        [...cryptoResult.jobs, ...aiResult.jobs, ...finResult.jobs, ...techResult.jobs].map((job) =>
+          makeJobId(job)
+        )
       );
 
       const toRemove = favoriteJobs.filter((fav) => !currentIds.has(fav.id));
@@ -136,6 +150,7 @@
       <a href="/crypto-jobs.html" class="cta-link">Browse Crypto Jobs</a>
       <a href="/ai-jobs.html" class="cta-link">Browse AI Jobs</a>
       <a href="/fin-jobs.html" class="cta-link">Browse FinTech Jobs</a>
+      <a href="/tech-jobs.html" class="cta-link">Browse Tech Jobs</a>
     </div>
   {:else}
     <JobBoard

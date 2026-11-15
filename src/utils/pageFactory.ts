@@ -8,7 +8,7 @@ export function generateHtmlTemplate(pageConfig: {
   title: string;
   description: string;
   type: 'jobs' | 'companies' | 'new-jobs';
-  category: 'crypto' | 'ai';
+  category: 'crypto' | 'ai' | 'fin' | 'tech';
 }): string {
   const ogImage = 'https://www.job-finder.org/crypto-logo.svg';
 
@@ -56,12 +56,12 @@ export function getEntryPointName(pageConfig: { path: string }): string {
 /**
  * Get route path from page type and category
  * @param type Page type (jobs, companies, new-jobs)
- * @param category Job category (crypto, ai)
+ * @param category Job category (crypto, ai, fin, tech)
  * @returns Route path (e.g., "/crypto-jobs.html", "/ai-companies.html")
  */
 export function getRoutePath(
   type: 'jobs' | 'companies' | 'new-jobs',
-  category: 'crypto' | 'ai'
+  category: 'crypto' | 'ai' | 'fin' | 'tech'
 ): string {
   if (type === 'jobs') {
     return `/${category}-jobs.html`;

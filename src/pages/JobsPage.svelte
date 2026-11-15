@@ -6,7 +6,7 @@
   import type { Job } from '../types/job';
   import type { Company } from '../types/company';
 
-  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' | 'all' } = {
+  export let pageConfig: { type: string; category: 'crypto' | 'ai' | 'fin' | 'tech' | 'all' } = {
     type: 'jobs',
     category: 'crypto',
   };
@@ -23,6 +23,8 @@
     'ai-new-jobs': '🆕 New AI Jobs',
     'fin-jobs': '💰 FinTech Jobs',
     'fin-new-jobs': '🆕 New FinTech Jobs',
+    'tech-jobs': '💻 Tech Jobs',
+    'tech-new-jobs': '🆕 New Tech Jobs',
   };
 
   $: bannerKey = `${pageConfig.category}-${isNewJobs ? 'new-' : ''}jobs`;
@@ -38,12 +40,16 @@
         ? storeData.cryptoNewJobs
         : pageConfig.category === 'ai'
           ? storeData.aiNewJobs
-          : storeData.finNewJobs
+          : pageConfig.category === 'fin'
+            ? storeData.finNewJobs
+            : storeData.techNewJobs
       : pageConfig.category === 'crypto'
         ? storeData.cryptoJobs
         : pageConfig.category === 'ai'
           ? storeData.aiJobs
-          : storeData.finJobs
+          : pageConfig.category === 'fin'
+            ? storeData.finJobs
+            : storeData.techJobs
     : [];
 
   $: companies = storeData
@@ -68,12 +74,16 @@
       ? 'cryptoNewJobs'
       : pageConfig.category === 'ai'
         ? 'aiNewJobs'
-        : 'finNewJobs'
+        : pageConfig.category === 'fin'
+          ? 'finNewJobs'
+          : 'techNewJobs'
     : pageConfig.category === 'crypto'
       ? 'cryptoJobs'
       : pageConfig.category === 'ai'
         ? 'aiJobs'
-        : 'finJobs';
+        : pageConfig.category === 'fin'
+          ? 'finJobs'
+          : 'techJobs';
   $: loading = storeData?.resources[jobsResource].loading ?? true;
   $: error = storeData?.resources[jobsResource].error ?? null;
 
@@ -95,9 +105,13 @@
           ? isNewJobs
             ? jobsStore.fetchAINewJobs()
             : jobsStore.fetchAIJobs()
-          : isNewJobs
-            ? jobsStore.fetchFinNewJobs()
-            : jobsStore.fetchFinJobs();
+          : pageConfig.category === 'fin'
+            ? isNewJobs
+              ? jobsStore.fetchFinNewJobs()
+              : jobsStore.fetchFinJobs()
+            : isNewJobs
+              ? jobsStore.fetchTechNewJobs()
+              : jobsStore.fetchTechJobs();
 
     fetchPromise
       .then(() => {

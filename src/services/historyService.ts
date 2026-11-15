@@ -4,7 +4,9 @@ export type HistoryData = Record<string, Record<string, number>>;
 
 const cache = new Map<string, HistoryData>();
 
-export async function fetchHistory(category: 'ai' | 'crypto' | 'fin'): Promise<HistoryData> {
+export async function fetchHistory(
+  category: 'ai' | 'crypto' | 'fin' | 'tech'
+): Promise<HistoryData> {
   if (cache.has(category)) {
     return cache.get(category)!;
   }
@@ -14,7 +16,9 @@ export async function fetchHistory(category: 'ai' | 'crypto' | 'fin'): Promise<H
       ? ENDPOINTS.AI_HISTORY
       : category === 'crypto'
         ? ENDPOINTS.CRYPTO_HISTORY
-        : ENDPOINTS.FIN_HISTORY;
+        : category === 'fin'
+          ? ENDPOINTS.FIN_HISTORY
+          : ENDPOINTS.TECH_HISTORY;
 
   const response = await fetch(url);
   if (!response.ok) {
