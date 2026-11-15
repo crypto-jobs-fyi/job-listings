@@ -29,6 +29,8 @@ export default [
       },
     },
     rules: {
+      // Reactive assignments can run more than once, unlike ordinary assignments.
+      'no-useless-assignment': 'off',
       'svelte/valid-compile': 'error',
       'svelte/no-unused-svelte-ignore': 'warn',
       'svelte/require-each-key': 'warn',

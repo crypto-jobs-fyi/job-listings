@@ -324,7 +324,7 @@
             <td colspan="3" class="empty-state">No companies found matching your search.</td>
           </tr>
         {:else}
-          {#each filteredCompanies as company (company.company_name)}
+          {#each filteredCompanies as company, index (`${company.company_name}-${index}`)}
             {@const jobCount = allGroupedJobs[company.company_name]?.length || 0}
             <tr class="company-row-item">
               <td>
