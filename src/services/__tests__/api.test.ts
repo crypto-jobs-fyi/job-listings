@@ -63,4 +63,15 @@ describe('fetchJSON', () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
+
+  it('preserves the original error when a request fails', async () => {
+    const cause = new Error('Network unavailable');
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(cause));
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    await expect(fetchJSON(testUrl)).rejects.toMatchObject({
+      message: `Failed to fetch data from ${testUrl}: Network unavailable`,
+      cause,
+    });
+  });
 });

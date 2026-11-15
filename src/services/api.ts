@@ -89,7 +89,7 @@ export async function fetchJSON<T>(
     } catch (error) {
       console.error(`Failed to fetch ${url}:`, error);
       const message = error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to fetch data from ${url}: ${message}`);
+      throw new Error(`Failed to fetch data from ${url}: ${message}`, { cause: error });
     } finally {
       inFlightRequests.delete(url);
     }

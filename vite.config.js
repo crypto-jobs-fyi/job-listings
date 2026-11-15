@@ -8,7 +8,8 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    rollupOptions: {
+    target: ['chrome107', 'edge107', 'firefox104', 'safari16'],
+    rolldownOptions: {
       input: [
         './/index.html',
         './/crypto-jobs.html',
