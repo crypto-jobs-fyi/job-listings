@@ -14,7 +14,7 @@
   // Accept pageConfig as prop, but also allow window override
   export let pageConfig: {
     type: string;
-    category: 'crypto' | 'ai' | 'fin' | 'all';
+    category: 'crypto' | 'ai' | 'fin' | 'tech' | 'all';
     title: string;
     description: string;
   } = {

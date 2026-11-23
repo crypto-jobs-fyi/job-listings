@@ -27,7 +27,9 @@
               ? state.aiTotal
               : cat.id === 'fin'
                 ? state.finTotal
-                : 0;
+                : cat.id === 'tech'
+                  ? state.techTotal
+                  : 0;
         const companies =
           cat.id === 'crypto'
             ? state.cryptoCompanies
@@ -35,7 +37,9 @@
               ? state.aiCompanies
               : cat.id === 'fin'
                 ? state.finCompanies
-                : [];
+                : cat.id === 'tech'
+                  ? state.techCompanies
+                  : [];
 
         return {
           ...cat,
@@ -65,6 +69,13 @@
         !state.resources.finJobs.error
       ) {
         jobs.fetchFinJobs();
+      }
+      if (
+        state.techTotal === null &&
+        !state.resources.techJobs.loading &&
+        !state.resources.techJobs.error
+      ) {
+        jobs.fetchTechJobs();
       }
     });
 

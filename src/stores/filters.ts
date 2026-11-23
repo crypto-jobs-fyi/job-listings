@@ -4,7 +4,7 @@ export interface FilterState {
   companySearch: string;
   locationSearch: string;
   titleSearch: string;
-  categoryFilter: 'all' | 'ai' | 'crypto';
+  categoryFilter: 'all' | 'ai' | 'crypto' | 'fin' | 'tech';
 }
 
 const defaultFilters: FilterState = {
@@ -31,7 +31,7 @@ function createFiltersStore() {
     setTitleSearch: (search: string) => {
       update((state) => ({ ...state, titleSearch: search }));
     },
-    setCategoryFilter: (category: 'all' | 'ai' | 'crypto') => {
+    setCategoryFilter: (category: 'all' | 'ai' | 'crypto' | 'fin' | 'tech') => {
       update((state) => ({ ...state, categoryFilter: category }));
     },
     setAll: (filters: Partial<FilterState>) => {

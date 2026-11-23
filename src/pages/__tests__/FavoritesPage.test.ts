@@ -62,6 +62,7 @@ vi.mock('../../services/companyService', () => ({
     fetchCryptoCompanies: vi.fn().mockResolvedValue([]),
     fetchAICompanies: vi.fn().mockResolvedValue([]),
     fetchFinTechCompanies: vi.fn().mockResolvedValue([]),
+    fetchTechCompanies: vi.fn().mockResolvedValue([]),
   },
   getCompanyUrl: vi.fn(),
   getCompanyLogoUrl: vi.fn(),
@@ -71,6 +72,7 @@ vi.mock('../../services/jobService', () => ({
   fetchCryptoJobs: vi.fn().mockResolvedValue({ jobs: [], total: 0 }),
   fetchAIJobs: vi.fn().mockResolvedValue({ jobs: [], total: 0 }),
   fetchFinJobs: vi.fn().mockResolvedValue({ jobs: [], total: 0 }),
+  fetchTechJobs: vi.fn().mockResolvedValue({ jobs: [], total: 0 }),
 }));
 
 describe('FavoritesPage', () => {
@@ -180,6 +182,7 @@ describe('FavoritesPage', () => {
     vi.mocked(jobService.fetchCryptoJobs).mockResolvedValue({ jobs: [], total: 0 });
     vi.mocked(jobService.fetchAIJobs).mockResolvedValue({ jobs: [currentJob], total: 1 });
     vi.mocked(jobService.fetchFinJobs).mockResolvedValue({ jobs: [], total: 0 });
+    vi.mocked(jobService.fetchTechJobs).mockResolvedValue({ jobs: [], total: 0 });
 
     render(FavoritesPage);
 
@@ -221,6 +224,7 @@ describe('FavoritesPage', () => {
     vi.mocked(jobService.fetchCryptoJobs).mockResolvedValue({ jobs: [], total: 0 });
     vi.mocked(jobService.fetchAIJobs).mockResolvedValue({ jobs: [currentJob], total: 1 });
     vi.mocked(jobService.fetchFinJobs).mockResolvedValue({ jobs: [], total: 0 });
+    vi.mocked(jobService.fetchTechJobs).mockResolvedValue({ jobs: [], total: 0 });
 
     render(FavoritesPage);
 

@@ -12,7 +12,7 @@ This changelog preserves historical milestones and superseded plans. Current com
 
 ## 2026-09-10: Rebaseline
 
-- Replaced the historical plan's eight-page inventory with the current 14-page scope: home, nine category pages across Crypto, AI, and FinTech, plus favorites, login, account, and admin pages.
+- Replaced the historical plan's eight-page inventory with the current 17-page scope: home, twelve category pages across Crypto, AI, FinTech, and Tech, plus favorites, login, account, and admin pages.
 - Superseded the "5 passing tests" baseline. Verification belongs in the current plan because test counts change over time.
 - Superseded the claim that Vite uses dynamic globbing. Entry points are generated into Vite's explicit input list.
 - Removed the unreferenced `src/utils/pageConfig.ts` file, which retained the obsolete Crypto/AI-only page catalog.

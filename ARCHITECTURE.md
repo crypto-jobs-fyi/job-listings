@@ -55,7 +55,7 @@ The application supports Light and Dark modes using a CSS variable-based system:
 
 ### Multi-Page Entry Point System
 
-The application uses 14 generated HTML and JavaScript entry points: the home page, three page types for each of Crypto, AI, and FinTech, plus favorites, login, account, and admin pages.
+The application uses 17 generated HTML and JavaScript entry points: the home page, three page types for each of Crypto, AI, FinTech, and Tech, plus favorites, login, account, and admin pages.
 
 1. **Configuration**: `categories.config.js` defines every category and its jobs, companies, current-count, new-jobs, and history endpoints.
 2. **Generation**: `npm run generate` creates category entry points, derived constants/categories, Vite inputs, `robots.txt`, and the sitemap.
@@ -106,8 +106,8 @@ The application uses email-based authentication with verification codes:
   - `setTitleSearch()`
   - `setCategoryFilter()`
 - **jobs.ts**: Manages job, company, and per-resource request state
-  - `fetchCryptoJobs()`, `fetchAIJobs()`, `fetchFinJobs()`
-  - `fetchCryptoNewJobs()`, `fetchAINewJobs()`, `fetchFinNewJobs()`
+  - `fetchCryptoJobs()`, `fetchAIJobs()`, `fetchFinJobs()`, `fetchTechJobs()`
+  - `fetchCryptoNewJobs()`, `fetchAINewJobs()`, `fetchFinNewJobs()`, `fetchTechNewJobs()`
   - `fetchCompanies(category)` and `invalidateCache()`
   - `resources[resource]` exposes `loading`, `error`, and `loadedAt`
 
@@ -119,10 +119,10 @@ The application uses email-based authentication with verification codes:
   - `isValidEmail(email)`: Email format validation
   - Uses Resend for email delivery and Upstash Redis for code storage
 - **jobService.ts**: Fetches job data from GitHub API
-  - `fetchCryptoJobs()`, `fetchAIJobs()`, `fetchFinJobs()`
-  - `fetchCryptoNewJobs()`, `fetchAINewJobs()`, `fetchFinNewJobs()`
+  - `fetchCryptoJobs()`, `fetchAIJobs()`, `fetchFinJobs()`, `fetchTechJobs()`
+  - `fetchCryptoNewJobs()`, `fetchAINewJobs()`, `fetchFinNewJobs()`, `fetchTechNewJobs()`
 - **companyService.ts**: Fetches company data and utilities
-  - `fetchCryptoCompanies()`, `fetchAICompanies()`, `fetchFinTechCompanies()`
+  - `fetchCryptoCompanies()`, `fetchAICompanies()`, `fetchFinTechCompanies()`, `fetchTechCompanies()`
   - `getCompanyLogoUrl()`
   - `getCompanyUrl()`
 - **historyService.ts**: Fetches and normalizes total and per-company history series.

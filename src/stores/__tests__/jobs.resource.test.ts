@@ -5,15 +5,18 @@ vi.mock('../../services/jobService', () => ({
   fetchCryptoJobs: vi.fn(),
   fetchAIJobs: vi.fn(),
   fetchFinJobs: vi.fn(),
+  fetchTechJobs: vi.fn(),
   fetchCryptoNewJobs: vi.fn(),
   fetchAINewJobs: vi.fn(),
   fetchFinNewJobs: vi.fn(),
+  fetchTechNewJobs: vi.fn(),
 }));
 
 vi.mock('../../services/companyService', () => ({
   fetchCryptoCompanies: vi.fn(),
   fetchAICompanies: vi.fn(),
   fetchFinTechCompanies: vi.fn(),
+  fetchTechCompanies: vi.fn(),
 }));
 
 import { fetchCryptoCompanies } from '../../services/companyService';

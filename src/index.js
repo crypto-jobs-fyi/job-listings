@@ -6,9 +6,9 @@ import './app.css';
 const pageConfig = {
   type: 'home',
   category: 'all',
-  title: 'Job Finder - Crypto & AI & FinTech Jobs | Find Your Next Opportunity',
+  title: 'Job Finder - Crypto & AI & FinTech & Tech Jobs | Find Your Next Opportunity',
   description:
-    'Discover crypto & ai & fintech job opportunities. Search thousands of positions from top companies.',
+    'Discover crypto & ai & fintech & tech job opportunities. Search thousands of positions from top companies.',
 };
 
 // Store in window for App.svelte to access

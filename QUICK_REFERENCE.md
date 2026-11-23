@@ -1,6 +1,6 @@
 # Quick Reference: Adding a Job Category
 
-Job Finder currently supports the `crypto`, `ai`, and `fin` categories. `categories.config.js` drives generated routes and derived configuration, but adding a category also requires extending the explicitly typed runtime mappings.
+Job Finder currently supports the `crypto`, `ai`, `fin`, and `tech` categories. `categories.config.js` drives generated routes and derived configuration, but adding a category also requires extending the explicitly typed runtime mappings.
 
 ## Category Configuration
 
